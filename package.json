@@ -39,7 +39,9 @@
         "vuetify-loader": "^1.2.2"
     },
     "dependencies": {
+        "vee-validate": "^2.2.12",
         "vform": "^1.0.1",
-        "vue-loader": "^15.7.0"
+        "vue-loader": "^15.7.0",
+        "ziggy": "tightenco/ziggy"
     }
 }
