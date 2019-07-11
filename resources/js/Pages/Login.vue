@@ -1,54 +1,105 @@
 <template>
-  <v-app id="inspire">
-    <v-content>
-      <v-container fluid fill-height>
-        <v-layout align-center justify-center>
-          <v-flex xs12 sm8 md4>
-            <v-card class="elevation-12">
-              <v-toolbar dark color="primary">
-                <v-toolbar-title>Login form</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-tooltip bottom>
-                  <v-btn icon large :href="source" target="_blank" slot="activator">
-                    <v-icon large>code</v-icon>
-                  </v-btn>
-                  <span>Source</span>
-                </v-tooltip>
-              </v-toolbar>
-              <v-card-text>
-                <v-form>
-                  <v-text-field prepend-icon="person" name="login" label="Login" type="text"></v-text-field>
-                  <v-text-field
-                    prepend-icon="lock"
-                    name="password"
-                    label="Password"
-                    id="password"
-                    type="password"
-                  ></v-text-field>
-                </v-form>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="primary">Login</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-content>
-  </v-app>
+  <modal-layout class="white" title="Login">
+    <v-card :flat="true">
+      <v-toolbar class="accent">
+        <v-spacer />
+        <v-toolbar-title class="text-xs-center white--text">Welcome to Login Page</v-toolbar-title>
+        <v-spacer />
+      </v-toolbar>
+      <v-card-text style="padding-top:150px;">
+        <v-container fluid>
+          <form @submit.prevent="login()">
+            <v-layout row>
+              <v-flex xs12 sm12 md4 offset-md4 lg4 offset-lg4 xl4 offset-xl4>
+                <v-text-field
+                  v-model="form.email"
+                  v-validate="'required|email'"
+                  :error-messages="errorMessages('email')"
+                  :class="{ 'error--text': hasErrors('email') }"
+                  class="primary--text"
+                  name="username"
+                  label="Type Your Account Email"
+                  data-vv-name="email"
+                  prepend-icon="email"
+                  counter="255"
+                />
+              </v-flex>
+            </v-layout>
+            <v-layout row>
+              <v-flex xs12 sm12 md4 offset-md4 lg4 offset-lg4 xl4 offset-xl4>
+                <v-text-field
+                  v-model="form.password"
+                  v-validate="'required|min:8'"
+                  :append-icon="icon"
+                  :type="!password_visible ? 'password' : 'text'"
+                  :error-messages="errorMessages('password')"
+                  :class="{ 'error--text': hasErrors('password') }"
+                  class="primary--text"
+                  name="password"
+                  label="Enter your password"
+                  hint="At least 8 characters"
+                  data-vv-name="password"
+                  counter="255"
+                  prepend-icon="fa-key"
+                  @click:append="() => (password_visible = !password_visible)"
+                />
+              </v-flex>
+            </v-layout>
+            <v-flex xs12 sm12 md4 offset-md4 lg4 offset-lg4 xl4 offset-xl4 text-xs-center>
+              <v-btn
+                :loading="form.busy"
+                :disabled="errors.any()"
+                block
+                type="submit"
+                color="accent"
+              >
+                Log In
+                <v-icon right colo="primary">fa-sign-in-alt</v-icon>
+              </v-btn>
+            </v-flex>
+          </form>
+        </v-container>
+      </v-card-text>
+    </v-card>
+  </modal-layout>
 </template>
 
 <script>
+import Form from "vform";
+import ModalLayout from "../Shared/ModalLayout";
+import validationError from "../mixins/validation-error";
 export default {
+  components: {
+    Form,
+    ModalLayout
+  },
+  mixins: [validationError],
   data: () => ({
-    draawer: null
+    form: new Form({
+      username: "",
+      email: "",
+      password: "",
+      remember: false
+    }),
+    password_visible: false,
+    drawer: null
   }),
-  props:{
-    source: String
+  computed: {
+    icon() {
+      return this.password_visible ? "visibility" : "visibility_off";
+    }
+  },
+  methods: {
+    login() {
+      let self = this;
+      self.$validator.validateAll();
+      if (!self.errors.any()) {
+        self.$inertia.post(this.route("login.attempt"), self.form);
+      }
+    },
   }
 };
 </script>
 
-<style>
+<style lang="scss">
 </style>
