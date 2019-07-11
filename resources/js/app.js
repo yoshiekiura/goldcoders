@@ -1,11 +1,10 @@
 import Inertia from 'inertia-vue'
 import Vue from 'vue'
-import '@/plugins/vuetify'
+import '@/plugins'
 
 Vue.use(Inertia)
 
 Vue.config.productionTip = false
-
 const app = document.getElementById('app')
 
 new Vue({
