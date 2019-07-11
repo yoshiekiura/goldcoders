@@ -1,5 +1,4 @@
 <?php
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,12 +11,8 @@ use Inertia\Inertia;
 |
  */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome');
-});
-Route::get('/login', function () {
-    return Inertia::render('Login');
-});
-Route::get('/register', function () {
-    return Inertia::render('Dashboard');
-});
+Route::get('login')->name('login')->uses('Auth\LoginController@showLoginForm');
+Route::post('login')->name('login.attempt')->uses('Auth\LoginController@login');
+Route::post('logout')->name('logout')->uses('Auth\LoginController@logout');
+
+Route::get('/')->name('dashboard')->uses('DashboardController')->middleware('auth');
