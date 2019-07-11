@@ -7,12 +7,12 @@ import 'vuetify/dist/vuetify.min.css'
 
 import 'material-design-icons-iconfont/dist/material-design-icons.css'     //! iconfont: 'md'
 //import '@mdi/font/css/materialdesignicons.css'                          //! iconfont: 'mdi'
-//import '@fortawesome/fontawesome-free/css/all.css'                      //! iconfont: 'fa'
+import '@fortawesome/fontawesome-free/css/all.css'                      //! iconfont: 'fa'
 //import 'font-awesome/css/font-awesome.min.css'                          //! iconfont: 'fa4'
 
 Vue.use(Vuetify,{
     icons: {
-        iconfont: 'md'
+        iconfont: 'fa'
     },
     theme: {
         primary: '#BA9A5a',
