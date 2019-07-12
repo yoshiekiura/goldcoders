@@ -1,39 +1,16 @@
 <template>
-  <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
-      </v-toolbar-title>
-      <v-spacer />
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>open_in_new</v-icon>
-      </v-btn>
-    </v-toolbar>
-
-    <v-content>
-      <HelloWorld />
-    </v-content>
-  </v-app>
+  <main-layout>
+    <h1>Dashboard</h1>
+  </main-layout>
 </template>
 
 <script>
-import HelloWorld from '@/Shared/HelloWorld'
+import MainLayout from "../Layouts/MainLayout.vue";
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld,
+    MainLayout
   },
-  data () {
-    return {
-      //
-    }
-  },
-}
+  data: () => ({})
+};
 </script>

@@ -66,7 +66,7 @@
 
 <script>
 import Form from "vform";
-import ModalLayout from "../Shared/ModalLayout";
+import ModalLayout from "../Layouts/ModalLayout";
 import validationError from "../mixins/validation-error";
 export default {
   components: {
