@@ -28,6 +28,11 @@ class LoginController extends Controller
      */
     protected $redirectTo = '/';
 
+    public function showLogoutForm()
+    {
+        return Inertia::render('Logout');
+    }
+
     /**
      * Create a new controller instance.
      *
@@ -35,7 +40,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        $this->middleware('guest')->except(['logout','showLogoutForm']);
     }
 
     public function showLoginForm()
