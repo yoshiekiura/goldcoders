@@ -13,6 +13,7 @@
 
 Route::get('login')->name('login')->uses('Auth\LoginController@showLoginForm');
 Route::post('login')->name('login.attempt')->uses('Auth\LoginController@login');
-Route::post('logout')->name('logout')->uses('Auth\LoginController@logout');
+Route::get('logout')->name('logout')->uses('Auth\LoginController@showLogoutForm');
+Route::post('logout')->name('logout.attempt')->uses('Auth\LoginController@logout');
 
 Route::get('/')->name('dashboard')->uses('DashboardController')->middleware('auth');
