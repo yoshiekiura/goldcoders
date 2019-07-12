@@ -1,7 +1,7 @@
 <template>
   <v-app v-cloak id="inspire">
     <left-side-bar />
-    <app-nav-bar />
+    <app-nav-bar :title="title"/>
     <v-content transition="slide-x-transition" fluid pa-0 ma-0>
       <slot />
     </v-content>

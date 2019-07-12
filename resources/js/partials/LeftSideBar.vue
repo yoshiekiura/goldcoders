@@ -3,12 +3,12 @@
     v-model="drawer"
     :clipped="$vuetify.breakpoint.width <= 1264 && true"
     fixed
-    class="accent"
+    class="secondary"
     hide-overlay
     app
   >
     <!-- either use route name or full url link in href -->
-    <v-list dense class="accent">
+    <v-list dense class="secondary">
       <v-link
         title="Dashboard"
         href="dashboard"

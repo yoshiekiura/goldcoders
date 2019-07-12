@@ -1,11 +1,6 @@
 <template>
-  <v-toolbar 
-    color="accent" 
-    fixed 
-    app>
-    <v-toolbar-side-icon 
-      class="white--text" 
-      @click.native.stop="toggleDrawer()"/>
+  <v-toolbar color="accent" fixed app>
+    <v-toolbar-side-icon class="primary--text" @click.native.stop="toggleDrawer()" />
     <!-- Title -->
     <v-toolbar-title
       v-if="extension"
@@ -14,47 +9,35 @@
       :style="$vuetify.breakpoint.width > 1264 && 'width: 300px'"
       class="text-xs-center ml-0 pl-3"
     >
-      <v-icon 
-        v-if="showIcon" 
-        class="ml-3 hidden-md-and-down accent">{{ icon }}</v-icon>
+      <v-icon v-if="showIcon" class="ml-3 hidden-md-and-down accent">{{ icon }}</v-icon>
       <span class="hidden-md-and-down">
-        <span class="white--text">{{ title }}</span>
+        <span class="primary--text">{{ title }}</span>
       </span>
     </v-toolbar-title>
-    <v-toolbar-title 
-      v-else 
-      class="text-xs-center">
-      <v-icon 
-        v-if="showIcon" 
-        class="ml-3 hidden-md-and-down accent">{{ icon }}</v-icon>
+    <v-toolbar-title v-else class="text-xs-center">
+      <v-icon v-if="showIcon" class="ml-3 hidden-md-and-down accent">{{ icon }}</v-icon>
       <span class="hidden-md-and-down">
-        <span class="white--text">{{ title }}</span>
+        <span class="primary--text">{{ title }}</span>
       </span>
     </v-toolbar-title>
-    <v-spacer/>
+    <v-spacer />
     <!-- center logo -->
-    <img 
-      v-if="showLogo" 
-      :src="logo" 
-      class="hidden-md-and-up">
-    <v-spacer/>
-    <v-btn 
-      dark 
-      icon 
-      @click="refresh">
-      <v-icon>refresh</v-icon>
+    <img v-if="showLogo" :src="logo" class="hidden-md-and-up" />
+    <v-spacer />
+    <v-btn icon @click="refresh">
+      <v-icon color="primary">refresh</v-icon>
     </v-btn>
   </v-toolbar>
 </template>
 
 <script>
 export default {
+  props: { title: String },
   data: () => ({
     extension: false,
     showLogo: false,
     logo: "/img/logo.png",
     showIcon: false,
-    title: null
   }),
   created() {
     /* Emit On a Child Component If You Want This To Be Visible */
@@ -67,7 +50,12 @@ export default {
       Bus.$emit("toggleDrawer");
     },
     refresh() {
-      this.$inertia.reload({ method: 'get', data: {}, preserveScroll: false, preserveState: false })
+      this.$inertia.reload({
+        method: "get",
+        data: {},
+        preserveScroll: false,
+        preserveState: false
+      });
     }
   }
 };
