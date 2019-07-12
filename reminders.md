@@ -21,3 +21,12 @@ If you'd like to visit a page without remembering the query strings, pass ?remem
 To forget previously remembered query strings, simply pass ?remember=forget.
 
 use name routes in laravel so we can use this.route(routename)
+
+on appnavbar or appfooter
+this.extension is useless check it later on
+
+we can change the title using title props on the layouts
+
+on left sidebar we can either use full qualified link or a route name in ziggy define in laravel web/api routes
+
+we use the whole ziggy route with function instead of just paths so we can check route current
