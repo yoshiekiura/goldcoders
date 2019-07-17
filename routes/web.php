@@ -13,7 +13,8 @@
 
 Route::get('login')->name('login')->uses('Auth\LoginController@showLoginForm');
 Route::post('login')->name('login.attempt')->uses('Auth\LoginController@login');
-Route::get('logout')->name('logout')->uses('Auth\LoginController@showLogoutForm');
-Route::post('logout')->name('logout.attempt')->uses('Auth\LoginController@logout');
+Route::get('logout')->name('logout')->uses('Auth\LoginController@showLogoutForm')->middleware('auth');
+Route::post('logout')->name('logout.attempt')->uses('Auth\LoginController@logout')->middleware('auth');
 
 Route::get('/')->name('dashboard')->uses('DashboardController')->middleware('auth');
+Route::get('/members')->name('users.index')->uses('UsersController@index')->middleware('auth');
