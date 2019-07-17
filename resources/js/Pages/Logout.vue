@@ -104,7 +104,7 @@ export default {
     logout() {
       let self = this;
       self.form.busy = true;
-      self.$inertia.post(this.route("logout.attempt"), self.form);
+      self.$inertia.post(this.route("logout.attempt").url(), self.form);
     }
   }
 };

@@ -79,7 +79,7 @@ export default {
       username: "",
       email: "",
       password: "",
-      remember: false
+      remember: null
     }),
     password_visible: false,
     drawer: null
@@ -94,7 +94,7 @@ export default {
       let self = this;
       self.$validator.validateAll();
       if (!self.errors.any()) {
-        self.$inertia.post(this.route("login.attempt"), self.form);
+        self.$inertia.post(this.route("login.attempt").url(), self.form);
       }
     },
   }
