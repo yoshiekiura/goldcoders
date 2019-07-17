@@ -1,15 +1,20 @@
 <template>
   <main-layout title="Dashboard">
-    <h1>Dashboard</h1>
+    <admin-dash-panel />
+    <!-- <customer-dash-panel /> -->
   </main-layout>
 </template>
 
 <script>
-import MainLayout from "../Layouts/MainLayout.vue";
+import MainLayout from "../Layouts/MainLayout";
+import AdminDashPanel from "../Shared/AdminDashPanel";
+// import CustomerDashPanel from "../Shared/CustomerDashPanel";
 
 export default {
   components: {
-    MainLayout
+    MainLayout,
+    AdminDashPanel
+    // CustomerDashPanel
   },
   data: () => ({})
 };
