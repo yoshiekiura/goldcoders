@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Date::use(CarbonImmutable::class);
+        Date::use (CarbonImmutable::class);
     }
 
     /**
@@ -37,25 +37,38 @@ class AppServiceProvider extends ServiceProvider
             return md5_file(public_path('mix-manifest.json'));
         });
         Inertia::share(function () {
+            $user = Auth::user();
             return [
-                'app'    => [
+                'app'        => [
                     'name' => Config::get('app.name')
                 ],
-                'auth'   => [
-                    'user' => Auth::user() ? [
-                        'id'    => Auth::user()->id,
-                        'photo_url' => Auth::user()->photo_url,
-
-                        // 'first_name' => Auth::user()->first_name,
-                        // 'last_name'  => Auth::user()->last_name,
-                        'email' => Auth::user()->email
-                        // 'role'       => Auth::user()->role,
+                'isLoggedIn' => $user ? true : false,
+                'auth'       => [
+                    'user' => $user ? [
+                        'id'        => $user->id,
+                        'email'     => Auth::user()->email,
+                        'username' => $user->username,
+                        'photo_url' => $user->photo_url,
+                        'fname' => $user->fname,
+                        'mname' => $user->mname,
+                        'lname' => $user->lname,
+                        'suffix' => $user->suffix,
+                        'sponsor' => $user->sponsor,
+                        'avatar' => $user->avatar,
+                        'active' => $user->active,
+                        'dob' => $user->dob,
+                        'mobile_no' => $user->mobile_no,
+                        'permanent_address' => $user->permanent_address,
+                        'current_address' => $user->current_address,
+                        'email_verified_at' => $user->email_verified_at,
+                        'roles' => $user->getRoles(),
+                        'abilities' => $user->getAbilities()
                     ] : null
                 ],
-                'flash'  => [
+                'flash'      => [
                     'success' => Session::get('success')
                 ],
-                'errors' => Session::get('errors') ? Session::get('errors')->getBag('default')->getMessages() : (object) []
+                'errors'     => Session::get('errors') ? Session::get('errors')->getBag('default')->getMessages() : (object) []
             ];
         });
         $this->registerLengthAwarePaginator();
@@ -69,6 +82,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LengthAwarePaginator::class, function ($app, $values) {
             return new class(...array_values($values)) extends LengthAwarePaginator
             {
+                /**
+                 * @param  $attributes
+                 * @return mixed
+                 */
                 public function only(...$attributes)
                 {
                     return $this->transform(function ($item) use ($attributes) {
@@ -76,6 +93,10 @@ class AppServiceProvider extends ServiceProvider
                     });
                 }
 
+                /**
+                 * @param  $callback
+                 * @return mixed
+                 */
                 public function transform($callback)
                 {
                     $this->items->transform($callback);
@@ -91,6 +112,10 @@ class AppServiceProvider extends ServiceProvider
                     ];
                 }
 
+                /**
+                 * @param $view
+                 * @param array   $data
+                 */
                 public function links($view = null, $data = [])
                 {
                     $this->appends(Request::all());
