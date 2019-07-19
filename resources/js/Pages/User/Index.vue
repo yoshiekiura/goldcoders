@@ -1,224 +1,1070 @@
 <template>
   <main-layout title="User Management">
-    <div>
-      <v-toolbar flat color="white">
-        <v-toolbar-title>Members Management</v-toolbar-title>
-        <v-divider class="mx-2" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark class="mb-2" v-on="on">New Member</v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
+    <v-container fluid>
+      <!-- User Main Detail -->
+      <v-card-title>
+        <v-spacer/>
+        <v-btn
+          color="teal"
+          dark
+          @click="createUser">
+          Create New User
+          <v-icon right>person_add</v-icon>
+        </v-btn>
+      </v-card-title>
+      <v-pagination
+        v-if="!loading"
+        v-model="page"
+        :length="meta.last_page"/>
+      <v-data-table
+        v-model="selected"
+        :headers="headers"
+        :items="items"
+        :search="search"
+        :pagination.sync="pagination"
+        :loading="loading"
+        :rows-per-page-items="rows_per_page_items"
+        select-all
+        light
+        item-key="id"
+        expand
+      >
+        <v-progress-linear
+          slot="progress"
+          color="blue"
+          indeterminate/>
+        <template
+          slot="headers"
+          slot-scope="props">
+          <tr>
+            <th>
+              <v-checkbox
+                :input-value="props.all"
+                :indeterminate="props.indeterminate"
+                light
+                primary
+                hide-details
+                @click.native="toggleAll"
+              />
+            </th>
+            <th colspan="5">
+              <v-toolbar
+                flat
+                dense
+                color="white">
+                <v-overflow-btn
+                  v-model="filterByData"
+                  :items="filters"
+                  return-object
+                  editable
+                  flat
+                  label="Filter By"
+                  hide-details
+                  overflow
+                />
 
-            <v-card-text>
-              <v-container grid-list-md>
-                <v-layout wrap>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.name" label="Name"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.calories" label="Payout Master"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.fat" label="Sponsor"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-text>
+                <v-divider
+                  class="mx-2"
+                  vertical/>
+                <v-text-field
+                  v-model="search"
+                  :label="`Search ${filterByData.value.toUpperCase()}`"
+                  append-icon="search"
+                  single-line
+                  hide-details
+                  px-2
+                />
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-      <v-data-table :headers="headers" :items="users" class="elevation-1">
-        <template v-slot:items="props">
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.calories }}</td>
-          <td>{{ props.item.fat }}</td>
-          <td>{{ props.item.carbs }}</td>
-          <td>{{ props.item.protein }}</td>
-          <td class="justify-center layout px-0">
-            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-            <v-icon small @click="deleteItem(props.item)">delete</v-icon>
-          </td>
+                <!-- <v-divider
+                  class="mx-2"
+                  vertical/>
+
+                <v-btn
+                  icon
+                  flat
+                  @click.native="toggleOrderByData">
+                  <v-icon :color="orderColor">{{ sortIcon }}</v-icon>
+                </v-btn> -->
+
+                <v-divider
+                  v-if="selected.length>0"
+                  class="mx-2"
+                  vertical/>
+                <div v-if="selected.length>0">
+                  <v-btn
+                    icon
+                    flat
+                    @click="massDeactivate">
+                    <v-icon color="amber">block</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    flat
+                    @click="massActivate">
+                    <v-icon color="green">how_to_reg</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    flat
+                    @click="viewMassMailModal">
+                    <v-icon color="yellow darken-1">mail</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    flat
+                    @click="massDelete">
+                    <v-icon color="error">delete_outline</v-icon>
+                  </v-btn>
+                </div>
+              </v-toolbar>
+            </th>
+          </tr>
+          <tr>
+            <th/>
+            <th
+              v-for="header in props.headers"
+              :key="header.text"
+              :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'name' : '', {'text-xs-left': header.align === 'left', 'text-xs-right': header.align === 'right', 'text-xs-center': header.align === 'center'},$vuetify.breakpoint.width >= 600 && 'title']"
+              @click="changeSort(header.value)"
+            >
+              <v-icon>arrow_upward</v-icon>
+              {{ header.text }}
+            </th>
+          </tr>
         </template>
-        <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
+        <template
+          slot="items"
+          slot-scope="props">
+          <tr>
+            <td class="title text-xs-left">
+              <v-checkbox
+                :active="props.selected"
+                :input-value="props.selected"
+                @click.native="props.selected = !props.selected"
+              />
+            </td>
+            <td class="title text-xs-left accent--text">{{ props.item.name }}</td>
+            <td class="title text-xs-left accent--text">
+              <span v-if="props.item.sponsor">{{ props.item.sponsor.name }}</span>
+            </td>
+            <td class="title text-xs-left accent--text">
+              <v-chip
+                v-for="(role,key) in props.item.roles"
+                :key="key"
+                dark>
+                <v-avatar
+                  :class="{
+                    'amber lighten-2': (role === 'admin' && props.item.id < 1000),
+                    'primary': (role === 'admin' && props.item.id > 999),
+                    'white--text': true,
+                    'indigo darken-2': (role === 'merchant'),
+                    'lime darken-2': (role === 'customer')
+                  }"
+                >
+                  <span
+                    v-if="props.item.id < 1000"
+                    class="headline">S</span>
+                  <span
+                    v-else
+                    class="headline">{{ role.charAt(0).toUpperCase() }}</span>
+                </v-avatar>
+                <span v-if="props.item.id < 1000">Super Admin</span>
+                <span v-else>{{ role }}</span>
+              </v-chip>
+            </td>
+            <td class="title text-xs-left accent--text">
+              <v-switch
+                :label="getStatus(props.item.active)"
+                v-model="props.item.active"
+                @change="toggleStatus(props.item)"
+              />
+            </td>
+            <td class="title text-xs-center">
+              <v-btn
+                :disabled="!can('manage_users')"
+                light
+                flat
+                icon
+                class="compress--icon"
+                @click="props.expanded = !props.expanded"
+              >
+                <v-icon
+                  v-if="!props.expanded"
+                  color="teal">fa-expand</v-icon>
+                <v-icon
+                  v-if="props.expanded"
+                  color="amber">fa-compress</v-icon>
+              </v-btn>
+              <v-btn
+                flat
+                icon
+                color="blue"
+                class="compress--icon"
+                @click="editUser(props.item)">
+                <v-icon>fa-pencil</v-icon>
+              </v-btn>
+              <v-btn
+                flat
+                icon
+                color="green"
+                class="compress--icon"
+                @click="viewSubscriptions(props.item)"
+              >
+                <v-icon>attach_money</v-icon>
+              </v-btn>
+              <v-btn
+                flat
+                icon
+                color="indigo"
+                class="compress--icon"
+                @click="viewReferrals(props.item)"
+              >
+                <v-icon>fa-users</v-icon>
+              </v-btn>
+              <v-btn
+                :disabled="!can('manage_users')"
+                flat
+                icon
+                color="error"
+                class="compress--icon"
+                @click="openDialog(props.item)"
+              >
+                <v-icon>fa-trash</v-icon>
+              </v-btn>
+            </td>
+          </tr>
+        </template>
+
+        <template
+          slot="pageText"
+          slot-scope="{ pageStart, pageStop }"
+        >From {{ pageStart }} to {{ pageStop }}</template>
+
+        <template
+          slot="expand"
+          slot-scope="props">
+          <v-container fluid>
+            <v-card
+              light
+              flat
+              text-xs-center>
+              <v-img
+                class="white--text blue-grey"
+                height="75px">
+                <v-container
+                  fill-height
+                  fluid>
+                  <v-layout fill-height>
+                    <v-flex
+                      xs12
+                      align-end
+                      flexbox>
+                      <v-avatar text-xs-left>
+                        <img
+                          :src="props.item.profile.avatar"
+                          :alt="props.item.name">
+                      </v-avatar>
+                      <span class="headline">{{ props.item.name }}</span>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-img>
+              <v-card-title>
+                <v-container fluid>
+                  <p
+                    v-if="props.item.sponsor"
+                    class="title accent--text">Sponsor Details</p>
+                  <v-layout
+                    v-if="props.item.sponsor"
+                    row
+                    wrap>
+                    <v-flex
+                      xs12
+                      px-2>
+                      <v-avatar>
+                        <img
+                          :src="props.item.sponsor.profile.avatar"
+                          :alt="props.item.sponsor.name"
+                        >
+                      </v-avatar>
+                      <span class="subheading">{{ props.item.sponsor.name }}</span>
+                    </v-flex>
+                  </v-layout>
+
+                  <p class="title accent--text">Account Details</p>
+                  <v-layout
+                    row
+                    wrap>
+                    <v-flex
+                      xs6
+                      px-1>
+                      <v-text-field
+                        v-model="props.item.username"
+                        label="Username"
+                        prepend-icon="fa-at"
+                        light
+                        readonly
+                      />
+                    </v-flex>
+                    <v-flex
+                      xs6
+                      px-1>
+                      <v-text-field
+                        v-model="props.item.email"
+                        label="Email"
+                        prepend-icon="fa-envelope"
+                        light
+                        readonly
+                      />
+                    </v-flex>
+                    <v-flex
+                      xs6
+                      px-1>
+                      <v-text-field
+                        :value="props.item.profile.current_address"
+                        label="Current Address"
+                        light
+                        readonly
+                        prepend-icon="looks_one"
+                      />
+                    </v-flex>
+                    <v-flex
+                      xs6
+                      px-1>
+                      <v-text-field
+                        :value="props.item.profile.permanent_address"
+                        label="Permanent Address"
+                        light
+                        readonly
+                        prepend-icon="looks_two"
+                      />
+                    </v-flex>
+                    <v-flex
+                      xs6
+                      px-1>
+                      <v-text-field
+                        v-model="props.item.profile.mobile_no"
+                        label="Phone"
+                        light
+                        readonly
+                        prepend-icon="phone"
+                      />
+                    </v-flex>
+                    <v-flex
+                      xs6
+                      px-1>
+                      <v-text-field
+                        :value="props.item.profile.dob"
+                        label="Date Of Birth"
+                        light
+                        readonly
+                        prepend-icon="cake"
+                      />
+                    </v-flex>
+                    <v-flex xs6>
+                      <v-switch
+                        v-model="props.item.active"
+                        :label="getStatus(props.item.active)"
+                        readonly
+                      />
+                    </v-flex>
+                  </v-layout>
+
+                  <!-- <v-layout
+                    row
+                    wrap>
+                    <p
+                      v-if="props.item.roles"
+                      class="title accent--text">Account Type</p>
+                    <v-flex xs12>
+                      <v-combobox
+                        :items="roles"
+                        v-model="props.item.roles"
+                        color="primary"
+                        light
+                        disabled
+                        multiple
+                        prepend-icon="fa-tags"
+                      >
+                        <template
+                          slot="selection"
+                          slot-scope="data">
+                          <v-chip
+                            :selected="data.selected"
+                            light>
+                            <v-avatar class="primary white--text">
+                              <span class="headline">{{ data.item.charAt(0).toUpperCase() }}</span>
+                            </v-avatar>
+                            {{ data.item }}
+                          </v-chip>
+                        </template>
+                      </v-combobox>
+                    </v-flex>
+                  </v-layout>-->
+                  <v-layout
+                    row
+                    wrap>
+                    <v-flex xs12>
+                      <p class="title accent--text">Active Subscription</p>
+                    </v-flex>
+                    <v-flex
+                      v-if="props.item.subscriptions.length >0"
+                      xs12>
+                      <v-chip
+                        v-for="subscription in props.item.subscriptions"
+                        :key="subscription.id"
+                      >
+                        <v-avatar class="primary white--text">
+                          <span class="headline">{{ getRank(subscription).charAt(0).toUpperCase() }}</span>
+                        </v-avatar>
+                        {{ getSubscriptionName(subscription) }}
+                      </v-chip>
+                    </v-flex>
+                    <v-flex
+                      v-else
+                      xs12>NO ACTIVE SUBSCRIPTION YET</v-flex>
+                  </v-layout>
+                  <!-- <p
+                    v-if="props.item.permissions"
+                  class="title accent--text">Permissions</p>-->
+                  <!-- <v-layout
+                    row
+                    wrap>
+                    <v-flex xs12>
+                      <v-combobox
+                        :items="permissions"
+                        v-model="props.item.permissions"
+                        color="brown"
+                        light
+                        disabled
+                        multiple
+                        prepend-icon="pan_tool"
+                      >
+                        <template
+                          slot="selection"
+                          slot-scope="data">
+                          <v-chip
+                            :selected="data.selected"
+                            light>
+                            <v-avatar class="primary white--text">
+                              <span class="headline">{{ data.item.charAt(0).toUpperCase() }}</span>
+                            </v-avatar>
+                            {{ data.item }}
+                          </v-chip>
+                        </template>
+                      </v-combobox>
+                    </v-flex>
+                  </v-layout>-->
+                </v-container>
+              </v-card-title>
+            </v-card>
+          </v-container>
         </template>
       </v-data-table>
-    </div>
+      <confirm :callback="confirmed(deleteUser)"/>
+      <mass-mail/>
+    </v-container>
   </main-layout>
 </template>
 
 <script>
 import MainLayout from "../../Layouts/MainLayout";
+import Confirm from "../../Shared/Confirm";
+import MassMail from "../../Shared/MassMail";
+import Acl from "../../mixins/acl";
+import validationError from "../../mixins/validation-error";
+import { Form } from "vform";
+import swal from "sweetalert2";
+import confirmation from "../../mixins/confirmation";
 
 export default {
   components: {
-    MainLayout
+    MainLayout,
+    Confirm,
+    MassMail
   },
+  mixins: [Acl, validationError, confirmation],
   data: () => ({
+    contentClass: { grey: true, "lighten-4": true, "accent--text": true },
     dialog: false,
+    /* { text: string; value: string; align: 'left' | 'center' | 'right'; sortable: boolean; class: string[] | string; width: string; } */
     headers: [
-      {
-        text: "Name",
-        align: "left",
-        sortable: true,
-        value: "name"
-      },
-      { text: "Payout Master", value: "calories", align: "left" },
-      { text: "Sponsor", value: "fat", align: "left" },
-      { text: "Roles", value: "carbs", align: "left" },
-      { text: "Status", value: "protein", align: "left" },
-      { text: "Actions", value: "name", sortable: false , align: "left"}
+      { text: "Name", value: "name", align: "left" },
+      { text: "Sponsor", value: "sponsor.name", align: "left" },
+      { text: "Roles", value: "roles", align: "left" },
+      { text: "Status", value: "active", align: "left" },
+      { text: "Actions", value: "", align: "left", sortable: false }
     ],
-    users: [],
-    editedIndex: -1,
-    editedItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+    filters: [
+      { text: "Filter By Name", value: "name" },
+      { text: "Filter By Role", value: "role" }
+    ],
+    filterByData: {
+      text: "Filter By Name",
+      value: "name"
     },
-    defaultItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
-    }
+    orderByData: "ASC",
+    orderColor: "teal",
+    items: [],
+    total_items: 0,
+    selected: [],
+    pagination: {
+      descending: false,
+      sortBy: "name",
+      rowsPerPage: 50,
+      page: 1
+    },
+    rows_per_page_items: [5, 10, 25, 50],
+    current_user: {},
+    usersForm: new Form({}),
+    toggleForm: new Form({
+      user_id: null
+    }),
+    search: "",
+    roles: [],
+    permissions: [],
+    rolesForm: new Form({
+      roles: []
+    }),
+    permissionsForm: new Form({
+      permissions: []
+    }),
+    deleteUserForm: new Form({
+      user_id: null
+    }),
+    domain: window.location.hostname,
+    dropdown_font: [
+      { text: "Arial" },
+      { text: "Calibri" },
+      { text: "Courier" },
+      { text: "Verdana" }
+    ],
+    dropdown_edit: [{ text: "Name" }, { text: "Roles" }, { text: "Status" }],
+    meta: {
+      current_page: 1,
+      last_page: 1,
+      per_page: 50
+    },
+    page: 1,
+    loading: false
   }),
   computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "New Member" : "Edit Member";
+    sortIcon() {
+      if (this.orderByData === "ASC") {
+        return "fa-sort-amount-asc";
+      }
+      return "fa-sort-amount-desc";
     }
   },
   watch: {
-    dialog(val) {
-      val || this.close();
+    items: {
+      handler: function(newValue) {},
+      deep: true
+    },
+    roles(newValue) {},
+    permissions(newValue) {},
+    page: {
+      handler() {
+        this.fetchUsers();
+      }
     }
   },
-  created() {
-    this.initialize();
+  mounted() {
+    let self = this;
+    self.fetchRoles();
+    self.fetchPermissions();
+    self.fetchUsers();
+    Bus.$on("send-mass-mail", form => {
+      self.massMail(form);
+    });
   },
   methods: {
-    initialize() {
-      this.users = [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0
-        },
-        {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3
-        },
-        {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9
-        },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7
-        }
-      ];
-    },
-
-    editItem(item) {
-      this.editedIndex = this.users.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-
-    deleteItem(item) {
-      const index = this.users.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.users.splice(index, 1);
-    },
-
-    close() {
-      this.dialog = false;
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
-    },
-
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.users[this.editedIndex], this.editedItem);
-      } else {
-        this.users.push(this.editedItem);
+    getRank(subscription) {
+      let rank = "";
+      switch (subscription.rank) {
+        case "1ex":
+          rank = "Executive";
+          break;
+        case "1br":
+          rank = "Bronze";
+          break;
+        case "1sl":
+          rank = "Silver";
+          break;
+        case "1gd":
+          rank = "Gold";
+          break;
+        case "1gd":
+          rank = "Gold";
+          break;
+        case "1dm":
+          rank = "Diamond";
+          break;
+        case "1lt":
+          rank = "Elite";
+          break;
+        default:
+          break;
       }
-      this.close();
+      return rank;
+    },
+    getSubscriptionName(subscription) {
+      let name = "";
+
+      name =
+        this.toProperCase(subscription.plan) +
+        " " +
+        this.getRank(subscription) +
+        " - " +
+        subscription.amount;
+      return name;
+    },
+    viewReferrals(user) {
+      vm.$router.push({
+        name: "user-referrals",
+        params: { user: `${user.id}` }
+      });
+    },
+    viewSubscriptions(user) {
+      vm.$router.push({
+        name: "user-subscriptions",
+        params: { id: `${user.id}` }
+      });
+    },
+    viewMassMailModal() {
+      Bus.$emit("open-modal-mass-mail", this.selected);
+    },
+    massDelete() {
+      let self = this;
+
+      let selected = _.map(self.selected, "id");
+      let massDeleteForm = new Form({
+        selected
+      });
+      this.$inertia
+        .post(route("api.user.massDelete"), massDeleteForm)
+        .then(response => {
+          let toggleModal = swal.mixin({
+            confirmButtonClass: "v-btn blue-grey  subheading white--text",
+            buttonsStyling: false
+          });
+          toggleModal({
+            title: "Success!",
+            html: '<p class="title">' + response.data.message + "</p>",
+            type: "success",
+            confirmButtonText: "Back"
+          });
+          selected.forEach(id => {
+            console.log(id);
+            if (id > 1000) {
+              let index = _.findIndex(self.items, { id });
+              self.$delete(self.items, index);
+            }
+          });
+          self.selected = [];
+        })
+        .catch(errors => {
+          console.log(errors);
+          if (errors.response.data.message) {
+            let toggleModal = swal.mixin({
+              confirmButtonClass: "v-btn blue-grey  subheading white--text",
+              buttonsStyling: false
+            });
+            toggleModal({
+              title: "Oops! Something Went Wrong...",
+              html: '<p class="title">' + errors.response.data.message + "</p>",
+              type: "warning",
+              confirmButtonText: "Back"
+            });
+          }
+        });
+    },
+    massMail(form) {
+      let self = this;
+      this.$inertia
+        .post(route("api.user.massMail"), form)
+        .then(response => {
+          let toggleModal = swal.mixin({
+            confirmButtonClass: "v-btn blue-grey  subheading white--text",
+            buttonsStyling: false
+          });
+          toggleModal({
+            title: "Success!",
+            html: '<p class="title">' + response.data.message + "</p>",
+            type: "success",
+            confirmButtonText: "Back"
+          });
+          self.selected = [];
+          Bus.$emit("close-modal-mass-mail");
+        })
+        .catch(errors => {
+          console.log(errors);
+          if (errors.response.data.message) {
+            let toggleModal = swal.mixin({
+              confirmButtonClass: "v-btn blue-grey  subheading white--text",
+              buttonsStyling: false
+            });
+            toggleModal({
+              title: "Oops! Something Went Wrong...",
+              html: '<p class="title">' + errors.response.data.message + "</p>",
+              type: "error",
+              confirmButtonText: "Back"
+            });
+          }
+          self.selected = [];
+          Bus.$emit("close-modal-mass-mail");
+        });
+    },
+    toggleOrderByData() {
+      if (this.orderByData === "ASC") {
+        this.orderByData = "DESC";
+        this.orderColor = "orange";
+      } else {
+        this.orderByData = "ASC";
+        this.orderColor = "teal";
+      }
+    },
+    editUser(user) {
+      vm.$router.push({ name: "edit-user", params: { id: `${user.id}` } });
+    },
+    toggleStatus(user) {
+      let self = this;
+      self.toggleForm.user_id = user.id;
+      let index = _.findIndex(self.items, { id: user.id });
+      this.$inertia
+        .post(route("api.user.toggleStatus"), self.toggleForm)
+        .then(response => {
+          let toggleModal = swal.mixin({
+            confirmButtonClass: "v-btn blue-grey  subheading white--text",
+            buttonsStyling: false
+          });
+          toggleModal({
+            title: "Success!",
+            html: '<p class="title">User Status Updated!</p>',
+            type: "success",
+            confirmButtonText: "Back"
+          });
+        })
+        .catch(errors => {
+          let toggleModal = swal.mixin({
+            confirmButtonClass: "v-btn blue-grey  subheading white--text",
+            buttonsStyling: false
+          });
+          toggleModal({
+            title: "Oops! Forbidden Action!",
+            html: '<p class="title">' + errors.response.data.message + "</p>",
+            type: "warning",
+            confirmButtonText: "Back"
+          });
+          user.active = true;
+          self.items.splice(index, 1, user);
+        });
+    },
+    getStatus(status) {
+      if (status) {
+        return "Active";
+      } else {
+        return "Inactive";
+      }
+    },
+    createUser() {
+      vm.$router.push({ name: "create-user" });
+    },
+    async massDeactivate() {
+      let self = this;
+      let selected = _.map(self.selected, "id");
+      let toggleStatusForm = new Form({
+        selected
+      });
+
+      try {
+        const payload = await this.$inertia.post(
+          route("api.user.massDeactivate"),
+          toggleStatusForm
+        );
+        let updated = payload.data.updated;
+        _.map(updated, id => {
+          let index = _.findIndex(self.items, { id });
+          self.items[index].active = false;
+        });
+        let toggleModal = swal.mixin({
+          confirmButtonClass: "v-btn blue-grey  subheading white--text",
+          buttonsStyling: false
+        });
+        toggleModal({
+          title: "Success",
+          html: `<p class="title">${payload.data.message}</p>`,
+          type: "success",
+          confirmButtonText: "Back"
+        });
+      } catch ({ errors, message }) {
+        if (errors) {
+          console.log(errors);
+        }
+        if (message) {
+          console.log(message);
+        }
+      }
+    },
+    async massActivate() {
+      let self = this;
+      let selected = _.map(self.selected, "id");
+      let toggleStatusForm = new Form({
+        selected
+      });
+
+      try {
+        const payload = await this.$inertia.post(
+          route("api.user.massActivate"),
+          toggleStatusForm
+        );
+        let updated = payload.data.updated;
+        console.log(updated);
+        _.map(updated, id => {
+          let index = _.findIndex(self.items, { id });
+          self.items[index].active = true;
+        });
+        let toggleModal = swal.mixin({
+          confirmButtonClass: "v-btn blue-grey  subheading white--text",
+          buttonsStyling: false
+        });
+        toggleModal({
+          title: "Success",
+          html: `<p class="title">${payload.data.message}</p>`,
+          type: "success",
+          confirmButtonText: "Back"
+        });
+      } catch ({ errors, message }) {
+        if (errors) {
+          console.log(errors);
+        }
+        if (message) {
+          console.log(message);
+        }
+      }
+    },
+    activeLink(link) {
+      return !!link;
+    },
+    async activateLink(user) {
+      let toggleModal = swal.mixin({
+        confirmButtonClass: "v-btn blue-grey  subheading white--text",
+        buttonsStyling: false
+      });
+      try {
+        let payload = await this.$inertia.get(
+          route("api.user.link.activate", { id: user.id })
+        );
+        toggleModal({
+          title: "Success!",
+          html: `<p class="title">${payload.data.message}</p>`,
+          type: "success",
+          confirmButtonText: "Back"
+        });
+        user.referral_link.active = true;
+      } catch ({ message }) {
+        if (message) {
+          toggleModal({
+            title: "Error!",
+            html: `<p class="title">${message}</p>`,
+            type: "error",
+            confirmButtonText: "Back"
+          });
+        }
+      }
+    },
+    async deactivateLink(user) {
+      let toggleModal = swal.mixin({
+        confirmButtonClass: "v-btn blue-grey  subheading white--text",
+        buttonsStyling: false
+      });
+      try {
+        let payload = await this.$inertia.get(
+          route("api.user.link.deactivate", { id: user.id })
+        );
+        user.referral_link.active = false;
+        toggleModal({
+          title: "Success!",
+          html: `<p class="title">${payload.data.message}</p>`,
+          type: "success",
+          confirmButtonText: "Back"
+        });
+      } catch ({ message }) {
+        if (message) {
+          toggleModal({
+            title: "Error!",
+            html: `<p class="title">${message}</p>`,
+            type: "error",
+            confirmButtonText: "Back"
+          });
+        }
+      }
+    },
+    async fetchRoles() {
+      let self = this;
+      try {
+        const payload = await this.$inertia.get(route("api.roles.index"));
+        self.roles = payload.data;
+      } catch ({ errors, message }) {
+        if (errors) {
+          console.log("fetchRoles:errors", errors);
+        }
+        if (message) {
+          console.log("fetchRoles:error-message", message);
+        }
+      }
+    },
+    async fetchPermissions() {
+      let self = this;
+      try {
+        const payload = await this.$inertia.get(route("api.permissions.index"));
+        self.permissions = payload.data;
+      } catch ({ errors, message }) {
+        if (errors) {
+          console.log("fetchRoles:errors", errors);
+        }
+        if (message) {
+          console.log("fetchRoles:error-message", message);
+        }
+      }
+    },
+    //! FIX THIS!
+    fetchUsers() {
+      let self = this;
+      self.loading = true;
+      self.items = [];
+      let order_by = self.pagination.descending ? "DESC" : "ASC";
+      let sort_by = self.pagination.sortBy;
+      let url = `/users?sortBy=${sort_by}&order_by=${order_by}`;
+      if (self.page > 1) {
+        url = `${url}&page=${self.page}`;
+      }
+      this.$inertia
+        .replace(url,{method: 'get'})
+        .then(response => {
+          self.items = response.data.data;
+          self.meta = response.data.meta;
+          self.loading = false;
+        })
+        .catch(errors => {
+          console.log(errors);
+          self.loading = false;
+        });
+    },
+    deleteUser(user) {
+      let self = this;
+      self.deleteUserForm.user_id = user.id;
+      let index = _.findIndex(self.items, { id: user.id });
+      let toggleModal = swal.mixin({
+        confirmButtonClass: "v-btn blue-grey  subheading white--text",
+        buttonsStyling: false
+      });
+      self.deleteUserForm.post(route("api.user.delete")).then(response => {
+        if (response.data.status === true) {
+          toggleModal({
+            title: "Success",
+            html: `<p class="title">User Deleted!</p>`,
+            type: "success",
+            confirmButtonText: "Back"
+          });
+          self.$delete(self.items, index);
+        } else {
+          toggleModal({
+            title: "Forbidden Action!",
+            html: `<p class="title">Cannot Delete Super Admin!</p>`,
+            type: "warning",
+            confirmButtonText: "Back"
+          });
+        }
+      });
+    },
+    toProperCase(key) {
+      let newStr = key.replace(/_/g, " ");
+      return newStr.replace(/\w\S*/g, function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      });
+    },
+    async changeRoles(item) {
+      let self = this;
+      let toggleModal = swal.mixin({
+        confirmButtonClass: "v-btn blue-grey  subheading white--text",
+        buttonsStyling: false
+      });
+      self.rolesForm.roles = item.roles;
+      try {
+        self.rolesForm.busy = true;
+        const payload = await self.rolesForm.post(
+          route("api.user.roles.sync", { id: item.id })
+        );
+        item.permissions = payload.data.permissions;
+        self.rolesForm.busy = false;
+        self.rolesForm = new Form({
+          roles: []
+        });
+        toggleModal({
+          title: "Success",
+          html: `<p class="title">User Role Change!</p>`,
+          type: "success",
+          confirmButtonText: "Back"
+        });
+      } catch (errors) {
+        toggleModal({
+          title: "Error!",
+          html: `<p class="title">${errors.response.data.message}</p>`,
+          type: "error",
+          confirmButtonText: "Back"
+        });
+        self.rolesForm.busy = false;
+      }
+    },
+    removeRole(role, roles) {
+      roles.splice(roles.indexOf(role), 1);
+      roles = [...roles];
+    },
+    async changePermissions(item) {
+      /* make ajax call to update permissions to this user */
+      let self = this;
+      self.permissionsForm.permissions = item.permissions;
+      try {
+        self.permissionsForm.busy = true;
+        const payload = await App.post(
+          route("api.user.permissions.sync", { id: item.id }),
+          self.permissionsForm
+        );
+        self.permissionsForm.busy = false;
+        self.permissionsForm = new AppForm(App.forms.permissionsForm);
+      } catch ({ message }) {
+        if (message) {
+        }
+        self.permissionsForm.busy = false;
+      }
+    },
+    removePermission(permission, permissions) {
+      permissions.splice(permissions.indexOf(permission), 1);
+      permissions = [...permissions];
+    },
+    deleteAll() {
+      this.items = [];
+      this.selected = [];
+    },
+    deleteSelected() {
+      let self = this;
+      let newItems = _.difference(self.items, self.selected);
+      self.items = newItems;
+      self.selected = [];
+      //! Send Api Call To Delete The Social Account
+    },
+    toggleAll() {
+      if (this.selected.length) this.selected = [];
+      else this.selected = this.items.slice();
+    },
+    changeSort(column) {
+      if (this.pagination.sortBy === column) {
+        this.pagination.descending = !this.pagination.descending;
+      } else {
+        this.pagination.sortBy = column;
+        this.pagination.descending = false;
+      }
     }
   }
 };
