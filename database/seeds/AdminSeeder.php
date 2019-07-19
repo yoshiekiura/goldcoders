@@ -25,9 +25,9 @@ class AdminSeeder extends Seeder
             'mobile_no'         => $faker->isbn10,
             'current_address'   => $faker->streetAddress,
             'permanent_address' => $faker->secondaryAddress,
-            'fname'             => $faker->firstName,
-            'mname'             => $faker->firstName,
-            'lname'             => $faker->lastName,
+            'fname'             => config('admin.fname'),
+            'mname'             => null,
+            'lname'             => config('admin.lname'),
             'dob'               => Carbon::now()->subYears(random_int(18,25))->subMonths(random_int(1,12))->subDays(1,31),
             'suffix'            => null
         ]);
