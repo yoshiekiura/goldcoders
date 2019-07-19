@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
                 'auth'       => [
                     'user' => $user ? [
                         'id'        => $user->id,
-                        'email'     => Auth::user()->email,
+                        'email'     => $user->email,
                         'username' => $user->username,
                         'photo_url' => $user->photo_url,
                         'fname' => $user->fname,
@@ -61,8 +61,8 @@ class AppServiceProvider extends ServiceProvider
                         'permanent_address' => $user->permanent_address,
                         'current_address' => $user->current_address,
                         'email_verified_at' => $user->email_verified_at,
-                        'roles' => $user->getRoles(),
-                        'abilities' => $user->getAbilities()
+                        'roles' => $user->getroles(),
+                        'abilities' => $user->getabilities()
                     ] : null
                 ],
                 'flash'      => [
