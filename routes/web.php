@@ -22,3 +22,4 @@ Route::get('/members/add')->name('users.add')->uses('UsersController@create')->m
 Route::get('/members/{user}/edit')->name('users.edit')->uses('UsersController@edit')->middleware('auth');
 Route::post('/members/{user}/update')->name('users.update')->uses('UsersController@update')->middleware('auth');
 Route::post('/members/{user}/delete')->name('users.destroy')->uses('UsersController@destroy')->middleware('auth');
+Route::post('/users/massDelete', 'UsersController@massDelete')->name('users.massDelete')->middleware('auth');
