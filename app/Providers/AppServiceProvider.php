@@ -36,39 +36,50 @@ class AppServiceProvider extends ServiceProvider
         Inertia::version(function () {
             return md5_file(public_path('mix-manifest.json'));
         });
+
         Inertia::share(function () {
-            $user = Auth::user();
+            $user      = Auth::user();
+            $abilities = \Bouncer::ability()->all()->pluck('name')->toArray();
+            $abilities = array_filter($abilities, function ($ability) {return '*' !== $ability;});
+            $auth_abilities = null;
+            if($user){
+            $auth_abilities = $user->getabilities()->pluck('name')->toArray();
+            $auth_abilities = array_filter($auth_abilities, function ($ability) {return '*' !== $ability;});
+            }
+
             return [
-                'app'        => [
+                'app'         => [
                     'name' => Config::get('app.name')
                 ],
-                'isLoggedIn' => $user ? true : false,
-                'auth'       => [
+                'roles'       => \Bouncer::role()->all()->pluck('name'),
+                'permissions' => $abilities,
+                'isLoggedIn'  => $user ? true : false,
+                'auth'        => [
                     'user' => $user ? [
-                        'id'        => $user->id,
-                        'email'     => $user->email,
-                        'username' => $user->username,
-                        'photo_url' => $user->photo_url,
-                        'fname' => $user->fname,
-                        'mname' => $user->mname,
-                        'lname' => $user->lname,
-                        'suffix' => $user->suffix,
-                        'sponsor' => $user->sponsor,
-                        'avatar' => $user->avatar,
-                        'active' => $user->active,
-                        'dob' => $user->dob,
-                        'mobile_no' => $user->mobile_no,
+                        'id'                => $user->id,
+                        'email'             => $user->email,
+                        'username'          => $user->username,
+                        'photo_url'         => $user->photo_url,
+                        'fname'             => $user->fname,
+                        'mname'             => $user->mname,
+                        'lname'             => $user->lname,
+                        'suffix'            => $user->suffix,
+                        'sponsor'           => $user->sponsor,
+                        'avatar'            => $user->avatar,
+                        'active'            => $user->active,
+                        'dob'               => $user->dob,
+                        'mobile_no'         => $user->mobile_no,
                         'permanent_address' => $user->permanent_address,
-                        'current_address' => $user->current_address,
+                        'current_address'   => $user->current_address,
                         'email_verified_at' => $user->email_verified_at,
-                        'roles' => $user->getroles(),
-                        'abilities' => $user->getabilities()
+                        'roles'             => $user->getroles()->toArray(),
+                        'permissions'         => $auth_abilities
                     ] : null
                 ],
-                'flash'      => [
+                'flash'       => [
                     'success' => Session::get('success')
                 ],
-                'errors'     => Session::get('errors') ? Session::get('errors')->getBag('default')->getMessages() : (object) []
+                'errors'      => Session::get('errors') ? Session::get('errors')->getBag('default')->getMessages() : (object) []
             ];
         });
         $this->registerLengthAwarePaginator();
