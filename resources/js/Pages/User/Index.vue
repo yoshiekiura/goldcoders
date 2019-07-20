@@ -261,7 +261,7 @@
                       flexbox>
                       <v-avatar text-xs-left>
                         <img
-                          :src="props.item.profile.avatar"
+                          :src="props.item.avatar"
                           :alt="props.item.name">
                       </v-avatar>
                       <span class="headline">{{ props.item.name }}</span>
@@ -283,7 +283,7 @@
                       px-2>
                       <v-avatar>
                         <img
-                          :src="props.item.sponsor.profile.avatar"
+                          :src="props.item.sponsor.avatar"
                           :alt="props.item.sponsor.name"
                         >
                       </v-avatar>
@@ -321,7 +321,7 @@
                       xs6
                       px-1>
                       <v-text-field
-                        :value="props.item.profile.current_address"
+                        :value="props.item.current_address"
                         label="Current Address"
                         light
                         readonly
@@ -332,7 +332,7 @@
                       xs6
                       px-1>
                       <v-text-field
-                        :value="props.item.profile.permanent_address"
+                        :value="props.item.permanent_address"
                         label="Permanent Address"
                         light
                         readonly
@@ -343,7 +343,7 @@
                       xs6
                       px-1>
                       <v-text-field
-                        v-model="props.item.profile.mobile_no"
+                        v-model="props.item.mobile_no"
                         label="Phone"
                         light
                         readonly
@@ -354,7 +354,7 @@
                       xs6
                       px-1>
                       <v-text-field
-                        :value="props.item.profile.dob"
+                        :value="props.item.dob"
                         label="Date Of Birth"
                         light
                         readonly
@@ -483,6 +483,9 @@ export default {
     Confirm,
     MassMail
   },
+  props: {
+    users: Object,
+  },
   mixins: [Acl, validationError, confirmation],
   data: () => ({
     contentClass: { grey: true, "lighten-4": true, "accent--text": true },
@@ -556,24 +559,13 @@ export default {
       return "fa-sort-amount-desc";
     }
   },
-  watch: {
-    items: {
-      handler: function(newValue) {},
-      deep: true
-    },
-    roles(newValue) {},
-    permissions(newValue) {},
-    page: {
-      handler() {
-        this.fetchUsers();
-      }
-    }
-  },
   mounted() {
     let self = this;
-    self.fetchRoles();
-    self.fetchPermissions();
-    self.fetchUsers();
+    console.log(self.users.data)
+    self.items = self.users.data
+    self.roles = self.$page.roles
+    self.permissions = self.$page.permissions
+  
     Bus.$on("send-mass-mail", form => {
       self.massMail(form);
     });
@@ -641,16 +633,16 @@ export default {
       let massDeleteForm = new Form({
         selected
       });
-      this.$inertia
-        .post(route("api.user.massDelete"), massDeleteForm)
-        .then(response => {
+      self.$inertia
+        .post(route("users.massDelete").url(), massDeleteForm)
+        .then((response) => {
           let toggleModal = swal.mixin({
             confirmButtonClass: "v-btn blue-grey  subheading white--text",
             buttonsStyling: false
           });
-          toggleModal({
+          toggleModal.fire({
             title: "Success!",
-            html: '<p class="title">' + response.data.message + "</p>",
+            html: '<p class="title">' + 'Success' + "</p>",
             type: "success",
             confirmButtonText: "Back"
           });
@@ -670,9 +662,9 @@ export default {
               confirmButtonClass: "v-btn blue-grey  subheading white--text",
               buttonsStyling: false
             });
-            toggleModal({
+            toggleModal.fire({
               title: "Oops! Something Went Wrong...",
-              html: '<p class="title">' + errors.response.data.message + "</p>",
+              html: '<p class="title">' + 'Failed Submitting' + "</p>",
               type: "warning",
               confirmButtonText: "Back"
             });
@@ -959,7 +951,7 @@ export default {
         confirmButtonClass: "v-btn blue-grey  subheading white--text",
         buttonsStyling: false
       });
-      self.deleteUserForm.post(route("api.user.delete")).then(response => {
+      self.$inertia.post(route("api.user.delete").url(), self.deleteUserForm).then(response => {
         if (response.data.status === true) {
           toggleModal({
             title: "Success",
