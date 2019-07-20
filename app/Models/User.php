@@ -122,9 +122,9 @@ class User extends Authenticatable
     /**
      * @return mixed
      */
-    public function isPayoutMaster()
+    public function isPaymaster()
     {
-        return $this->isA('payoutmaster');
+        return $this->isA('paymaster');
     }
 
     /**
