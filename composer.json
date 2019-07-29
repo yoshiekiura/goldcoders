@@ -19,7 +19,7 @@
         "pragmarx/version": "^0.2.9",
         "predis/predis": "^1.1",
         "reinink/remember-query-strings": "^0.1.0",
-        "silber/bouncer": "v1.0.0-rc.5",
+        "spatie/laravel-permission": "^2.37",
         "tightenco/ziggy": "^0.7.1"
     },
     "require-dev": {

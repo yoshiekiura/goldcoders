@@ -37,3 +37,19 @@ we use the whole ziggy route with function instead of just paths so we can check
 
 create a stats controller that return total_users subscription_total account_subscriptios etc.
 for admin dashboar panel
+
+Dont Use anymore bouncer instead use spatie permission again
+https://laravel.com/docs/5.1/authorization#checking-abilities
+https://github.com/drbyte/spatie-permissions-demo/blob/master/app/Policies/PostPolicy.php
+https://laravel.com/docs/5.8/authorization#writing-policies
+https://laravel.com/docs/5.1/authorization#controller-authorization
+https://scotch.io/tutorials/user-authorization-in-laravel-54-with-spatie-laravel-permission
+https://github.com/drbyte/spatie-permissions-demo/blob/master/app/Http/Controllers/PostsController.php
+https://docs.spatie.be/laravel-permission/v2/basic-usage/role-permissions/
+
+check if resource can still be used
+publish ziggy config
+
+create 3 types of dashboard for admin, paymaster and member
+Instead of using \$inertia post/get etc for example api calls only
+just used the vform is has the form helpers for making api calls

@@ -3,19 +3,13 @@
     <v-container fluid>
       <!-- User Main Detail -->
       <v-card-title>
-        <v-spacer/>
-        <v-btn
-          color="teal"
-          dark
-          @click="createUser">
+        <v-spacer />
+        <v-btn color="teal" dark @click="createUser">
           Create New User
           <v-icon right>person_add</v-icon>
         </v-btn>
       </v-card-title>
-      <v-pagination
-        v-if="!loading"
-        v-model="page"
-        :length="meta.last_page"/>
+      <v-pagination v-if="!loading" v-model="page" :length="meta.last_page" />
       <v-data-table
         v-model="selected"
         :headers="headers"
@@ -29,13 +23,8 @@
         item-key="id"
         expand
       >
-        <v-progress-linear
-          slot="progress"
-          color="blue"
-          indeterminate/>
-        <template
-          slot="headers"
-          slot-scope="props">
+        <v-progress-linear slot="progress" color="blue" indeterminate />
+        <template slot="headers" slot-scope="props">
           <tr>
             <th>
               <v-checkbox
@@ -48,10 +37,7 @@
               />
             </th>
             <th colspan="5">
-              <v-toolbar
-                flat
-                dense
-                color="white">
+              <v-toolbar flat dense color="white">
                 <v-overflow-btn
                   v-model="filterByData"
                   :items="filters"
@@ -63,9 +49,7 @@
                   overflow
                 />
 
-                <v-divider
-                  class="mx-2"
-                  vertical/>
+                <v-divider class="mx-2" vertical />
                 <v-text-field
                   v-model="search"
                   :label="`Search ${filterByData.value.toUpperCase()}`"
@@ -84,35 +68,20 @@
                   flat
                   @click.native="toggleOrderByData">
                   <v-icon :color="orderColor">{{ sortIcon }}</v-icon>
-                </v-btn> -->
+                </v-btn>-->
 
-                <v-divider
-                  v-if="selected.length>0"
-                  class="mx-2"
-                  vertical/>
+                <v-divider v-if="selected.length>0" class="mx-2" vertical />
                 <div v-if="selected.length>0">
-                  <v-btn
-                    icon
-                    flat
-                    @click="massDeactivate">
+                  <v-btn icon flat @click="massDeactivate">
                     <v-icon color="amber">block</v-icon>
                   </v-btn>
-                  <v-btn
-                    icon
-                    flat
-                    @click="massActivate">
+                  <v-btn icon flat @click="massActivate">
                     <v-icon color="green">how_to_reg</v-icon>
                   </v-btn>
-                  <v-btn
-                    icon
-                    flat
-                    @click="viewMassMailModal">
+                  <v-btn icon flat @click="viewMassMailModal">
                     <v-icon color="yellow darken-1">mail</v-icon>
                   </v-btn>
-                  <v-btn
-                    icon
-                    flat
-                    @click="massDelete">
+                  <v-btn icon flat @click="massDelete">
                     <v-icon color="error">delete_outline</v-icon>
                   </v-btn>
                 </div>
@@ -120,7 +89,7 @@
             </th>
           </tr>
           <tr>
-            <th/>
+            <th />
             <th
               v-for="header in props.headers"
               :key="header.text"
@@ -132,9 +101,7 @@
             </th>
           </tr>
         </template>
-        <template
-          slot="items"
-          slot-scope="props">
+        <template slot="items" slot-scope="props">
           <tr>
             <td class="title text-xs-left">
               <v-checkbox
@@ -148,27 +115,24 @@
               <span v-if="props.item.sponsor">{{ props.item.sponsor.name }}</span>
             </td>
             <td class="title text-xs-left accent--text">
-              <v-chip
-                v-for="(role,key) in props.item.roles"
-                :key="key"
-                dark>
+              <v-chip v-for="(role,key) in props.item.roles" :key="key">
                 <v-avatar
                   :class="{
-                    'amber lighten-2': (role === 'admin' && props.item.id < 1000),
-                    'primary': (role === 'admin' && props.item.id > 999),
+                    'primary': (role === 'admin' && props.item.id ===1),
+                    'amber lighten-2': (role === 'admin'),
                     'white--text': true,
-                    'indigo darken-2': (role === 'merchant'),
-                    'lime darken-2': (role === 'customer')
+                    'blue lighten-2': (role === 'paymaster'),
+                    'lime lighten-2': (role === 'member')
                   }"
                 >
                   <span
-                    v-if="props.item.id < 1000"
+                    v-if="props.item.id === 1"
                     class="headline">S</span>
                   <span
                     v-else
                     class="headline">{{ role.charAt(0).toUpperCase() }}</span>
                 </v-avatar>
-                <span v-if="props.item.id < 1000">Super Admin</span>
+                <span v-if="props.item.id === 1">Super Admin</span>
                 <span v-else>{{ role }}</span>
               </v-chip>
             </td>
@@ -188,20 +152,11 @@
                 class="compress--icon"
                 @click="props.expanded = !props.expanded"
               >
-                <v-icon
-                  v-if="!props.expanded"
-                  color="teal">fa-expand</v-icon>
-                <v-icon
-                  v-if="props.expanded"
-                  color="amber">fa-compress</v-icon>
+                <v-icon v-if="!props.expanded" color="teal">expand_more</v-icon>
+                <v-icon v-if="props.expanded" color="amber">expand_less</v-icon>
               </v-btn>
-              <v-btn
-                flat
-                icon
-                color="blue"
-                class="compress--icon"
-                @click="editUser(props.item)">
-                <v-icon>fa-pencil</v-icon>
+              <v-btn flat icon color="blue" class="compress--icon" @click="editUser(props.item)">
+                <v-icon>edit</v-icon>
               </v-btn>
               <v-btn
                 flat
@@ -240,29 +195,15 @@
           slot-scope="{ pageStart, pageStop }"
         >From {{ pageStart }} to {{ pageStop }}</template>
 
-        <template
-          slot="expand"
-          slot-scope="props">
+        <template slot="expand" slot-scope="props">
           <v-container fluid>
-            <v-card
-              light
-              flat
-              text-xs-center>
-              <v-img
-                class="white--text blue-grey"
-                height="75px">
-                <v-container
-                  fill-height
-                  fluid>
+            <v-card light flat text-xs-center>
+              <v-img class="white--text blue-grey" height="75px">
+                <v-container fill-height fluid>
                   <v-layout fill-height>
-                    <v-flex
-                      xs12
-                      align-end
-                      flexbox>
+                    <v-flex xs12 align-end flexbox>
                       <v-avatar text-xs-left>
-                        <img
-                          :src="props.item.avatar"
-                          :alt="props.item.name">
+                        <img :src="props.item.avatar" :alt="props.item.name" />
                       </v-avatar>
                       <span class="headline">{{ props.item.name }}</span>
                     </v-flex>
@@ -271,33 +212,19 @@
               </v-img>
               <v-card-title>
                 <v-container fluid>
-                  <p
-                    v-if="props.item.sponsor"
-                    class="title accent--text">Sponsor Details</p>
-                  <v-layout
-                    v-if="props.item.sponsor"
-                    row
-                    wrap>
-                    <v-flex
-                      xs12
-                      px-2>
+                  <p v-if="props.item.sponsor" class="title accent--text">Sponsor Details</p>
+                  <v-layout v-if="props.item.sponsor" row wrap>
+                    <v-flex xs12 px-2>
                       <v-avatar>
-                        <img
-                          :src="props.item.sponsor.avatar"
-                          :alt="props.item.sponsor.name"
-                        >
+                        <img :src="props.item.sponsor.avatar" :alt="props.item.sponsor.name" />
                       </v-avatar>
                       <span class="subheading">{{ props.item.sponsor.name }}</span>
                     </v-flex>
                   </v-layout>
 
                   <p class="title accent--text">Account Details</p>
-                  <v-layout
-                    row
-                    wrap>
-                    <v-flex
-                      xs6
-                      px-1>
+                  <v-layout row wrap>
+                    <v-flex xs6 px-1>
                       <v-text-field
                         v-model="props.item.username"
                         label="Username"
@@ -306,9 +233,7 @@
                         readonly
                       />
                     </v-flex>
-                    <v-flex
-                      xs6
-                      px-1>
+                    <v-flex xs6 px-1>
                       <v-text-field
                         v-model="props.item.email"
                         label="Email"
@@ -317,9 +242,7 @@
                         readonly
                       />
                     </v-flex>
-                    <v-flex
-                      xs6
-                      px-1>
+                    <v-flex xs6 px-1>
                       <v-text-field
                         :value="props.item.current_address"
                         label="Current Address"
@@ -328,9 +251,7 @@
                         prepend-icon="looks_one"
                       />
                     </v-flex>
-                    <v-flex
-                      xs6
-                      px-1>
+                    <v-flex xs6 px-1>
                       <v-text-field
                         :value="props.item.permanent_address"
                         label="Permanent Address"
@@ -339,9 +260,7 @@
                         prepend-icon="looks_two"
                       />
                     </v-flex>
-                    <v-flex
-                      xs6
-                      px-1>
+                    <v-flex xs6 px-1>
                       <v-text-field
                         v-model="props.item.mobile_no"
                         label="Phone"
@@ -350,9 +269,7 @@
                         prepend-icon="phone"
                       />
                     </v-flex>
-                    <v-flex
-                      xs6
-                      px-1>
+                    <v-flex xs6 px-1>
                       <v-text-field
                         :value="props.item.dob"
                         label="Date Of Birth"
@@ -401,15 +318,11 @@
                       </v-combobox>
                     </v-flex>
                   </v-layout>-->
-                  <v-layout
-                    row
-                    wrap>
+                  <v-layout row wrap>
                     <v-flex xs12>
                       <p class="title accent--text">Active Subscription</p>
                     </v-flex>
-                    <v-flex
-                      v-if="props.item.subscriptions.length >0"
-                      xs12>
+                    <v-flex v-if="props.item.subscriptions.length >0" xs12>
                       <v-chip
                         v-for="subscription in props.item.subscriptions"
                         :key="subscription.id"
@@ -420,9 +333,7 @@
                         {{ getSubscriptionName(subscription) }}
                       </v-chip>
                     </v-flex>
-                    <v-flex
-                      v-else
-                      xs12>NO ACTIVE SUBSCRIPTION YET</v-flex>
+                    <v-flex v-else xs12>NO ACTIVE SUBSCRIPTION YET</v-flex>
                   </v-layout>
                   <!-- <p
                     v-if="props.item.permissions"
@@ -461,8 +372,8 @@
           </v-container>
         </template>
       </v-data-table>
-      <confirm :callback="confirmed(deleteUser)"/>
-      <mass-mail/>
+      <confirm :callback="confirmed(deleteUser)" />
+      <mass-mail />
     </v-container>
   </main-layout>
 </template>
@@ -485,6 +396,7 @@ export default {
   },
   props: {
     users: Object,
+    status: Boolean
   },
   mixins: [Acl, validationError, confirmation],
   data: () => ({
@@ -549,7 +461,8 @@ export default {
       per_page: 50
     },
     page: 1,
-    loading: false
+    loading: false,
+    togglestatus: false
   }),
   computed: {
     sortIcon() {
@@ -561,11 +474,11 @@ export default {
   },
   mounted() {
     let self = this;
-    console.log(self.users.data)
-    self.items = self.users.data
-    self.roles = self.$page.roles
-    self.permissions = self.$page.permissions
-  
+    console.log(self.users.data);
+    self.items = self.users.data;
+    self.roles = self.$page.roles;
+    self.permissions = self.$page.permissions;
+
     Bus.$on("send-mass-mail", form => {
       self.massMail(form);
     });
@@ -633,22 +546,23 @@ export default {
       let massDeleteForm = new Form({
         selected
       });
-      self.$inertia
-        .post(route("users.massDelete").url(), massDeleteForm)
-        .then((response) => {
-          let toggleModal = swal.mixin({
-            confirmButtonClass: "v-btn blue-grey  subheading white--text",
-            buttonsStyling: false
-          });
+      let toggleModal = swal.mixin({
+        confirmButtonClass: "v-btn blue-grey  subheading white--text",
+        buttonsStyling: false
+      });
+
+      massDeleteForm
+        .post(route("users.massDelete").url())
+        .then(response => {
           toggleModal.fire({
             title: "Success!",
-            html: '<p class="title">' + 'Success' + "</p>",
+            html: '<p class="title">' + "Success" + "</p>",
             type: "success",
             confirmButtonText: "Back"
           });
           selected.forEach(id => {
             console.log(id);
-            if (id > 1000) {
+            if (id !== 1) {
               let index = _.findIndex(self.items, { id });
               self.$delete(self.items, index);
             }
@@ -657,30 +571,24 @@ export default {
         })
         .catch(errors => {
           console.log(errors);
-          if (errors.response.data.message) {
-            let toggleModal = swal.mixin({
-              confirmButtonClass: "v-btn blue-grey  subheading white--text",
-              buttonsStyling: false
-            });
-            toggleModal.fire({
-              title: "Oops! Something Went Wrong...",
-              html: '<p class="title">' + 'Failed Submitting' + "</p>",
-              type: "warning",
-              confirmButtonText: "Back"
-            });
-          }
+          toggleModal.fire({
+            title: "Oops! Something Went Wrong...",
+            html: '<p class="title">' + errors + "</p>",
+            type: "warning",
+            confirmButtonText: "Back"
+          });
         });
     },
     massMail(form) {
       let self = this;
-      this.$inertia
-        .post(route("api.user.massMail"), form)
+      form
+        .post(route("users.massMail").url())
         .then(response => {
           let toggleModal = swal.mixin({
             confirmButtonClass: "v-btn blue-grey  subheading white--text",
             buttonsStyling: false
           });
-          toggleModal({
+          toggleModal.fire({
             title: "Success!",
             html: '<p class="title">' + response.data.message + "</p>",
             type: "success",
@@ -696,7 +604,7 @@ export default {
               confirmButtonClass: "v-btn blue-grey  subheading white--text",
               buttonsStyling: false
             });
-            toggleModal({
+            toggleModal.fire({
               title: "Oops! Something Went Wrong...",
               html: '<p class="title">' + errors.response.data.message + "</p>",
               type: "error",
@@ -723,26 +631,36 @@ export default {
       let self = this;
       self.toggleForm.user_id = user.id;
       let index = _.findIndex(self.items, { id: user.id });
-      this.$inertia
-        .post(route("api.user.toggleStatus"), self.toggleForm)
-        .then(response => {
+      self.toggleForm
+        .post(route("users.toggleStatus").url())
+        .then(({ data }) => {
+          console.log(data.status);
           let toggleModal = swal.mixin({
             confirmButtonClass: "v-btn blue-grey  subheading white--text",
             buttonsStyling: false
           });
-          toggleModal({
-            title: "Success!",
-            html: '<p class="title">User Status Updated!</p>',
-            type: "success",
-            confirmButtonText: "Back"
-          });
+          if (data.status === true) {
+            toggleModal.fire({
+              title: "Success!",
+              html: '<p class="title">User Status Activated!</p>',
+              type: "success",
+              confirmButtonText: "Back"
+            });
+          } else {
+            toggleModal.fire({
+              title: "Success!",
+              html: '<p class="title">User Status Deactivated!</p>',
+              type: "success",
+              confirmButtonText: "Back"
+            });
+          }
         })
         .catch(errors => {
           let toggleModal = swal.mixin({
             confirmButtonClass: "v-btn blue-grey  subheading white--text",
             buttonsStyling: false
           });
-          toggleModal({
+          toggleModal.fire({
             title: "Oops! Forbidden Action!",
             html: '<p class="title">' + errors.response.data.message + "</p>",
             type: "warning",
@@ -768,34 +686,33 @@ export default {
       let toggleStatusForm = new Form({
         selected
       });
+      let toggleModal = swal.mixin({
+        confirmButtonClass: "v-btn blue-grey  subheading white--text",
+        buttonsStyling: false
+      });
 
       try {
-        const payload = await this.$inertia.post(
-          route("api.user.massDeactivate"),
-          toggleStatusForm
+        const payload = await toggleStatusForm.post(
+          route("users.massDeactivate").url()
         );
         let updated = payload.data.updated;
         _.map(updated, id => {
           let index = _.findIndex(self.items, { id });
           self.items[index].active = false;
         });
-        let toggleModal = swal.mixin({
-          confirmButtonClass: "v-btn blue-grey  subheading white--text",
-          buttonsStyling: false
-        });
-        toggleModal({
+        toggleModal.fire({
           title: "Success",
           html: `<p class="title">${payload.data.message}</p>`,
           type: "success",
           confirmButtonText: "Back"
         });
-      } catch ({ errors, message }) {
-        if (errors) {
-          console.log(errors);
-        }
-        if (message) {
-          console.log(message);
-        }
+      } catch (errors) {
+        toggleModal.fire({
+          title: "Oops Something Went Wrong!",
+          html: `<p class="title">${errors}</p>`,
+          type: "error",
+          confirmButtonText: "Back"
+        });
       }
     },
     async massActivate() {
@@ -804,11 +721,14 @@ export default {
       let toggleStatusForm = new Form({
         selected
       });
+      let toggleModal = swal.mixin({
+        confirmButtonClass: "v-btn blue-grey  subheading white--text",
+        buttonsStyling: false
+      });
 
       try {
-        const payload = await this.$inertia.post(
-          route("api.user.massActivate"),
-          toggleStatusForm
+        const payload = await toggleStatusForm.post(
+          route("users.massActivate").url()
         );
         let updated = payload.data.updated;
         console.log(updated);
@@ -816,23 +736,19 @@ export default {
           let index = _.findIndex(self.items, { id });
           self.items[index].active = true;
         });
-        let toggleModal = swal.mixin({
-          confirmButtonClass: "v-btn blue-grey  subheading white--text",
-          buttonsStyling: false
-        });
-        toggleModal({
+        toggleModal.fire({
           title: "Success",
           html: `<p class="title">${payload.data.message}</p>`,
           type: "success",
           confirmButtonText: "Back"
         });
-      } catch ({ errors, message }) {
-        if (errors) {
-          console.log(errors);
-        }
-        if (message) {
-          console.log(message);
-        }
+      } catch (errors) {
+        toggleModal.fire({
+          title: "Oops Something Went Wrong!",
+          html: `<p class="title">${errors}</p>`,
+          type: "error",
+          confirmButtonText: "Back"
+        });
       }
     },
     activeLink(link) {
@@ -932,7 +848,7 @@ export default {
         url = `${url}&page=${self.page}`;
       }
       this.$inertia
-        .replace(url,{method: 'get'})
+        .replace(url, { method: "get" })
         .then(response => {
           self.items = response.data.data;
           self.meta = response.data.meta;
@@ -951,24 +867,26 @@ export default {
         confirmButtonClass: "v-btn blue-grey  subheading white--text",
         buttonsStyling: false
       });
-      self.$inertia.post(route("api.user.delete").url(), self.deleteUserForm).then(response => {
-        if (response.data.status === true) {
-          toggleModal({
-            title: "Success",
-            html: `<p class="title">User Deleted!</p>`,
-            type: "success",
-            confirmButtonText: "Back"
-          });
-          self.$delete(self.items, index);
-        } else {
-          toggleModal({
-            title: "Forbidden Action!",
-            html: `<p class="title">Cannot Delete Super Admin!</p>`,
-            type: "warning",
-            confirmButtonText: "Back"
-          });
-        }
-      });
+      self.$inertia
+        .post(route("api.user.delete").url(), self.deleteUserForm)
+        .then(response => {
+          if (response.data.status === true) {
+            toggleModal({
+              title: "Success",
+              html: `<p class="title">User Deleted!</p>`,
+              type: "success",
+              confirmButtonText: "Back"
+            });
+            self.$delete(self.items, index);
+          } else {
+            toggleModal({
+              title: "Forbidden Action!",
+              html: `<p class="title">Cannot Delete Super Admin!</p>`,
+              type: "warning",
+              confirmButtonText: "Back"
+            });
+          }
+        });
     },
     toProperCase(key) {
       let newStr = key.replace(/_/g, " ");
@@ -1057,6 +975,11 @@ export default {
         this.pagination.sortBy = column;
         this.pagination.descending = false;
       }
+    }
+  },
+  watch: {
+    status(newValue) {
+      this.togglestatus = newValue;
     }
   }
 };

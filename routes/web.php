@@ -23,3 +23,8 @@ Route::get('/members/{user}/edit')->name('users.edit')->uses('UsersController@ed
 Route::post('/members/{user}/update')->name('users.update')->uses('UsersController@update')->middleware('auth');
 Route::post('/members/{user}/delete')->name('users.destroy')->uses('UsersController@destroy')->middleware('auth');
 Route::post('/users/massDelete', 'UsersController@massDelete')->name('users.massDelete')->middleware('auth');
+Route::post('/users/toggleStatus', 'UsersController@toggleStatus')->name('users.toggleStatus')->middleware('auth');
+Route::post('/users/massActivate', 'UsersController@massActivate')->name('users.massActivate')->middleware('auth');
+Route::post('/users/massDeactivate', 'UsersController@massDeactivate')->name('users.massDeactivate')->middleware('auth');
+Route::post('/users/massDelete', 'UsersController@massDelete')->name('users.massDelete')->middleware('auth');
+Route::post('/users/massMail', 'UsersController@massMail')->name('users.massMail')->middleware('auth');

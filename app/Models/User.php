@@ -2,16 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
+use App\Traits\User\Scopes;
+use App\Traits\User\Methods;
+use App\Traits\User\Mutators;
+use App\Traits\User\Relationships;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Cviebrock\EloquentSluggable\Sluggable;
-use Silber\Bouncer\Database\HasRolesAndAbilities;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasRolesAndAbilities, Sluggable;
+    use Notifiable, HasRoles, Sluggable, Mutators, Relationships, Methods, Scopes;
+
+    /**
+     * @var array
+     */
+    protected $appends = ['permission_list', 'can', 'role_list'];
 
     /**
      * The attributes that should be cast to native types.
@@ -64,108 +71,18 @@ class User extends Authenticatable
             /* change this */
             $sponsorID = \Cookie::get('sponsor');
 
-            /* if cookie is present */
             if ($sponsorID) {
+                /* check if cookie is present */
                 $sponsor     = self::find($sponsorID);
                 $user->sp_id = $sponsor->id;
             }
 
-            /* override cookie with current request */
             if ($sponsorID = request()->sponsor_id) {
+                /* override cookie with current request */
                 $sponsor     = self::find($sponsorID);
                 $user->sp_id = $sponsor->id;
             }
         });
-    }
-
-    /**
-     * Add Default Avatar
-     *
-     */
-    public function getAvatarAttribute($value)
-    {
-        return empty($value) ? 'https://www.gravatar.com/avatar/'.md5(Str::lower($this->email)).'.jpg?s=200&d=mm' : url($value);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNameAttribute()
-    {
-        return $this->fname.' '.$this->lname;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function isAdmin()
-    {
-        return $this->isAn('admin');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function isBanned()
-    {
-        return $this->isA('banned');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function isMember()
-    {
-        return $this->isA('member');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function isPaymaster()
-    {
-        return $this->isA('paymaster');
-    }
-
-    /**
-     * Referrals Relationship
-     *
-     */
-    public function referrals()
-    {
-        return $this->hasMany(static::class, 'sp_id');
-    }
-
-    /**
-     * @param $query
-     * @param array    $filters
-     */
-    // fucking fix this to query profile for first and last name
-    public function scopeFilter($query, array $filters)
-    {
-        $query->when($filters['search'] ?? null, function ($query, $search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('fname', 'like', '%'.$search.'%')
-                      ->orWhere('lname', 'like', '%'.$search.'%')
-                      ->orWhere('email', 'like', '%'.$search.'%');
-            });
-        })->when($filters['role'] ?? null, function ($query, $role) {
-            $query->whereIs($role);
-        })->when($filters['trashed'] ?? null, function ($query, $trashed) {
-            if ('with' === $trashed) {
-                $query->withTrashed();
-            } elseif ('only' === $trashed) {
-                $query->onlyTrashed();
-            }
-        });
-    }
-
-    /**
-     * @param $query
-     */
-    public function scopeOrderByName($query)
-    {
-        $query->orderBy('lname')->orderBy('fname');
     }
 
     /**
@@ -175,14 +92,6 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new PasswordResetNotification($token));
-    }
-
-    /**
-     * @param $password
-     */
-    public function setPasswordAttribute($password)
-    {
-        $this->attributes['password'] = Hash::make($password);
     }
 
     /**
@@ -196,22 +105,5 @@ class User extends Authenticatable
                 'source' => 'username'
             ]
         ];
-    }
-
-    /**
-     * Sponsor Relationship
-     *
-     */
-    public function sponsor()
-    {
-        return $this->belongsTo(static::class, 'sp_id');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function subscriptions()
-    {
-        return $this->hasMany(Subscription::class);
     }
 }

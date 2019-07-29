@@ -24,7 +24,7 @@
         "fibers": "^4.0.1",
         "inertia-vue": "github:inertiajs/inertia-vue",
         "laravel-mix": "^4.0.7",
-        "lodash": "^4.17.5",
+        "lodash": "^4.17.15",
         "material-design-icons-iconfont": "^5.0.1",
         "resolve-url-loader": "^2.3.1",
         "roboto-fontface": "^0.10.0",
@@ -39,10 +39,12 @@
         "vuetify-loader": "^1.2.2"
     },
     "dependencies": {
-        "sweetalert2": "^8.13.6",
-        "vee-validate": "^2.2.12",
+        "axios": "^0.19.0",
+        "sweetalert2": "^8.14.0",
+        "vee-validate": "^2.2.13",
         "vform": "^1.0.1",
+        "vue-axios": "^2.1.4",
         "vue-loader": "^15.7.0",
-        "ziggy": "tightenco/ziggy"
+        "ziggy": "github:tightenco/ziggy"
     }
 }

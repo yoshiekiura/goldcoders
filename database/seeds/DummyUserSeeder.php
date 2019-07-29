@@ -16,14 +16,14 @@ class DummyUserSeeder extends Seeder
         /* Paymaster */
 
         factory(User::class, 1)->create()->each(function ($user) {
-            \Bouncer::assign('paymaster')->to($user);
+            $user->assignRole('paymaster');
             $subscriptions = factory(Subscription::class, 10)->create();
             $user->subscriptions()->saveMany($subscriptions);
             $user->save();
         });
         /* Member */
         factory(User::class, 1)->create()->each(function ($user) {
-            \Bouncer::assign('member')->to($user);
+            $user->assignRole('member');
             $subscriptions = factory(Subscription::class, 10)->create();
             $user->subscriptions()->saveMany($subscriptions);
             $user->save();

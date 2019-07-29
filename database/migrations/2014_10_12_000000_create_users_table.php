@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('sp_id')->nullable();
+            $table->unsignedBigInteger('paymaster_id')->nullable(); // use as referrence for paymaster
             $table->string('username')->unique(); // generate ramdom username
             $table->string('email')->unique()->nullable();
             $table->string('password', 60);

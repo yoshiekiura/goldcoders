@@ -28,10 +28,10 @@ class AdminSeeder extends Seeder
             'fname'             => config('admin.fname'),
             'mname'             => null,
             'lname'             => config('admin.lname'),
-            'dob'               => Carbon::now()->subYears(random_int(18,25))->subMonths(random_int(1,12))->subDays(1,31),
+            'dob'               => Carbon::now()->subYears(random_int(18, 25))->subMonths(random_int(1, 12))->subDays(1, 31),
             'suffix'            => null
         ]);
-        \Bouncer::assign('admin')->to($user);
+        $user->assignRole('admin');
 
         $subscriptions = factory(Subscription::class, 10)->create();
         $user->subscriptions()->saveMany($subscriptions);

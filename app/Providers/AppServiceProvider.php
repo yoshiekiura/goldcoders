@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Role;
 use Inertia\Inertia;
+use App\Models\Permission;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\UrlWindow;
@@ -38,25 +40,20 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Inertia::share(function () {
-            $user      = Auth::user();
-            $abilities = \Bouncer::ability()->all()->pluck('name')->toArray();
-            $abilities = array_filter($abilities, function ($ability) {return '*' !== $ability;});
-            $auth_abilities = null;
-            if($user){
-            $auth_abilities = $user->getabilities()->pluck('name')->toArray();
-            $auth_abilities = array_filter($auth_abilities, function ($ability) {return '*' !== $ability;});
-            }
-
+            $user        = Auth::user();
+            $roles       = Role::all()->pluck('name')->toArray();
+            $permissions = Permission::all()->pluck('name')->toArray();
             return [
                 'app'         => [
                     'name' => Config::get('app.name')
                 ],
-                'roles'       => \Bouncer::role()->all()->pluck('name'),
-                'permissions' => $abilities,
+                'roles'       => $roles,
+                'permissions' => $permissions,
                 'isLoggedIn'  => $user ? true : false,
                 'auth'        => [
                     'user' => $user ? [
                         'id'                => $user->id,
+                        'sponsor'           => $user->sponsor,
                         'email'             => $user->email,
                         'username'          => $user->username,
                         'photo_url'         => $user->photo_url,
@@ -72,12 +69,13 @@ class AppServiceProvider extends ServiceProvider
                         'permanent_address' => $user->permanent_address,
                         'current_address'   => $user->current_address,
                         'email_verified_at' => $user->email_verified_at,
-                        'roles'             => $user->getroles()->toArray(),
-                        'permissions'         => $auth_abilities
+                        'roles'             => $user->role_list,
+                        'permissions'       => $user->permission_list,
+                        'can'               => $user->can
                     ] : null
                 ],
                 'flash'       => [
-                    'success' => Session::get('success')
+                    'success' => Session::get('success'),
                 ],
                 'errors'      => Session::get('errors') ? Session::get('errors')->getBag('default')->getMessages() : (object) []
             ];

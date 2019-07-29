@@ -28,8 +28,7 @@ export default {
       return _.difference(permissions, me.permissions).length === 0;
     },
     can(permission) {
-      // for the moment we return true need to fix this later on
-      return true
+      return this.$page.auth.user.can[permission]
     }
   }
 };
