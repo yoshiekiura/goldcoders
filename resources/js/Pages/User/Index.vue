@@ -625,7 +625,7 @@ export default {
       }
     },
     editUser(user) {
-      vm.$router.push({ name: "edit-user", params: { id: `${user.id}` } });
+      this.$inertia.visit(route('users.edit',{user: user.id}).url());
     },
     toggleStatus(user) {
       let self = this;

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Mail\MassMail;
+use App\Models\Permission;
 use App\Models\Subscription;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
@@ -21,8 +24,12 @@ class UsersController extends Controller
      */
     public function create(Request $request)
     {
+        $this->authorize('create',auth()->user());
+
         $data = request()->validate([
             'fname'                 => 'required',
+            'sp_id'                 => 'nullable',
+            'paymaster_id'          => 'nullable',
             'mname'                 => 'nullable',
             'lname'                 => 'required',
             'suffix'                => 'nullable',
@@ -37,14 +44,24 @@ class UsersController extends Controller
                 'required',
                 'exists:roles,name'
             ],
+            'permissions'           => [
+                'sometimes',
+                'required',
+                'exists:permissions,name'
+            ],
+ 
             'active'                => 'boolean',
             'current_address'       => 'nullable',
             'permanent_address'     => 'nullable'
         ]);
+
         DB::beginTransaction();
         $user  = User::create($data);
         $roles = request('roles');
         $user->syncRoles($roles);
+        if ($user->hasRole('member')) {
+            $user->paymaster_id = $data['paymaster_id'];
+        }
 
         try {
             if (!$user) {
@@ -78,7 +95,19 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        //
+        $this->authorize("edit", auth()->user());
+        $user        = User::findOrFail($id)->toArray();
+        $roles       = Role::all()->pluck('name');
+        $permissions = Permission::all()->pluck('name')->toArray();
+        $sponsors    = User::where('id', '!=', $id)->get(['fname', 'mname', 'lname', 'id', 'username']);
+        $paymasters  = User::role('paymaster')->get(['fname', 'mname', 'lname', 'id', 'username']);
+        return Inertia::render('User/Edit', [
+            'user'        => $user,
+            'roles'       => $roles,
+            'permissions' => $permissions,
+            'sponsors'    => $sponsors,
+            'paymasters'  => $paymasters
+        ]);
     }
 
     /**
@@ -88,6 +117,7 @@ class UsersController extends Controller
      */
     public function index()
     {
+        $this->authorize('view', auth()->user());
         return Inertia::render('User/Index', [
             'filters' => Request::all('sortBy', 'orderBy'),
             'users'   => User::orderByName()
@@ -124,8 +154,9 @@ class UsersController extends Controller
     /**
      * @param Request $request
      */
-    public function massActivate(Request $request)
+    public function massActivate()
     {
+        $this->authorize('update',auth()->user());
         $ids     = $this->selectExceptSuperAdmin();
         $updated = User::whereIn('id', $ids)->update(['active' => true]);
 
@@ -141,6 +172,7 @@ class UsersController extends Controller
      */
     public function massDeactivate(Request $request)
     {
+        $this->authorize('update',auth()->user());
         $ids     = $this->selectExceptSuperAdmin();
         $updated = User::whereIn('id', $ids)->update(['active' => false]);
 
@@ -156,6 +188,7 @@ class UsersController extends Controller
      */
     public function massDelete(Request $request)
     {
+        $this->authorize('update', auth()->user());
         $ids = $this->selectExceptSuperAdmin();
         DB::beginTransaction();
         try {
@@ -193,6 +226,7 @@ class UsersController extends Controller
      */
     public function massMail()
     {
+        $this->authorize('sendmail',auth()->user());
         $data['subject']        = request()->input('subject');
         $data['message']        = request()->input('message');
         $data['with_panel']     = request()->input('with_panel');
@@ -257,9 +291,77 @@ class UsersController extends Controller
      * @param  int                         $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update()
     {
-        //
+        //find user
+
+        $user = User::findOrFail(request()->id);
+
+        $this->authorize('update', $user);
+        //update user
+        $data = request()->validate([
+            'id'                    => 'required',
+            'sp_id'                 => 'nullable',
+            'paymaster_id'          => 'nullable',
+            'fname'                 => 'required',
+            'mname'                 => 'nullable',
+            'lname'                 => 'required',
+            'suffix'                => 'nullable',
+            'mobile_no'             => 'nullable',
+            'dob'                   => 'nullable',
+            'email'                 => [
+                'required',
+                'nullable',
+                Rule::unique('users')->ignore($user)
+            ],
+            'password'              => 'nullable|min:6|confirmed',
+            'password_confirmation' => 'required_with:password',
+            'roles'                 => [
+                'sometimes',
+                'required',
+                'exists:roles,name'
+            ],
+            'permissions'           => [
+                'sometimes',
+                'required',
+                'exists:permissions,name'
+            ],
+            'active'                => 'boolean',
+            'current_address'       => 'nullable',
+            'permanent_address'     => 'nullable'
+        ]);
+
+        $user->update($data);
+
+// update password
+        if ($data['password'] && $data['password_confirmation']) {
+            $user->password = $data['password'];
+        }
+
+        $roles       = $data['roles'];
+        $permissions = $data['permissions'];
+
+// update user status active /inactive
+        if ($user->isSuperAdmin()) {
+            $user->active = true;
+            $user->sp_id  = null;
+        } else {
+            $user->active = $data['active'];
+            $user->sp_id  = $data['sp_id'];
+            // update roles
+            $user->syncRoles($roles);
+            // update permissions
+            $permissions = $user->syncPermissions($permissions);
+        }
+
+// update paymaster if account is member only
+        if ($user->hasRole('member')) {
+            $user->paymaster_id = $data['paymaster_id'];
+        }
+
+        $user->save();
+        // return a json response
+        return redirect()->route('users.index');
     }
 
     /**
