@@ -874,11 +874,11 @@ export default {
         confirmButtonClass: "v-btn blue-grey  subheading white--text",
         buttonsStyling: false
       });
-      self.$inertia
-        .post(route("api.user.delete").url(), self.deleteUserForm)
-        .then(response => {
+      self.deleteUserForm
+        .post(route("users.destroy", {user: user.id}).url())
+        .then( (response) => {
           if (response.data.status === true) {
-            toggleModal({
+            toggleModal.fire({
               title: "Success",
               html: `<p class="title">User Deleted!</p>`,
               type: "success",
@@ -886,7 +886,7 @@ export default {
             });
             self.$delete(self.items, index);
           } else {
-            toggleModal({
+            toggleModal.fire({
               title: "Forbidden Action!",
               html: `<p class="title">Cannot Delete Super Admin!</p>`,
               type: "warning",

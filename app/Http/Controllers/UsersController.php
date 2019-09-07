@@ -41,9 +41,31 @@ class UsersController extends Controller
      * @param  int                         $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        $this->authorize('manage_users',auth()->user());
+        $deleted = false;
+        if (!$user->isSuperAdmin()) {
+            $deleted = $user->delete();
+
+            if (!$deleted) {
+                throw new UpdatingRecordFailed;
+            } else {
+                // remove all referrals
+                User::where('sp_id', $user->id)->update(['sp_id' => null]);
+                // Remove all subscriptions
+                $subscriptions = Subscription::where('user_id', $user->id);
+                // Remove All uploads inside subscriptions
+                $image_urls    = $subscriptions->pluck('image_url');
+                // // delete all uploads
+                if (count($image_urls) > 0) {
+                    Storage::delete($image_urls);
+                }
+                // remove all subscriptions
+                $subscriptions->delete();
+            }
+        }
+        return response()->json(['status' =>$deleted], 200);
     }
 
     /**

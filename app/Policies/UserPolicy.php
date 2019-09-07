@@ -18,6 +18,11 @@ class UserPolicy
     {
         //
     }
+    public function destroy(User $user){
+        if($user->('manage_users')){
+            return true;
+        }
+    }
 
     /**
      * @param User $user

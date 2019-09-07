@@ -22,7 +22,7 @@ Route::get('/members/create')->name('users.create')->uses('UsersController@creat
 Route::post('/members/store')->name('users.store')->uses('UsersController@store')->middleware('auth');
 Route::get('/members/{user}/edit')->name('users.edit')->uses('UsersController@edit')->middleware('auth');
 Route::post('/members/{user}/update')->name('users.update')->uses('UsersController@update')->middleware('auth');
-Route::post('/members/{user}/delete')->name('users.destroy')->uses('UsersController@destroy')->middleware('auth');
+Route::post('/members/{user}/destroy')->name('users.destroy')->uses('UsersController@destroy')->middleware('auth');
 Route::post('/users/massDelete', 'UsersController@massDelete')->name('users.massDelete')->middleware('auth');
 Route::post('/users/toggleStatus', 'UsersController@toggleStatus')->name('users.toggleStatus')->middleware('auth');
 Route::post('/users/massActivate', 'UsersController@massActivate')->name('users.massActivate')->middleware('auth');
