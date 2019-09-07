@@ -18,7 +18,8 @@ Route::post('logout')->name('logout.attempt')->uses('Auth\LoginController@logout
 
 Route::get('/')->name('dashboard')->uses('DashboardController')->middleware('auth');
 Route::get('/members')->name('users.index')->uses('UsersController@index')->middleware('auth');
-Route::get('/members/add')->name('users.add')->uses('UsersController@create')->middleware('auth');
+Route::get('/members/create')->name('users.create')->uses('UsersController@create')->middleware('auth');
+Route::post('/members/store')->name('users.store')->uses('UsersController@store')->middleware('auth');
 Route::get('/members/{user}/edit')->name('users.edit')->uses('UsersController@edit')->middleware('auth');
 Route::post('/members/{user}/update')->name('users.update')->uses('UsersController@update')->middleware('auth');
 Route::post('/members/{user}/delete')->name('users.destroy')->uses('UsersController@destroy')->middleware('auth');

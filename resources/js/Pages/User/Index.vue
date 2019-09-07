@@ -118,22 +118,28 @@
               <v-chip v-for="(role,key) in props.item.roles" :key="key">
                 <v-avatar
                   :class="{
-                    'primary': (role === 'admin' && props.item.id ===1),
                     'amber lighten-2': (role === 'admin'),
                     'white--text': true,
                     'blue lighten-2': (role === 'paymaster'),
                     'lime lighten-2': (role === 'member')
                   }"
                 >
-                  <span
-                    v-if="props.item.id === 1"
-                    class="headline">S</span>
-                  <span
-                    v-else
+                    <span
                     class="headline">{{ role.charAt(0).toUpperCase() }}</span>
                 </v-avatar>
-                <span v-if="props.item.id === 1">Super Admin</span>
-                <span v-else>{{ role }}</span>
+                <span>{{ role }}</span>
+              </v-chip>
+              <v-chip v-if="props.item.id === 1">
+                <v-avatar
+                  :class="{
+                    'primary': true,
+                    'white--text': true,
+                  }"
+                >
+                  <span
+                    class="headline">S</span>
+                </v-avatar>
+                <span>Super Admin</span>
               </v-chip>
             </td>
             <td class="title text-xs-left accent--text">
@@ -474,7 +480,6 @@ export default {
   },
   mounted() {
     let self = this;
-    console.log(self.users.data);
     self.items = self.users.data;
     self.roles = self.$page.roles;
     self.permissions = self.$page.permissions;
@@ -678,7 +683,9 @@ export default {
       }
     },
     createUser() {
-      vm.$router.push({ name: "create-user" });
+        this.$inertia.visit(
+          route("users.create").url()
+        );
     },
     async massDeactivate() {
       let self = this;

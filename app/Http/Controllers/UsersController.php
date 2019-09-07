@@ -18,62 +18,21 @@ use App\Exceptions\AccountCreationFailed;
 class UsersController extends Controller
 {
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
      */
     public function create(Request $request)
     {
-        $this->authorize('create',auth()->user());
-
-        $data = request()->validate([
-            'fname'                 => 'required',
-            'sp_id'                 => 'nullable',
-            'paymaster_id'          => 'nullable',
-            'mname'                 => 'nullable',
-            'lname'                 => 'required',
-            'suffix'                => 'nullable',
-            'mobile_no'             => 'nullable',
-            'dob'                   => 'nullable',
-            'username'              => 'nullable',
-            'email'                 => 'nullable|email|unique:users',
-            'password'              => 'required|min:6|confirmed',
-            'password_confirmation' => 'required',
-            'roles'                 => [
-                'sometimes',
-                'required',
-                'exists:roles,name'
-            ],
-            'permissions'           => [
-                'sometimes',
-                'required',
-                'exists:permissions,name'
-            ],
- 
-            'active'                => 'boolean',
-            'current_address'       => 'nullable',
-            'permanent_address'     => 'nullable'
+        $this->authorize('create', auth()->user());
+        $roles       = Role::all()->pluck('name');
+        $permissions = Permission::all()->pluck('name')->toArray();
+        $sponsors    = User::get(['fname', 'mname', 'lname', 'id', 'username']);
+        $paymasters  = User::role('paymaster')->get(['fname', 'mname', 'lname', 'id', 'username']);
+        return Inertia::render('User/Create', [
+            'roles'       => $roles,
+            'permissions' => $permissions,
+            'sponsors'    => $sponsors,
+            'paymasters'  => $paymasters
         ]);
-
-        DB::beginTransaction();
-        $user  = User::create($data);
-        $roles = request('roles');
-        $user->syncRoles($roles);
-        if ($user->hasRole('member')) {
-            $user->paymaster_id = $data['paymaster_id'];
-        }
-
-        try {
-            if (!$user) {
-                throw new AccountCreationFailed;
-            }
-        } catch (\Exception $e) {
-            DB::rollback();
-            return response()->json(['message' => $e->getMessage()], 400); // Failed Creation
-        }
-
-        DB::commit();
-        return redirect()->back();
     }
 
     /**
@@ -95,7 +54,7 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        $this->authorize("edit", auth()->user());
+        $this->authorize('edit', auth()->user());
         $user        = User::findOrFail($id)->toArray();
         $roles       = Role::all()->pluck('name');
         $permissions = Permission::all()->pluck('name')->toArray();
@@ -156,7 +115,7 @@ class UsersController extends Controller
      */
     public function massActivate()
     {
-        $this->authorize('update',auth()->user());
+        $this->authorize('update', auth()->user());
         $ids     = $this->selectExceptSuperAdmin();
         $updated = User::whereIn('id', $ids)->update(['active' => true]);
 
@@ -172,7 +131,7 @@ class UsersController extends Controller
      */
     public function massDeactivate(Request $request)
     {
-        $this->authorize('update',auth()->user());
+        $this->authorize('update', auth()->user());
         $ids     = $this->selectExceptSuperAdmin();
         $updated = User::whereIn('id', $ids)->update(['active' => false]);
 
@@ -226,7 +185,7 @@ class UsersController extends Controller
      */
     public function massMail()
     {
-        $this->authorize('sendmail',auth()->user());
+        $this->authorize('sendmail', auth()->user());
         $data['subject']        = request()->input('subject');
         $data['message']        = request()->input('message');
         $data['with_panel']     = request()->input('with_panel');
@@ -249,32 +208,71 @@ class UsersController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for creating a new resource.
      *
-     * @param  int                         $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request    $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('create', auth()->user());
+
+        $data = request()->validate([
+            'fname'                 => 'required',
+            'sp_id'                 => 'nullable',
+            'paymaster_id'          => 'nullable',
+            'mname'                 => 'nullable',
+            'lname'                 => 'required',
+            'suffix'                => 'nullable',
+            'mobile_no'             => 'nullable',
+            'dob'                   => 'nullable',
+            'username'              => 'nullable',
+            'email'                 => 'nullable|email|unique:users',
+            'password'              => 'required|min:6|confirmed',
+            'password_confirmation' => 'required',
+            'roles'                 => [
+                'sometimes',
+                'required',
+                'exists:roles,name'
+            ],
+            'permissions'           => [
+                'sometimes',
+                'required',
+                'exists:permissions,name'
+            ],
+
+            'active'                => 'boolean',
+            'current_address'       => 'nullable',
+            'permanent_address'     => 'nullable'
+        ]);
+
+        DB::beginTransaction();
+        $user  = User::create($data);
+        $roles = request('roles');
+        $user->syncRoles($roles);
+
+        if ($user->hasRole('member')) {
+            $user->paymaster_id = $data['paymaster_id'];
+        }
+
+        try {
+            if (!$user) {
+                throw new AccountCreationFailed;
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['message' => $e->getMessage()], 400); // Failed Creation
+        }
+
+        DB::commit();
+        return redirect()->route('users.index');
     }
 
     public function toggleStatus()
     {
+        $this->authorize('update', auth()->user());
         $user = User::find(Request::get('user_id'));
 
-        if ($user->isAdmin()) {
+        if ($user->isSuperAdmin()) {
             return response()->json(['message' => 'You Cannot Modify Super Admin!'], 400);
         }
 
@@ -345,13 +343,17 @@ class UsersController extends Controller
         if ($user->isSuperAdmin()) {
             $user->active = true;
             $user->sp_id  = null;
+
+            $admin_role = ['admin'];
+            $mergeroles = array_unique(array_merge($roles, $admin_role));
+            $user->syncRoles($mergeroles);
         } else {
             $user->active = $data['active'];
             $user->sp_id  = $data['sp_id'];
             // update roles
             $user->syncRoles($roles);
             // update permissions
-            $permissions = $user->syncPermissions($permissions);
+            // $permissions = $user->syncPermissions($permissions);
         }
 
 // update paymaster if account is member only

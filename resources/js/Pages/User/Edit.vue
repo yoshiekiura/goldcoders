@@ -178,11 +178,8 @@
         </v-flex>
         <v-flex v-if="showPaymasterDrownDown" class="xs12 offset-md2 md8">
           <v-autocomplete
-            v-validate="'required'"
             :items="paymasters"
             v-model="form.paymaster_id"
-            :error-messages="errorMessages('paymaster')"
-            :class="{ 'error--text': hasErrors('paymaster') }"
             required
             item-text="name"
             item-value="id"
@@ -193,17 +190,12 @@
             clearable
             deletable-chips
             prepend-icon="verified_user"
-            data-vv-name="paymaster"
           />
         </v-flex>
-        <v-flex class="xs12 offset-md2 md8">
+        <!-- <v-flex class="xs12 offset-md2 md8">
           <v-autocomplete
-            v-validate="'required'"
             :items="permissions"
             v-model="form.permissions"
-            :error-messages="errorMessages('permissions')"
-            :class="{ 'error--text': hasErrors('permissions') }"
-            required
             color="blue-grey"
             label="Select Permissions"
             light
@@ -212,9 +204,8 @@
             clearable
             deletable-chips
             prepend-icon="fa-tags"
-            data-vv-name="permissions"
           />
-        </v-flex>
+        </v-flex> -->
 
         <v-flex xs12 md4 offset-md2 px-2>
           <v-text-field
@@ -305,10 +296,10 @@ export default {
       type: [Array],
       required: true
     },
-    permissions: {
-      type: [Array],
-      required: true
-    }
+    // permissions: {
+    //   type: [Array],
+    //   required: true
+    // }
   },
   data: () => ({
     /* Always Declare Your Form Object */
@@ -324,6 +315,7 @@ export default {
       dob: null,
       active: false,
       roles: [],
+      // permissions: [],
       password: null,
       password_confirmation: null,
       email: null,
@@ -346,13 +338,13 @@ export default {
       val && this.$nextTick(() => (this.$refs.picker.activePicker = "YEAR"));
     },
     "form.roles"(val) {
-      if(val.length === 0){
+      if (val.length === 0) {
         this.showPaymasterDrownDown = false;
-        this.form.paymaster_id = null
+        this.form.paymaster_id = null;
       }
-      if(val.includes("member")){
+      if (val.includes("member")) {
         this.showPaymasterDrownDown = true;
-      }else{
+      } else {
         this.showPaymasterDrownDown = false;
         this.form.paymaster_id = null;
       }
@@ -361,7 +353,6 @@ export default {
   mounted() {
     let self = this;
     self.setUser();
-    console.log(self.sponsors);
   },
   methods: {
     save(date) {
@@ -397,12 +388,14 @@ export default {
     updateUser() {
       let self = this;
       self.form.busy = true;
-      self.$inertia.post(
-        this.route("users.update", { user: self.form.id }).url(),
-        self.form
-      ).then(()=> {
-        self.form.busy = false;
-      })
+      self.$inertia
+        .post(
+          this.route("users.update", { user: self.form.id }).url(),
+          self.form
+        )
+        .then(() => {
+          self.form.busy = false;
+        });
     },
     setUser() {
       let self = this;
@@ -427,7 +420,7 @@ export default {
     },
     redirectBack() {
       let self = this;
-      self.$nextTick(() => self.$router.push({ name: "users" }));
+      self.$nextTick(() => self.$inertia.visit(route("users.index").url()));
     }
   }
 };
