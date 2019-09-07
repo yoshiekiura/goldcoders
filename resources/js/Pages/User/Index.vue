@@ -115,6 +115,17 @@
               <span v-if="props.item.sponsor">{{ props.item.sponsor.name }}</span>
             </td>
             <td class="title text-xs-left accent--text">
+              <v-chip v-if="props.item.id === 1">
+                <v-avatar
+                  :class="{
+                    'primary': true,
+                    'white--text': true,
+                  }"
+                >
+                  <span class="headline">S</span>
+                </v-avatar>
+                <span>Super Admin</span>
+              </v-chip>
               <v-chip v-for="(role,key) in props.item.roles" :key="key">
                 <v-avatar
                   :class="{
@@ -124,22 +135,9 @@
                     'lime lighten-2': (role === 'member')
                   }"
                 >
-                    <span
-                    class="headline">{{ role.charAt(0).toUpperCase() }}</span>
+                  <span class="headline">{{ role.charAt(0).toUpperCase() }}</span>
                 </v-avatar>
                 <span>{{ role }}</span>
-              </v-chip>
-              <v-chip v-if="props.item.id === 1">
-                <v-avatar
-                  :class="{
-                    'primary': true,
-                    'white--text': true,
-                  }"
-                >
-                  <span
-                    class="headline">S</span>
-                </v-avatar>
-                <span>Super Admin</span>
               </v-chip>
             </td>
             <td class="title text-xs-left accent--text">
@@ -292,38 +290,6 @@
                       />
                     </v-flex>
                   </v-layout>
-
-                  <!-- <v-layout
-                    row
-                    wrap>
-                    <p
-                      v-if="props.item.roles"
-                      class="title accent--text">Account Type</p>
-                    <v-flex xs12>
-                      <v-combobox
-                        :items="roles"
-                        v-model="props.item.roles"
-                        color="primary"
-                        light
-                        disabled
-                        multiple
-                        prepend-icon="fa-tags"
-                      >
-                        <template
-                          slot="selection"
-                          slot-scope="data">
-                          <v-chip
-                            :selected="data.selected"
-                            light>
-                            <v-avatar class="primary white--text">
-                              <span class="headline">{{ data.item.charAt(0).toUpperCase() }}</span>
-                            </v-avatar>
-                            {{ data.item }}
-                          </v-chip>
-                        </template>
-                      </v-combobox>
-                    </v-flex>
-                  </v-layout>-->
                   <v-layout row wrap>
                     <v-flex xs12>
                       <p class="title accent--text">Active Subscription</p>
@@ -630,7 +596,7 @@ export default {
       }
     },
     editUser(user) {
-      this.$inertia.visit(route('users.edit',{user: user.id}).url());
+      this.$inertia.visit(route("users.edit", { user: user.id }).url());
     },
     toggleStatus(user) {
       let self = this;
@@ -683,9 +649,7 @@ export default {
       }
     },
     createUser() {
-        this.$inertia.visit(
-          route("users.create").url()
-        );
+      this.$inertia.visit(route("users.create").url());
     },
     async massDeactivate() {
       let self = this;
@@ -875,8 +839,8 @@ export default {
         buttonsStyling: false
       });
       self.deleteUserForm
-        .post(route("users.destroy", {user: user.id}).url())
-        .then( (response) => {
+        .post(route("users.destroy", { user: user.id }).url())
+        .then(response => {
           if (response.data.status === true) {
             toggleModal.fire({
               title: "Success",

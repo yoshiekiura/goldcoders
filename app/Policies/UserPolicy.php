@@ -18,8 +18,13 @@ class UserPolicy
     {
         //
     }
-    public function destroy(User $user){
-        if($user->('manage_users')){
+
+    /**
+     * @param User $user
+     */
+    public function create(User $user)
+    {
+        if ($user->can('manage_users')) {
             return true;
         }
     }
@@ -27,7 +32,7 @@ class UserPolicy
     /**
      * @param User $user
      */
-    public function create(User $user)
+    public function destroy(User $user)
     {
         if ($user->can('manage_users')) {
             return true;

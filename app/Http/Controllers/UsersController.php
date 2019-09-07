@@ -43,7 +43,7 @@ class UsersController extends Controller
      */
     public function destroy(User $user)
     {
-        $this->authorize('manage_users',auth()->user());
+        $this->authorize('destroy',auth()->user());
         $deleted = false;
         if (!$user->isSuperAdmin()) {
             $deleted = $user->delete();
