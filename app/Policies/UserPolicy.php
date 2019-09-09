@@ -16,7 +16,7 @@ class UserPolicy
      */
     public function __construct()
     {
-        //
+        //we can inject here an auth user instance
     }
 
     /**
