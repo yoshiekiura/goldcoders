@@ -1,61 +1,21 @@
 <template>
-  <v-toolbar color="accent" fixed app>
-    <v-toolbar-side-icon class="primary--text" @click.native.stop="toggleDrawer()" />
-    <!-- Title -->
-    <v-toolbar-title
-      v-if="extension"
-      slot="extension"
-      :class="$vuetify.breakpoint.width <= 1264 && 'pr-3'"
-      :style="$vuetify.breakpoint.width > 1264 && 'width: 300px'"
-      class="text-xs-center ml-0 pl-3"
-    >
-      <v-icon v-if="showIcon" class="ml-3 hidden-md-and-down accent">{{ icon }}</v-icon>
-      <span class="hidden-md-and-down">
-        <span class="primary--text">{{ title }}</span>
-      </span>
-    </v-toolbar-title>
-    <v-toolbar-title v-else class="text-xs-center">
-      <v-icon v-if="showIcon" class="ml-3 hidden-md-and-down accent">{{ icon }}</v-icon>
-      <span class="hidden-md-and-down">
-        <span class="primary--text">{{ title }}</span>
-      </span>
-    </v-toolbar-title>
-    <v-spacer />
-    <!-- center logo -->
-    <img v-if="showLogo" :src="logo" class="hidden-md-and-up" />
-    <v-spacer />
-    <v-btn icon @click="refresh">
-      <v-icon color="primary">refresh</v-icon>
-    </v-btn>
-  </v-toolbar>
+  <v-app-bar app clipped-right color="accent" dark>
+    <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
+    <v-toolbar-title>{{ title }}</v-toolbar-title>
+    <div class="flex-grow-1"></div>
+    <v-app-bar-nav-icon v-if="withRight" @click.stop="toggleRightDrawer()"></v-app-bar-nav-icon>
+  </v-app-bar>
 </template>
 
 <script>
 export default {
-  props: { title: String },
-  data: () => ({
-    extension: false,
-    showLogo: false,
-    logo: "/img/logo.png",
-    showIcon: false,
-  }),
-  created() {
-    /* Emit On a Child Component If You Want This To Be Visible */
-    Bus.$on("header-extension-visible", visibility => {
-      this.extension = visibility;
-    });
-  },
+  props: { title: String , withRight: Boolean},
   methods: {
     toggleDrawer() {
       Bus.$emit("toggleDrawer");
     },
-    refresh() {
-      this.$inertia.reload({
-        method: "get",
-        data: {},
-        preserveScroll: false,
-        preserveState: false
-      });
+    toggleRightDrawer() {
+      Bus.$emit("toggleRightDrawer");
     }
   }
 };

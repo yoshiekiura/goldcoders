@@ -1,30 +1,34 @@
 <template>
-  <v-list-tile
-    :avatar="avatarOn"
+  <v-list-item
     :class="[{ styleAvatar: avatarOn }]"
     @click.native="navigate(href)"
   >
-    <v-list-tile-action v-if="iconOn && !avatarOn">
+    <v-list-item-action v-if="iconOn && !avatarOn">
       <v-icon
         :style="{color: isActive(href) ? activeColor : iconColor, cursor: href ? 'pointer' : ''}"
-      >{{ icon }}</v-icon>
-    </v-list-tile-action>
-    <v-list-tile-avatar v-if="iconOn && avatarOn">
-      <img 
+      >
+      {{ icon }}
+      </v-icon>
+    </v-list-item-action>
+    <v-list-item-avatar v-if="iconOn && avatarOn">
+         <v-img 
         :src="avatar" 
-        alt>
-    </v-list-tile-avatar>
-    <v-list-tile-content>
-      <v-list-tile-title :style="{color: isActive(href) ? activeColor : linkColor}">
+         >
+         </v-img>
+    </v-list-item-avatar>
+    <v-list-item-content>
+      <v-list-item-title :style="{color: isActive(href) ? activeColor : linkColor}">
         <span :style="{cursor: href ? 'pointer' : ''}">{{ title }}</span>
-      </v-list-tile-title>
-    </v-list-tile-content>
-    <v-list-tile-action v-if="iconOn && avatarOn">
+      </v-list-item-title>
+    </v-list-item-content>
+    <v-list-item-action v-if="iconOn && avatarOn">
       <v-icon
         :style="{color: isActive(href) ? activeColor : iconColor, cursor: href ? 'pointer' : ''}"
-      >{{ icon }}</v-icon>
-    </v-list-tile-action>
-  </v-list-tile>
+      >
+      {{ icon }}
+      </v-icon>
+    </v-list-item-action>
+  </v-list-item>
 </template>
 
 <script>

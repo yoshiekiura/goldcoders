@@ -23,22 +23,17 @@
       xs12
       text-xs-center>
       <v-card
-        color="tertiary white--text"
+        color="secondary white--text"
         class="ma-1"
         height="150px">
-        <v-card-text
-          class="title"
-          style="margin-left:auto;margin-right:auto;width:150px;"
-        >
           <v-icon
             x-large
             color="brown lighten-3"
           >
             local_atm
           </v-icon>
-          <v-subheader class="white--text">Overall Subscription Commission</v-subheader>
-          {{ stats.total_subscription_commissions }}
-        </v-card-text>
+          <v-card-title class="white--text">Overall Subscription Commission</v-card-title>
+          <span style="margin-left:auto;margin-right:auto;width:150px;">{{ stats.total_subscription_commissions }}</span>
       </v-card>
     </v-flex>
     <v-flex
@@ -47,7 +42,7 @@
       xs12
       text-xs-center>
       <v-card
-        color="tertiary white--text"
+        color="secondary white--text"
         class="ma-1"
         height="150px">
         <v-card-text
@@ -60,7 +55,7 @@
           >
             fa-percent
           </v-icon>
-          <v-subheader class="white--text">Overall Overriding Commission</v-subheader>
+          <p class="white--text">Overall Overriding Commission</p>
           {{ five_percent }}
         </v-card-text>
       </v-card>
@@ -70,7 +65,7 @@
       md4
       text-xs-center>
       <v-card
-        color="tertiary white--text"
+        color="secondary white--text"
         class="ma-1"
         height="150px">
         <v-card-text
@@ -93,7 +88,7 @@
       md4
       text-xs-center>
       <v-card
-        color="tertiary white--text"
+        color="secondary white--text"
         class="ma-1"
         height="150px">
         <v-card-text
@@ -116,7 +111,7 @@
       md4
       text-xs-center>
       <v-card
-        color="tertiary white--text"
+        color="secondary white--text"
         class="ma-1"
         height="150px">
         <v-card-text
@@ -140,7 +135,7 @@
       md4
       text-xs-center>
       <v-card
-        color="tertiary white--text"
+        color="secondary white--text"
         class="ma-1"
         height="150px">
         <v-card-text
@@ -165,7 +160,7 @@
       md4
       text-xs-center>
       <v-card
-        color="tertiary white--text"
+        color="secondary white--text"
         class="ma-1"
         height="150px">
         <v-card-text
@@ -188,7 +183,7 @@
       md4
       text-xs-center>
       <v-card
-        color="tertiary white--text"
+        color="secondary white--text"
         class="ma-1"
         height="150px">
         <v-card-text
@@ -197,7 +192,7 @@
         >
           <v-icon
             x-large
-            color="tertiary lighten-5"
+            color="secondary lighten-5"
           >
             attach_money
           </v-icon>
@@ -229,7 +224,7 @@ export default {
       return this.$page.auth.user
     }, 
     isSuperAdmin(){
-        if(this.getMe.id <= 1000){
+        if(this.getMe.id === 1){
             return true;
         }
         return false;

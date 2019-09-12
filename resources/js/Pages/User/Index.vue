@@ -15,13 +15,9 @@
         :headers="headers"
         :items="items"
         :search="search"
-        :pagination.sync="pagination"
         :loading="loading"
-        :rows-per-page-items="rows_per_page_items"
-        select-all
         light
         item-key="id"
-        expand
       >
         <v-progress-linear slot="progress" color="blue" indeterminate />
         <template slot="headers" slot-scope="props">

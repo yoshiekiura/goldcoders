@@ -1,11 +1,13 @@
 <template>
-  <v-app v-cloak id="inspire">
-    <left-side-bar />
+  <v-app>
+    <!-- <right-side-bar/> -->
+    <!-- <app-nav-bar :title="title" with-right/> -->
     <app-nav-bar :title="title"/>
+    <left-side-bar/>
     <v-content transition="slide-x-transition" fluid pa-0 ma-0>
-      <slot />
+      <slot/>
     </v-content>
-    <app-footer />
+    <app-footer/>
   </v-app>
 </template>
 
@@ -13,12 +15,14 @@
 import AppFooter from "../partials/AppFooter.vue";
 import AppNavBar from "../partials/AppNavBar.vue";
 import LeftSideBar from "../partials/LeftSideBar.vue";
+// import RightSideBar from "../partials/RightSideBar.vue";
 
 export default {
   components: {
     AppFooter,
     AppNavBar,
-    LeftSideBar
+    LeftSideBar,
+    // RightSideBar
   },
   props: {
     title: String

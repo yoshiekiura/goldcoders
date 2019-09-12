@@ -1,6 +1,6 @@
 <template>
   <modal-layout class="white" title="Login">
-    <v-card :flat="true">
+    <v-card :flat="true" color="grey lighten-5">
       <v-toolbar class="accent">
         <v-spacer />
         <v-toolbar-title class="text-xs-center white--text">Welcome to Login Page</v-toolbar-title>
@@ -54,13 +54,14 @@
                 color="accent"
               >
                 Log In
-                <v-icon right colo="primary">fa-sign-in-alt</v-icon>
+                <v-icon right colo="primary">fa-sign-in</v-icon>
               </v-btn>
             </v-flex>
           </form>
         </v-container>
       </v-card-text>
     </v-card>
+    <app-footer></app-footer>
   </modal-layout>
 </template>
 
@@ -68,10 +69,12 @@
 import Form from "vform";
 import ModalLayout from "../Layouts/ModalLayout";
 import validationError from "../mixins/validation-error";
+import AppFooter from "../partials/ModalFooter";
 export default {
   components: {
     Form,
-    ModalLayout
+    ModalLayout,
+    AppFooter
   },
   mixins: [validationError],
   data: () => ({

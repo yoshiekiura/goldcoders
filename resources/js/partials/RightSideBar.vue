@@ -1,5 +1,5 @@
 <template>
-<v-navigation-drawer v-model="drawer" app class="blue-grey darken-4">
+<v-navigation-drawer v-model="drawer" app clipped right class="blue-grey darken-4">
       <v-list>
       <v-link
         title="Dashboard"
@@ -7,14 +7,6 @@
         icon="dashboard"
         link-color="white"
         active-color="#BA9A5a"
-        icon-color="#fafafa"
-      />
-      <v-link
-        title="Manage Users"
-        href="users.index"
-        icon="fa-users"
-        link-color="white"
-        active-color="#4db6ac"
         icon-color="#fafafa"
       />
       <v-link
@@ -58,7 +50,7 @@ export default {
   },
   mounted() {
     let self = this;
-    Bus.$on("toggleDrawer", function() {
+    Bus.$on("toggleRightDrawer", function() {
       self.drawer = !self.drawer;
     });
   }
