@@ -18,6 +18,8 @@
         :loading="loading"
         light
         item-key="id"
+        show-expand
+        :expanded.sync="expanded"
       >
         <v-progress-linear slot="progress" color="blue" indeterminate />
         <template slot="headers" slot-scope="props">
@@ -195,8 +197,8 @@
           slot-scope="{ pageStart, pageStop }"
         >From {{ pageStart }} to {{ pageStop }}</template>
 
-        <template slot="expand" slot-scope="props">
-          <v-container fluid>
+        <template v-slot:expanded-item="props">
+          <td colspan="6" fluid pa-0 ma-0>
             <v-card light flat text-xs-center>
               <v-img class="white--text blue-grey" height="75px">
                 <v-container fill-height fluid>
@@ -337,7 +339,7 @@
                 </v-container>
               </v-card-title>
             </v-card>
-          </v-container>
+          </td>
         </template>
       </v-data-table>
       <confirm :callback="confirmed(deleteUser)" />
@@ -370,6 +372,7 @@ export default {
   data: () => ({
     contentClass: { grey: true, "lighten-4": true, "accent--text": true },
     dialog: false,
+    expanded: [],
     /* { text: string; value: string; align: 'left' | 'center' | 'right'; sortable: boolean; class: string[] | string; width: string; } */
     headers: [
       { text: "Name", value: "name", align: "left" },
