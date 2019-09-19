@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer v-model="drawer" app class="blue-grey darken-4">
-    <v-list color="primary">
+    <v-list color="primary darken-1">
       <v-list-item>
         <v-list-item-avatar>
           <v-img :src="$page.auth.user.avatar"></v-img>

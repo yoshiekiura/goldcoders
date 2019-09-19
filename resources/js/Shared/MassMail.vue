@@ -7,7 +7,7 @@
     <v-card>
       <v-toolbar 
         dark 
-        color="primary">
+        color="accent">
         <v-btn 
           icon 
           dark 

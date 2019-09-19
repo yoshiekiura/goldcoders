@@ -110,29 +110,22 @@
           />
         </template>
         <template v-slot:item.roles="{ item }">
-          <v-chip v-if="item.id === 1" color="blue-grey darken-4">
-            <v-avatar
-              left
-              :class="{
-                    'primary': true,
-                    'white--text': true,
-                  }"
-            >S</v-avatar>
-            <span class="white--text">Super Admin</span>
-          </v-chip>
           <v-chip v-for="(role,key) in item.roles" :key="key" color="blue-grey darken-4">
             <v-avatar
               left
               :class="{
                     'amber lighten-2': (role === 'admin'),
-                    'white--text': true,
                     'blue lighten-2': (role === 'paymaster'),
                     'lime lighten-2': (role === 'member')
                   }"
             >
               <span class="headline white--text">{{ role.charAt(0).toUpperCase() }}</span>
             </v-avatar>
-            <span class="white--text">{{ role }}</span>
+            <span :class="{
+                    'amber--text text--lighten-2': (role === 'admin'),
+                    'blue--text text--lighten-2': (role === 'paymaster'),
+                    'lime--text text--lighten-2': (role === 'member')
+                  }">{{ role.toUpperCase() }}</span>
           </v-chip>
         </template>
         <template v-slot:item.action="{item}">

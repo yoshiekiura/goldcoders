@@ -43,8 +43,9 @@ class UsersController extends Controller
      */
     public function destroy(User $user)
     {
-        $this->authorize('destroy',auth()->user());
+        $this->authorize('destroy', auth()->user());
         $deleted = false;
+
         if (!$user->isSuperAdmin()) {
             $deleted = $user->delete();
 
@@ -56,16 +57,19 @@ class UsersController extends Controller
                 // Remove all subscriptions
                 $subscriptions = Subscription::where('user_id', $user->id);
                 // Remove All uploads inside subscriptions
-                $image_urls    = $subscriptions->pluck('image_url');
-                // // delete all uploads
+                $image_urls = $subscriptions->pluck('image_url');
+
+// // delete all uploads
                 if (count($image_urls) > 0) {
                     Storage::delete($image_urls);
                 }
+
                 // remove all subscriptions
                 $subscriptions->delete();
             }
         }
-        return response()->json(['status' =>$deleted], 200);
+
+        return response()->json(['status' => $deleted], 200);
     }
 
     /**
@@ -324,6 +328,10 @@ class UsersController extends Controller
             'sp_id'                 => 'nullable',
             'paymaster_id'          => 'nullable',
             'fname'                 => 'required',
+            'username'              => [
+                'required',
+                Rule::unique('users')->ignore($user->id)
+            ],
             'mname'                 => 'nullable',
             'lname'                 => 'required',
             'suffix'                => 'nullable',
@@ -374,7 +382,8 @@ class UsersController extends Controller
             $user->sp_id  = $data['sp_id'];
             // update roles
             $user->syncRoles($roles);
-            // update permissions
+
+// update permissions
             // $permissions = $user->syncPermissions($permissions);
         }
 
