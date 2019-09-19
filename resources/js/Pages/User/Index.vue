@@ -5,7 +5,7 @@
       <v-card-title>
         <v-text-field
           v-model="form.search"
-          clearable1
+          clearable
           flat
           solo-inverted
           hide-details
@@ -50,43 +50,55 @@
           <v-toolbar dark color="blue-grey darken-4" class="mb-1">
             <v-text-field
               v-model="search"
-              clearable1
+              clearable
               flat
               solo-inverted
               hide-details
-              prepend-inner-icon="search"
+              prepend-inner-icon="contacts"
               label="Filter By Name"
             ></v-text-field>
             <div class="flex-grow-1"></div>
             <v-text-field
               v-model="filterSponsor"
-              clearable1
+              clearable
               flat
               solo-inverted
               hide-details
-              prepend-inner-icon="fa-user"
+              prepend-inner-icon="person"
               label="Filter By Sponsor"
             ></v-text-field>
             <div class="flex-grow-1"></div>
-
             <v-select
-              label="Filter By Roles"
-              flat
-              hide-details
-              small
-              multiple
-              clearable
-              :items="roles"
               v-model="filterRole"
-            ></v-select>
+              :items="roles"
+              label="Filter By Roles"
+              clearable
+              hide-details
+              solo-inverted
+              prepend-inner-icon="group"
+              flat
+              multiple
+            >
+              <template v-slot:selection="{ item, index }">
+                <v-chip v-if="index === 0">
+                  <span>{{ item }}</span>
+                </v-chip>
+                <span
+                  v-if="index === 1"
+                  class="grey--text caption"
+                >(+{{ filterRole.length - 1 }} others)</span>
+              </template>
+            </v-select>
+
             <div class="flex-grow-1"></div>
 
             <v-select
               label="Filter By Status"
               flat
               hide-details
-              small
+              solo-inverted
               clearable
+              prepend-inner-icon="verified_user"
               :items="statuses"
               v-model="filterStatus"
             ></v-select>
@@ -433,13 +445,12 @@ export default {
     this.form.sortBy = this.filters.sortBy;
     this.form.roles = this.filters.roles;
     this.form.active = this.filters.active;
+    this.roles = this.$page.roles;
     // this.form.active = this.filters.active
     // this.form.roles = this.filters.roles
   },
   mounted() {
     let self = this;
-    self.roles = self.$page.roles;
-    self.permissions = self.$page.permissions;
 
     Bus.$on("send-mass-mail", form => {
       self.massMail(form);
@@ -511,9 +522,9 @@ export default {
       let massDeleteForm = new Form({
         selected
       });
-      
+
       self.$inertia.post(route("users.massDelete").url(), massDeleteForm);
-      
+
       swal.fire({
         title: "<strong>Success!</u></strong>",
         type: "success",
@@ -575,7 +586,7 @@ export default {
       let self = this;
       self.toggleForm.user_id = user.id;
       let index = _.findIndex(self.items.data, { id: user.id });
-      self.$inertia.post(route('users.toggleStatus').url(),self.toggleForm)
+      self.$inertia.post(route("users.toggleStatus").url(), self.toggleForm);
       swal.fire({
         title: "<strong>Success!</u></strong>",
         type: "success",
@@ -601,7 +612,7 @@ export default {
       let toggleStatusForm = new Form({
         selected
       });
-     
+
       self.$inertia.post(route("users.massDeactivate").url(), toggleStatusForm);
 
       swal.fire({
@@ -633,9 +644,12 @@ export default {
     deleteUser(user) {
       let self = this;
       self.deleteUserForm.user_id = user.id;
-      
-        self.$inertia.post(route('users.destroy',{user: user.id}).url(),self.deleteUserForm)
-         swal.fire({
+
+      self.$inertia.post(
+        route("users.destroy", { user: user.id }).url(),
+        self.deleteUserForm
+      );
+      swal.fire({
         title: "<strong>Success!</u></strong>",
         type: "success",
         html: " <b>Selected Users Activated!</b>",
