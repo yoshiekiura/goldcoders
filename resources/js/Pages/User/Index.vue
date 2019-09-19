@@ -575,44 +575,15 @@ export default {
       let self = this;
       self.toggleForm.user_id = user.id;
       let index = _.findIndex(self.items.data, { id: user.id });
-      self.toggleForm
-        .post(route("users.toggleStatus").url())
-        .then(({ data }) => {
-          console.log(data.status);
-          let toggleModal = swal.mixin({
-            confirmButtonClass: "v-btn blue-grey  subheading white--text",
-            buttonsStyling: false
-          });
-          if (data.status === true) {
-            toggleModal.fire({
-              title: "Success!",
-              html: '<p class="title">User Status Activated!</p>',
-              type: "success",
-              confirmButtonText: "Back"
-            });
-          } else {
-            toggleModal.fire({
-              title: "Success!",
-              html: '<p class="title">User Status Deactivated!</p>',
-              type: "success",
-              confirmButtonText: "Back"
-            });
-          }
-        })
-        .catch(errors => {
-          let toggleModal = swal.mixin({
-            confirmButtonClass: "v-btn blue-grey  subheading white--text",
-            buttonsStyling: false
-          });
-          toggleModal.fire({
-            title: "Oops! Forbidden Action!",
-            html: '<p class="title">' + errors.response.data.message + "</p>",
-            type: "warning",
-            confirmButtonText: "Back"
-          });
-          user.active = true;
-          self.items.data.splice(index, 1, user);
-        });
+      self.$inertia.post(route('users.toggleStatus').url(),self.toggleForm)
+      swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>User Status Toggled!</b>",
+        focusConfirm: true,
+        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
+        confirmButtonAriaLabel: "Back!"
+      });
     },
     getStatus(status) {
       if (status) {

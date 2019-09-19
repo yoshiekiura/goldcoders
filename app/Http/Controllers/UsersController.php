@@ -300,14 +300,12 @@ class UsersController extends Controller
         $this->authorize('update', auth()->user());
         $user = User::find(Request::get('user_id'));
 
-        if ($user->isSuperAdmin()) {
-            return response()->json(['message' => 'You Cannot Modify Super Admin!'], 400);
+        if (!$user->isSuperAdmin()) {
+            $user->active = !$user->active;
+            $user->save();
         }
 
-        $user->active = !$user->active;
-        $user->save();
-
-        return response()->json(['status' => $user->active], 201);
+        return redirect()->route('users.index');
     }
 
     /**
