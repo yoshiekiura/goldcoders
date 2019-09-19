@@ -3,18 +3,17 @@
     <v-container fluid>
       <!-- User Main Detail -->
       <v-card-title>
-         <v-text-field
-              v-model="form.search"
-              clearable1
-              flat
-              solo-inverted
-              hide-details
-              prepend-inner-icon="search"
-              label="Search"
-              @click:append="reset()"
-              append-icon="refresh"
-            >
-            </v-text-field>
+        <v-text-field
+          v-model="form.search"
+          clearable1
+          flat
+          solo-inverted
+          hide-details
+          prepend-inner-icon="search"
+          label="Search"
+          @click:append="reset()"
+          append-icon="refresh"
+        ></v-text-field>
 
         <div class="flex-grow-1"></div>
         <v-btn color="accent" dark @click="createUser">
@@ -134,11 +133,13 @@
             >
               <span class="headline white--text">{{ role.charAt(0).toUpperCase() }}</span>
             </v-avatar>
-            <span :class="{
+            <span
+              :class="{
                     'amber--text text--lighten-2': (role === 'admin'),
                     'blue--text text--lighten-2': (role === 'paymaster'),
                     'lime--text text--lighten-2': (role === 'member')
-                  }">{{ role.toUpperCase() }}</span>
+                  }"
+            >{{ role.toUpperCase() }}</span>
           </v-chip>
         </template>
         <template v-slot:item.action="{item}">
@@ -278,7 +279,7 @@
         </template>
       </v-data-table>
       <confirm name="item" :callback="confirmed(deleteUser)" />
-      <massConfirm name="mass" :callback="confirmed(massDelete)"/>
+      <massConfirm name="mass" :callback="confirmed(massDelete)" />
       <mass-mail />
     </v-container>
   </main-layout>
@@ -306,7 +307,7 @@ export default {
   props: {
     users: Object,
     status: Boolean,
-    filters: Object,
+    filters: Object
   },
   mixins: [Acl, validationError, confirmation],
   data: () => ({
@@ -358,9 +359,9 @@ export default {
     filterStatus: "",
     filterSponsor: "",
     form: {
-      search: '',
-      sortBy: '',
-      orderBy: '',
+      search: "",
+      sortBy: "",
+      orderBy: ""
       // active: '',
       // roles: '',
     },
@@ -426,12 +427,12 @@ export default {
       ];
     }
   },
-  created(){
-    this.form.search = this.filters.search
-    this.form.orderBy = this.filters.orderBy 
-    this.form.sortBy = this.filters.sortBy
-    this.form.roles = this.filters.roles
-    this.form.active = this.filters.active
+  created() {
+    this.form.search = this.filters.search;
+    this.form.orderBy = this.filters.orderBy;
+    this.form.sortBy = this.filters.sortBy;
+    this.form.roles = this.filters.roles;
+    this.form.active = this.filters.active;
     // this.form.active = this.filters.active
     // this.form.roles = this.filters.roles
   },
@@ -446,7 +447,7 @@ export default {
   },
   methods: {
     reset() {
-      this.form = _.mapValues(this.form, () => null)
+      this.form = _.mapValues(this.form, () => null);
     },
     getRank(subscription) {
       let rank = "";
@@ -510,31 +511,17 @@ export default {
       let massDeleteForm = new Form({
         selected
       });
-      let toggleModal = swal.mixin({
-        confirmButtonClass: "v-btn blue-grey  subheading white--text",
-        buttonsStyling: false
+      
+      self.$inertia.post(route("users.massDelete").url(), massDeleteForm);
+      
+      swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>Selected Users Deleted!</b>",
+        focusConfirm: true,
+        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
+        confirmButtonAriaLabel: "Back!"
       });
-
-      massDeleteForm
-        .post(route("users.massDelete").url())
-        .then(response => {
-          toggleModal.fire({
-            title: "Success!",
-            html: '<p class="title">' + "Success" + "</p>",
-            type: "success",
-            confirmButtonText: "Back"
-          });
-          self.$inertia.reload()
-        })
-        .catch(errors => {
-          console.log(errors);
-          toggleModal.fire({
-            title: "Oops! Something Went Wrong...",
-            html: '<p class="title">' + errors + "</p>",
-            type: "warning",
-            confirmButtonText: "Back"
-          });
-        });
     },
     massMail(form) {
       let self = this;
@@ -643,34 +630,17 @@ export default {
       let toggleStatusForm = new Form({
         selected
       });
-      let toggleModal = swal.mixin({
-        confirmButtonClass: "v-btn blue-grey  subheading white--text",
-        buttonsStyling: false
-      });
+     
+      self.$inertia.post(route("users.massDeactivate").url(), toggleStatusForm);
 
-      try {
-        const payload = await toggleStatusForm.post(
-          route("users.massDeactivate").url()
-        );
-        let updated = payload.data.updated;
-        _.map(updated, id => {
-          let index = _.findIndex(self.items.data, { id });
-          self.items.data[index].active = false;
-        });
-        toggleModal.fire({
-          title: "Success",
-          html: `<p class="title">${payload.data.message}</p>`,
-          type: "success",
-          confirmButtonText: "Back"
-        });
-      } catch (errors) {
-        toggleModal.fire({
-          title: "Oops Something Went Wrong!",
-          html: `<p class="title">${errors}</p>`,
-          type: "error",
-          confirmButtonText: "Back"
-        });
-      }
+      swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>Selected Users Deactivated!</b>",
+        focusConfirm: true,
+        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
+        confirmButtonAriaLabel: "Back!"
+      });
     },
     async massActivate() {
       let self = this;
@@ -678,35 +648,16 @@ export default {
       let toggleStatusForm = new Form({
         selected
       });
-      let toggleModal = swal.mixin({
-        confirmButtonClass: "v-btn blue-grey  subheading white--text",
-        buttonsStyling: false
-      });
 
-      try {
-        const payload = await toggleStatusForm.post(
-          route("users.massActivate").url()
-        );
-        let updated = payload.data.updated;
-        console.log(updated);
-        _.map(updated, id => {
-          let index = _.findIndex(self.items.data, { id });
-          self.items.data[index].active = true;
-        });
-        toggleModal.fire({
-          title: "Success",
-          html: `<p class="title">${payload.data.message}</p>`,
-          type: "success",
-          confirmButtonText: "Back"
-        });
-      } catch (errors) {
-        toggleModal.fire({
-          title: "Oops Something Went Wrong!",
-          html: `<p class="title">${errors}</p>`,
-          type: "error",
-          confirmButtonText: "Back"
-        });
-      }
+      self.$inertia.post(route("users.massActivate").url(), toggleStatusForm);
+      swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>Selected Users Activated!</b>",
+        focusConfirm: true,
+        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
+        confirmButtonAriaLabel: "Back!"
+      });
     },
     deleteUser(user) {
       let self = this;
@@ -726,7 +677,7 @@ export default {
               type: "success",
               confirmButtonText: "Back"
             });
-            self.$inertia.reload()
+            self.$inertia.reload();
           } else {
             toggleModal.fire({
               title: "Forbidden Action!",
@@ -750,12 +701,15 @@ export default {
     },
     form: {
       handler: _.throttle(function() {
-        let query = _.pickBy(this.form)
-        let url = this.route('users.index', Object.keys(query).length ? query : { remember: "forget"}).url()
-        this.$inertia.replace(url)
+        let query = _.pickBy(this.form);
+        let url = this.route(
+          "users.index",
+          Object.keys(query).length ? query : { remember: "forget" }
+        ).url();
+        this.$inertia.replace(url);
       }, 150),
-      deep: true,
-    },
+      deep: true
+    }
   }
 };
 </script>

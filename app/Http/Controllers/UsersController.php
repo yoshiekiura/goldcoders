@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Exceptions\UpdatingRecordFailed;
 use App\Exceptions\AccountCreationFailed;
 
 class UsersController extends Controller
@@ -105,9 +106,9 @@ class UsersController extends Controller
         $this->authorize('view', auth()->user());
 
         return Inertia::render('User/Index', [
-            'filters' => Request::all('search', 'sortBy', 'orderBy','status'),
+            'filters' => Request::all('search', 'sortBy', 'orderBy', 'status'),
             'users'   => User::orderByName()
-                ->filter(Request::only('search', 'sortBy', 'orderBy','status'))
+                ->filter(Request::only('search', 'sortBy', 'orderBy', 'status'))
                 ->paginate()
                 ->transform(function ($user) {
                     return [
@@ -150,7 +151,7 @@ class UsersController extends Controller
             throw new UpdatingRecordFailed;
         }
 
-        return response()->json(['message' => 'Selected Users Activated!', 'updated' => $ids]);
+        return redirect()->route('users.index');
     }
 
     /**
@@ -166,7 +167,7 @@ class UsersController extends Controller
             throw new UpdatingRecordFailed;
         }
 
-        return response()->json(['message' => 'Selected Users Deactivated!', 'updated' => $ids]);
+        return redirect()->route('users.index');
     }
 
     /**
@@ -200,11 +201,11 @@ class UsersController extends Controller
             $users->delete();
             // remove all uploads /files
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed To Delete Selected Users!']);
+            abort(404);
         }
 
         DB::commit();
-        return response()->json(['message' => 'Successfully Deleted Selected Users.']);
+        return redirect()->route('users.index');
     }
 
     /**
@@ -406,7 +407,7 @@ class UsersController extends Controller
         $ids = request()->input('selected');
 
         $except = array_filter($ids, function ($id) {
-            return User::find($id)->isSuperAdmin();
+            return optional(User::find($id))->isSuperAdmin();
         });
 
         if (count($except) > 0) {
