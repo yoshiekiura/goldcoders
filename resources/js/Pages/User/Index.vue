@@ -633,31 +633,16 @@ export default {
     deleteUser(user) {
       let self = this;
       self.deleteUserForm.user_id = user.id;
-      let index = _.findIndex(self.items.data, { id: user.id });
-      let toggleModal = swal.mixin({
-        confirmButtonClass: "v-btn blue-grey  subheading white--text",
-        buttonsStyling: false
+      
+        self.$inertia.post(route('users.destroy',{user: user.id}).url(),self.deleteUserForm)
+         swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>Selected Users Activated!</b>",
+        focusConfirm: true,
+        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
+        confirmButtonAriaLabel: "Back!"
       });
-      self.deleteUserForm
-        .post(route("users.destroy", { user: user.id }).url())
-        .then(response => {
-          if (response.data.status === true) {
-            toggleModal.fire({
-              title: "Success",
-              html: `<p class="title">User Deleted!</p>`,
-              type: "success",
-              confirmButtonText: "Back"
-            });
-            self.$inertia.reload();
-          } else {
-            toggleModal.fire({
-              title: "Forbidden Action!",
-              html: `<p class="title">Cannot Delete Super Admin!</p>`,
-              type: "warning",
-              confirmButtonText: "Back"
-            });
-          }
-        });
     },
     toProperCase(key) {
       let newStr = key.replace(/_/g, " ");

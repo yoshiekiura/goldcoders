@@ -70,7 +70,7 @@ class UsersController extends Controller
             }
         }
 
-        return response()->json(['status' => $deleted], 200);
+        return redirect()->back();
     }
 
     /**
