@@ -30,13 +30,13 @@ export default {
     message: {
       type: String,
       default: function() {
-        return "Halt! This Action is Destructive and Irreversible Only Proceed If You Think Deleting This Record has No Side effects To Other Record.";
+        return "Halt! This Action is Destructive and Irreversible Only Proceed If You Think Deleting All The Selected Record Has No Impact On Your Data Record.";
       }
     },
     title: {
       type: String,
       default: function() {
-        return "Are You Sure You Want To Delete This?";
+        return "You are Deleting The Selected Items!";
       }
     },
     action: {
@@ -51,7 +51,7 @@ export default {
     params: null
   }),
   mounted() {
-    Bus.$on("open-confirmation", params => {
+    Bus.$on("open-mass-confirm-dialog", params => {
       this.dialog = true;
       this.params = params;
     });

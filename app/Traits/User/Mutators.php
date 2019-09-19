@@ -42,7 +42,7 @@ trait Mutators
      */
     public function getNameAttribute()
     {
-        return $this->fname.' '.$this->mname.' '.$this->lname.' '.$this->suffix;
+        return $this->fname.' '.$this->lname;
     }
 
     /**

@@ -115,7 +115,7 @@ class UsersController extends Controller
                         'mname'             => $user->mname,
                         'lname'             => $user->lname,
                         'suffix'            => $user->suffix,
-                        'sponsor'           => $user->sponsor,
+                        'sponsor'           => optional($user->sponsor)->name,
                         'avatar'            => $user->avatar,
                         'active'            => $user->active,
                         'dob'               => $user->dob,

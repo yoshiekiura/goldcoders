@@ -1,8 +1,8 @@
 <template>
   <modal-layout class="white">
     <v-card :flat="true">
-      <v-toolbar class="primary">
-        <v-btn flat icon color="white" @click.native="redirectBack()">
+      <v-toolbar class="accent">
+        <v-btn text icon color="white" @click.native="redirectBack()">
           <v-icon>arrow_back</v-icon>
         </v-btn>
         <v-spacer />
@@ -13,7 +13,7 @@
           <v-btn
             :loading="form.busy"
             :disabled="errors.any() || form.busy"
-            flat
+            text
             color="white"
             @click.native="submit()"
           >
@@ -129,10 +129,8 @@
             v-model="menu"
             :close-on-content-click="false"
             :nudge-right="40"
-            lazy
             transition="scale-transition"
             offset-y
-            full-width
             min-width="290px"
           >
             <template v-slot:activator="{ on }">

@@ -1,8 +1,8 @@
 <template>
   <modal-layout class="white" title="Logout">
-    <v-card :flat="true">
+    <v-card :flat="true" color="grey lighten-5">
       <v-toolbar class="accent">
-        <v-btn flat icon color="primary" @click.native="redirectBack()">
+        <v-btn text icon color="primary" @click.native="redirectBack()">
           <v-icon>arrow_back</v-icon>
         </v-btn>
         <v-spacer />
@@ -10,7 +10,7 @@
         <v-spacer />
         <v-toolbar-items>
           <!-- If There is no User Account Login Yet Redirect to Authentication Page -->
-          <v-btn flat color="primary" @click.native="logout()">
+          <v-btn text color="primary" @click.native="logout()">
             <v-icon right>fa-power-off</v-icon>
           </v-btn>
         </v-toolbar-items>
@@ -20,10 +20,10 @@
           <form @submit.prevent="logout()">
             <v-layout v-if="$page.auth.user" row>
               <v-flex x12 sm12 md4 offset-md4 lg4 offset-lg4 xl4 offset-xl4>
-                <v-card flat>
+                <v-card flat class="text-center grey lighten-5">
                   <v-container fill-height fluid>
                     <v-layout fill-height>
-                      <v-flex xs12 text-xs-center flexbox>
+                      <v-flex xs12>
                         <v-avatar
                           :tile="tile"
                           :size="avatarSize"
@@ -31,14 +31,14 @@
                           fill-height
                           fluid
                         >
-                          <img :src="$page.auth.user.photo_url" :alt="$page.auth.user.name" />
+                          <img :src="$page.auth.user.avatar" :alt="$page.auth.user.name" />
                         </v-avatar>
                       </v-flex>
                     </v-layout>
                   </v-container>
                   <v-layout>
-                    <v-flex xs12 text-xs-center flexbox>
-                      <h5 class="primary--text title">{{ $page.auth.user.name }}</h5>
+                    <v-flex xs12 text-center flexbox>
+                      <h5 class="primary--text title">{{ $page.auth.user.fname }} {{$page.auth.user.lname }}</h5>
                     </v-flex>
                   </v-layout>
                 </v-card>
@@ -46,10 +46,9 @@
             </v-layout>
             <v-layout row>
               <v-flex xs12 sm12 md4 offset-md4 lg4 offset-lg4 xl4 offset-xl4>
-                <v-card-actions>
                   <v-btn
                     block
-                    flat
+                    text
                     class="white--text"
                     color="info"
                     @click.native="redirectBack()"
@@ -58,12 +57,11 @@
                     :loading="form.busy"
                     :disabled="form.busy"
                     block
-                    flat
+                    text
                     color="red lighten-2"
                     class="white--text"
                     type="submit"
                   >Yes, Log Me Out</v-btn>
-                </v-card-actions>
               </v-flex>
             </v-layout>
           </form>

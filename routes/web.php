@@ -16,7 +16,6 @@ Route::post('/users/massDelete', 'UsersController@massDelete')->name('users.mass
 Route::post('/users/toggleStatus', 'UsersController@toggleStatus')->name('users.toggleStatus')->middleware('auth');
 Route::post('/users/massActivate', 'UsersController@massActivate')->name('users.massActivate')->middleware('auth');
 Route::post('/users/massDeactivate', 'UsersController@massDeactivate')->name('users.massDeactivate')->middleware('auth');
-Route::post('/users/massDelete', 'UsersController@massDelete')->name('users.massDelete')->middleware('auth');
 Route::post('/users/massMail', 'UsersController@massMail')->name('users.massMail')->middleware('auth');
 
 // routes for profile, settings, change password

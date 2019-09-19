@@ -21,7 +21,7 @@
           <v-btn 
             :disabled="errors.any()" 
             dark 
-            flat 
+            text
             @click="submit">Send Mail
             <v-icon right>fa-send</v-icon>
           </v-btn>

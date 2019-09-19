@@ -3,193 +3,158 @@
     <v-container fluid>
       <!-- User Main Detail -->
       <v-card-title>
-        <v-spacer />
-        <v-btn color="teal" dark @click="createUser">
+        <div class="flex-grow-1"></div>
+        <v-btn color="accent" dark @click="createUser">
           Create New User
           <v-icon right>person_add</v-icon>
         </v-btn>
       </v-card-title>
-      <v-pagination v-if="!loading" v-model="page" :length="meta.last_page" />
       <v-data-table
         v-model="selected"
+        :loading="loading"
         :headers="headers"
         :items="items"
         :search="search"
-        :loading="loading"
         light
         item-key="id"
         show-expand
         :expanded.sync="expanded"
+        show-select
+        :sort-by="sortBy"
+        :sort-desc="sortDesc"
+        :items-per-page="5"
+        multi-sort
+        class="elevation-1"
+        :footer-props="{
+      showFirstLastPage: true,
+      firstIcon: 'mdi-arrow-collapse-left',
+      lastIcon: 'mdi-arrow-collapse-right',
+      prevIcon: 'mdi-minus',
+      nextIcon: 'mdi-plus'
+    }"
       >
-        <v-progress-linear slot="progress" color="blue" indeterminate />
-        <template slot="headers" slot-scope="props">
-          <tr>
-            <th>
-              <v-checkbox
-                :input-value="props.all"
-                :indeterminate="props.indeterminate"
-                light
-                primary
-                hide-details
-                @click.native="toggleAll"
-              />
-            </th>
-            <th colspan="5">
-              <v-toolbar flat dense color="white">
-                <v-overflow-btn
-                  v-model="filterByData"
-                  :items="filters"
-                  return-object
-                  editable
-                  flat
-                  label="Filter By"
-                  hide-details
-                  overflow
-                />
+        <!-- toolbar search -->
+        <template v-slot:top>
+          <v-toolbar dark color="blue-grey darken-4" class="mb-1">
+            <v-text-field
+              v-model="search"
+              clearable1
+              flat
+              solo-inverted
+              hide-details
+              prepend-inner-icon="search"
+              label="Filter By Name"
+            ></v-text-field>
+            <div class="flex-grow-1"></div>
+            <v-text-field
+              v-model="filterSponsor"
+              clearable1
+              flat
+              solo-inverted
+              hide-details
+              prepend-inner-icon="fa-user"
+              label="Filter By Sponsor"
+            ></v-text-field>
+            <div class="flex-grow-1"></div>
 
-                <v-divider class="mx-2" vertical />
-                <v-text-field
-                  v-model="search"
-                  :label="`Search ${filterByData.value.toUpperCase()}`"
-                  append-icon="search"
-                  single-line
-                  hide-details
-                  px-2
-                />
+            <v-select
+              label="Filter By Roles"
+              flat
+              hide-details
+              small
+              multiple
+              clearable
+              :items="roles"
+              v-model="filterRole"
+            ></v-select>
+            <div class="flex-grow-1"></div>
 
-                <!-- <v-divider
-                  class="mx-2"
-                  vertical/>
+            <v-select
+              label="Filter By Status"
+              flat
+              hide-details
+              small
+              clearable
+              :items="statuses"
+              v-model="filterStatus"
+            ></v-select>
 
-                <v-btn
-                  icon
-                  flat
-                  @click.native="toggleOrderByData">
-                  <v-icon :color="orderColor">{{ sortIcon }}</v-icon>
-                </v-btn>-->
+            <template v-if="can('manage_users')">
+              <div class="flex-grow-1"></div>
 
-                <v-divider v-if="selected.length>0" class="mx-2" vertical />
-                <div v-if="selected.length>0">
-                  <v-btn icon flat @click="massDeactivate">
-                    <v-icon color="amber">block</v-icon>
-                  </v-btn>
-                  <v-btn icon flat @click="massActivate">
-                    <v-icon color="green">how_to_reg</v-icon>
-                  </v-btn>
-                  <v-btn icon flat @click="viewMassMailModal">
-                    <v-icon color="yellow darken-1">mail</v-icon>
-                  </v-btn>
-                  <v-btn icon flat @click="massDelete">
-                    <v-icon color="error">delete_outline</v-icon>
-                  </v-btn>
-                </div>
-              </v-toolbar>
-            </th>
-          </tr>
-          <tr>
-            <th />
-            <th
-              v-for="header in props.headers"
-              :key="header.text"
-              :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'name' : '', {'text-xs-left': header.align === 'left', 'text-xs-right': header.align === 'right', 'text-xs-center': header.align === 'center'},$vuetify.breakpoint.width >= 600 && 'title']"
-              @click="changeSort(header.value)"
-            >
-              <v-icon>arrow_upward</v-icon>
-              {{ header.text }}
-            </th>
-          </tr>
+              <v-btn :disabled="selected.length<1" icon text @click="massDeactivate">
+                <v-icon color="amber">block</v-icon>
+              </v-btn>
+              <v-btn :disabled="selected.length<1" icon text @click="massActivate">
+                <v-icon color="green">how_to_reg</v-icon>
+              </v-btn>
+              <v-btn :disabled="selected.length<1" icon text @click="viewMassMailModal">
+                <v-icon color="yellow darken-1">mail</v-icon>
+              </v-btn>
+              <v-btn :disabled="selected.length<1" icon text @click="openMassDialog()">
+                <v-icon color="red">delete_outline</v-icon>
+              </v-btn>
+            </template>
+          </v-toolbar>
         </template>
-        <template slot="items" slot-scope="props">
-          <tr>
-            <td class="title text-xs-left">
-              <v-checkbox
-                :active="props.selected"
-                :input-value="props.selected"
-                @click.native="props.selected = !props.selected"
-              />
-            </td>
-            <td class="title text-xs-left accent--text">{{ props.item.name }}</td>
-            <td class="title text-xs-left accent--text">
-              <span v-if="props.item.sponsor">{{ props.item.sponsor.name }}</span>
-            </td>
-            <td class="title text-xs-left accent--text">
-              <v-chip v-if="props.item.id === 1">
-                <v-avatar
-                  :class="{
+        <template v-slot:item.name="{ item }">{{ item.name.toUpperCase() }}</template>
+        <template v-slot:item.sponsor="{ item }">
+          <span v-if="item.sponsor">{{ item.sponsor.toUpperCase() }}</span>
+        </template>
+        <template v-slot:item.active="{ item }">
+          <v-switch
+            color="green darken-4"
+            :label="getStatus(item.active)"
+            v-model="item.active"
+            @change="toggleStatus(item)"
+          />
+        </template>
+        <template v-slot:item.roles="{ item }">
+          <v-chip v-if="item.id === 1" color="blue-grey darken-4">
+            <v-avatar
+              left
+              :class="{
                     'primary': true,
                     'white--text': true,
                   }"
-                >
-                  <span class="headline">S</span>
-                </v-avatar>
-                <span>Super Admin</span>
-              </v-chip>
-              <v-chip v-for="(role,key) in props.item.roles" :key="key">
-                <v-avatar
-                  :class="{
+            >S</v-avatar>
+            <span class="white--text">Super Admin</span>
+          </v-chip>
+          <v-chip v-for="(role,key) in item.roles" :key="key" color="blue-grey darken-4">
+            <v-avatar
+              left
+              :class="{
                     'amber lighten-2': (role === 'admin'),
                     'white--text': true,
                     'blue lighten-2': (role === 'paymaster'),
                     'lime lighten-2': (role === 'member')
                   }"
-                >
-                  <span class="headline">{{ role.charAt(0).toUpperCase() }}</span>
-                </v-avatar>
-                <span>{{ role }}</span>
-              </v-chip>
-            </td>
-            <td class="title text-xs-left accent--text">
-              <v-switch
-                :label="getStatus(props.item.active)"
-                v-model="props.item.active"
-                @change="toggleStatus(props.item)"
-              />
-            </td>
-            <td class="title text-xs-center">
-              <v-btn
-                :disabled="!can('manage_users')"
-                light
-                flat
-                icon
-                class="compress--icon"
-                @click="props.expanded = !props.expanded"
-              >
-                <v-icon v-if="!props.expanded" color="teal">expand_more</v-icon>
-                <v-icon v-if="props.expanded" color="amber">expand_less</v-icon>
-              </v-btn>
-              <v-btn flat icon color="blue" class="compress--icon" @click="editUser(props.item)">
-                <v-icon>edit</v-icon>
-              </v-btn>
-              <v-btn
-                flat
-                icon
-                color="green"
-                class="compress--icon"
-                @click="viewSubscriptions(props.item)"
-              >
-                <v-icon>attach_money</v-icon>
-              </v-btn>
-              <v-btn
-                flat
-                icon
-                color="indigo"
-                class="compress--icon"
-                @click="viewReferrals(props.item)"
-              >
-                <v-icon>fa-users</v-icon>
-              </v-btn>
-              <v-btn
-                :disabled="!can('manage_users')"
-                flat
-                icon
-                color="error"
-                class="compress--icon"
-                @click="openDialog(props.item)"
-              >
-                <v-icon>fa-trash</v-icon>
-              </v-btn>
-            </td>
-          </tr>
+            >
+              <span class="headline white--text">{{ role.charAt(0).toUpperCase() }}</span>
+            </v-avatar>
+            <span class="white--text">{{ role }}</span>
+          </v-chip>
+        </template>
+        <template v-slot:item.action="{item}">
+          <v-btn text icon color="blue" class="compress--icon" @click="editUser(item)">
+            <v-icon>edit</v-icon>
+          </v-btn>
+          <v-btn text icon color="green" class="compress--icon" @click="viewSubscriptions(item)">
+            <v-icon>attach_money</v-icon>
+          </v-btn>
+          <v-btn text icon color="indigo" class="compress--icon" @click="viewReferrals(item)">
+            <v-icon>fa-users</v-icon>
+          </v-btn>
+          <v-btn
+            :disabled="!can('manage_users')"
+            text
+            icon
+            color="error"
+            class="compress--icon"
+            @click="openDialog(item)"
+          >
+            <v-icon>fa-trash</v-icon>
+          </v-btn>
         </template>
 
         <template
@@ -198,8 +163,8 @@
         >From {{ pageStart }} to {{ pageStop }}</template>
 
         <template v-slot:expanded-item="props">
-          <td colspan="6" fluid pa-0 ma-0>
-            <v-card light flat text-xs-center>
+          <td colspan="12" fluid pa-0 ma-0>
+            <v-card light text text-xs-center>
               <v-img class="white--text blue-grey" height="75px">
                 <v-container fill-height fluid>
                   <v-layout fill-height>
@@ -214,15 +179,10 @@
               </v-img>
               <v-card-title>
                 <v-container fluid>
-                  <p v-if="props.item.sponsor" class="title accent--text">Sponsor Details</p>
-                  <v-layout v-if="props.item.sponsor" row wrap>
-                    <v-flex xs12 px-2>
-                      <v-avatar>
-                        <img :src="props.item.sponsor.avatar" :alt="props.item.sponsor.name" />
-                      </v-avatar>
-                      <span class="subheading">{{ props.item.sponsor.name }}</span>
-                    </v-flex>
-                  </v-layout>
+                  <p
+                    v-if="props.item.sponsor"
+                    class="title accent--text"
+                  >Sponsor: {{ props.item.sponsor }}</p>
 
                   <p class="title accent--text">Account Details</p>
                   <v-layout row wrap>
@@ -305,44 +265,14 @@
                     </v-flex>
                     <v-flex v-else xs12>NO ACTIVE SUBSCRIPTION YET</v-flex>
                   </v-layout>
-                  <!-- <p
-                    v-if="props.item.permissions"
-                  class="title accent--text">Permissions</p>-->
-                  <!-- <v-layout
-                    row
-                    wrap>
-                    <v-flex xs12>
-                      <v-combobox
-                        :items="permissions"
-                        v-model="props.item.permissions"
-                        color="brown"
-                        light
-                        disabled
-                        multiple
-                        prepend-icon="pan_tool"
-                      >
-                        <template
-                          slot="selection"
-                          slot-scope="data">
-                          <v-chip
-                            :selected="data.selected"
-                            light>
-                            <v-avatar class="primary white--text">
-                              <span class="headline">{{ data.item.charAt(0).toUpperCase() }}</span>
-                            </v-avatar>
-                            {{ data.item }}
-                          </v-chip>
-                        </template>
-                      </v-combobox>
-                    </v-flex>
-                  </v-layout>-->
                 </v-container>
               </v-card-title>
             </v-card>
           </td>
         </template>
       </v-data-table>
-      <confirm :callback="confirmed(deleteUser)" />
+      <confirm name="item" :callback="confirmed(deleteUser)" />
+      <massConfirm name="mass" :callback="confirmed(massDelete)"/>
       <mass-mail />
     </v-container>
   </main-layout>
@@ -357,13 +287,16 @@ import validationError from "../../mixins/validation-error";
 import { Form } from "vform";
 import swal from "sweetalert2";
 import confirmation from "../../mixins/confirmation";
+import MassConfirm from "../../Shared/MassConfirm";
 
 export default {
   components: {
     MainLayout,
     Confirm,
-    MassMail
+    MassMail,
+    MassConfirm
   },
+  // from backend
   props: {
     users: Object,
     status: Boolean
@@ -373,22 +306,15 @@ export default {
     contentClass: { grey: true, "lighten-4": true, "accent--text": true },
     dialog: false,
     expanded: [],
-    /* { text: string; value: string; align: 'left' | 'center' | 'right'; sortable: boolean; class: string[] | string; width: string; } */
-    headers: [
-      { text: "Name", value: "name", align: "left" },
-      { text: "Sponsor", value: "sponsor.name", align: "left" },
-      { text: "Roles", value: "roles", align: "left" },
-      { text: "Status", value: "active", align: "left" },
-      { text: "Actions", value: "", align: "left", sortable: false }
-    ],
+
+    // server side
     filters: [
       { text: "Filter By Name", value: "name" },
-      { text: "Filter By Role", value: "role" }
+      { text: "Filter By Role", value: "role" },
+      { text: "Filter by Status", value: "active" },
+      { text: "Filter By Sponsor", value: "sponsor" }
     ],
-    filterByData: {
-      text: "Filter By Name",
-      value: "name"
-    },
+    // server side
     orderByData: "ASC",
     orderColor: "teal",
     items: [],
@@ -418,29 +344,80 @@ export default {
     deleteUserForm: new Form({
       user_id: null
     }),
-    domain: window.location.hostname,
-    dropdown_font: [
-      { text: "Arial" },
-      { text: "Calibri" },
-      { text: "Courier" },
-      { text: "Verdana" }
-    ],
-    dropdown_edit: [{ text: "Name" }, { text: "Roles" }, { text: "Status" }],
     meta: {
       current_page: 1,
       last_page: 1,
       per_page: 50
     },
     page: 1,
+    togglestatus: false,
     loading: false,
-    togglestatus: false
+    sortBy: ["name", "sponsor", "roles", "active"],
+    sortByValue: "name",
+    sortDesc: [false, true],
+    filterRole: [],
+    filterStatus: "",
+    filterSponsor: "",
+    statuses: ["active", "inactive"]
   }),
   computed: {
-    sortIcon() {
-      if (this.orderByData === "ASC") {
-        return "fa-sort-amount-asc";
-      }
-      return "fa-sort-amount-desc";
+    headers() {
+      return [
+        {
+          text: "Member",
+          align: "left",
+          sortable: true,
+          value: "name"
+        },
+        {
+          text: "Sponsor",
+          value: "sponsor",
+          sortable: true,
+          filter: value => {
+            if (!this.filterSponsor) return true;
+            if (value) {
+              return (
+                this.filterSponsor.toLowerCase().trim() ===
+                value.toLowerCase().trim()
+              );
+            }
+          }
+        },
+        {
+          text: "Roles",
+          value: "roles",
+          sortable: true,
+          filter: value => {
+            if (this.filterRole.length <= 0) return true;
+
+            if (this.filterRole.length === 1) {
+              return this.filterRole.some(r => value.indexOf(r) >= 0);
+            } else {
+              return _.isEqual(this.filterRole.sort(), value);
+            }
+          }
+        },
+        {
+          text: "Status",
+          value: "active",
+          sortable: true,
+          filter: value => {
+            let status = false;
+            let active = ["active"];
+            let inactive = ["inactive"];
+            if (active.includes(this.filterStatus)) {
+              status = true;
+            }
+            if (inactive.includes(this.filterStatus)) {
+              status = false;
+            }
+            if (!this.filterStatus) return true;
+
+            return status === value;
+          }
+        },
+        { text: "Actions", value: "action", sortable: false }
+      ];
     }
   },
   mounted() {
@@ -721,114 +698,6 @@ export default {
         });
       }
     },
-    activeLink(link) {
-      return !!link;
-    },
-    async activateLink(user) {
-      let toggleModal = swal.mixin({
-        confirmButtonClass: "v-btn blue-grey  subheading white--text",
-        buttonsStyling: false
-      });
-      try {
-        let payload = await this.$inertia.get(
-          route("api.user.link.activate", { id: user.id })
-        );
-        toggleModal({
-          title: "Success!",
-          html: `<p class="title">${payload.data.message}</p>`,
-          type: "success",
-          confirmButtonText: "Back"
-        });
-        user.referral_link.active = true;
-      } catch ({ message }) {
-        if (message) {
-          toggleModal({
-            title: "Error!",
-            html: `<p class="title">${message}</p>`,
-            type: "error",
-            confirmButtonText: "Back"
-          });
-        }
-      }
-    },
-    async deactivateLink(user) {
-      let toggleModal = swal.mixin({
-        confirmButtonClass: "v-btn blue-grey  subheading white--text",
-        buttonsStyling: false
-      });
-      try {
-        let payload = await this.$inertia.get(
-          route("api.user.link.deactivate", { id: user.id })
-        );
-        user.referral_link.active = false;
-        toggleModal({
-          title: "Success!",
-          html: `<p class="title">${payload.data.message}</p>`,
-          type: "success",
-          confirmButtonText: "Back"
-        });
-      } catch ({ message }) {
-        if (message) {
-          toggleModal({
-            title: "Error!",
-            html: `<p class="title">${message}</p>`,
-            type: "error",
-            confirmButtonText: "Back"
-          });
-        }
-      }
-    },
-    async fetchRoles() {
-      let self = this;
-      try {
-        const payload = await this.$inertia.get(route("api.roles.index"));
-        self.roles = payload.data;
-      } catch ({ errors, message }) {
-        if (errors) {
-          console.log("fetchRoles:errors", errors);
-        }
-        if (message) {
-          console.log("fetchRoles:error-message", message);
-        }
-      }
-    },
-    async fetchPermissions() {
-      let self = this;
-      try {
-        const payload = await this.$inertia.get(route("api.permissions.index"));
-        self.permissions = payload.data;
-      } catch ({ errors, message }) {
-        if (errors) {
-          console.log("fetchRoles:errors", errors);
-        }
-        if (message) {
-          console.log("fetchRoles:error-message", message);
-        }
-      }
-    },
-    //! FIX THIS!
-    fetchUsers() {
-      let self = this;
-      self.loading = true;
-      self.items = [];
-      let order_by = self.pagination.descending ? "DESC" : "ASC";
-      let sort_by = self.pagination.sortBy;
-      let url = `/users?sortBy=${sort_by}&order_by=${order_by}`;
-      if (self.page > 1) {
-        url = `${url}&page=${self.page}`;
-      }
-      this.$inertia
-        .replace(url, { method: "get" })
-        .then(response => {
-          self.items = response.data.data;
-          self.meta = response.data.meta;
-          self.loading = false;
-        })
-        .catch(errors => {
-          console.log(errors);
-          self.loading = false;
-        });
-    },
     deleteUser(user) {
       let self = this;
       self.deleteUserForm.user_id = user.id;
@@ -863,88 +732,6 @@ export default {
       return newStr.replace(/\w\S*/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
       });
-    },
-    async changeRoles(item) {
-      let self = this;
-      let toggleModal = swal.mixin({
-        confirmButtonClass: "v-btn blue-grey  subheading white--text",
-        buttonsStyling: false
-      });
-      self.rolesForm.roles = item.roles;
-      try {
-        self.rolesForm.busy = true;
-        const payload = await self.rolesForm.post(
-          route("api.user.roles.sync", { id: item.id })
-        );
-        item.permissions = payload.data.permissions;
-        self.rolesForm.busy = false;
-        self.rolesForm = new Form({
-          roles: []
-        });
-        toggleModal({
-          title: "Success",
-          html: `<p class="title">User Role Change!</p>`,
-          type: "success",
-          confirmButtonText: "Back"
-        });
-      } catch (errors) {
-        toggleModal({
-          title: "Error!",
-          html: `<p class="title">${errors.response.data.message}</p>`,
-          type: "error",
-          confirmButtonText: "Back"
-        });
-        self.rolesForm.busy = false;
-      }
-    },
-    removeRole(role, roles) {
-      roles.splice(roles.indexOf(role), 1);
-      roles = [...roles];
-    },
-    async changePermissions(item) {
-      /* make ajax call to update permissions to this user */
-      let self = this;
-      self.permissionsForm.permissions = item.permissions;
-      try {
-        self.permissionsForm.busy = true;
-        const payload = await App.post(
-          route("api.user.permissions.sync", { id: item.id }),
-          self.permissionsForm
-        );
-        self.permissionsForm.busy = false;
-        self.permissionsForm = new AppForm(App.forms.permissionsForm);
-      } catch ({ message }) {
-        if (message) {
-        }
-        self.permissionsForm.busy = false;
-      }
-    },
-    removePermission(permission, permissions) {
-      permissions.splice(permissions.indexOf(permission), 1);
-      permissions = [...permissions];
-    },
-    deleteAll() {
-      this.items = [];
-      this.selected = [];
-    },
-    deleteSelected() {
-      let self = this;
-      let newItems = _.difference(self.items, self.selected);
-      self.items = newItems;
-      self.selected = [];
-      //! Send Api Call To Delete The Social Account
-    },
-    toggleAll() {
-      if (this.selected.length) this.selected = [];
-      else this.selected = this.items.slice();
-    },
-    changeSort(column) {
-      if (this.pagination.sortBy === column) {
-        this.pagination.descending = !this.pagination.descending;
-      } else {
-        this.pagination.sortBy = column;
-        this.pagination.descending = false;
-      }
     }
   },
   watch: {
