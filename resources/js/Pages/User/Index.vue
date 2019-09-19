@@ -3,6 +3,19 @@
     <v-container fluid>
       <!-- User Main Detail -->
       <v-card-title>
+         <v-text-field
+              v-model="form.search"
+              clearable1
+              flat
+              solo-inverted
+              hide-details
+              prepend-inner-icon="search"
+              label="Search"
+              @click:append="reset()"
+              append-icon="refresh"
+            >
+            </v-text-field>
+
         <div class="flex-grow-1"></div>
         <v-btn color="accent" dark @click="createUser">
           Create New User
@@ -13,7 +26,7 @@
         v-model="selected"
         :loading="loading"
         :headers="headers"
-        :items="items"
+        :items="users.data"
         :search="search"
         light
         item-key="id"
@@ -292,21 +305,14 @@ export default {
   // from backend
   props: {
     users: Object,
-    status: Boolean
+    status: Boolean,
+    filters: Object,
   },
   mixins: [Acl, validationError, confirmation],
   data: () => ({
     contentClass: { grey: true, "lighten-4": true, "accent--text": true },
     dialog: false,
     expanded: [],
-
-    // server side
-    filters: [
-      { text: "Filter By Name", value: "name" },
-      { text: "Filter By Role", value: "role" },
-      { text: "Filter by Status", value: "active" },
-      { text: "Filter By Sponsor", value: "sponsor" }
-    ],
     // server side
     orderByData: "ASC",
     orderColor: "teal",
@@ -351,6 +357,13 @@ export default {
     filterRole: [],
     filterStatus: "",
     filterSponsor: "",
+    form: {
+      search: '',
+      sortBy: '',
+      orderBy: '',
+      // active: '',
+      // roles: '',
+    },
     statuses: ["active", "inactive"]
   }),
   computed: {
@@ -413,9 +426,17 @@ export default {
       ];
     }
   },
+  created(){
+    this.form.search = this.filters.search
+    this.form.orderBy = this.filters.orderBy 
+    this.form.sortBy = this.filters.sortBy
+    this.form.roles = this.filters.roles
+    this.form.active = this.filters.active
+    // this.form.active = this.filters.active
+    // this.form.roles = this.filters.roles
+  },
   mounted() {
     let self = this;
-    self.items = self.users.data;
     self.roles = self.$page.roles;
     self.permissions = self.$page.permissions;
 
@@ -424,6 +445,9 @@ export default {
     });
   },
   methods: {
+    reset() {
+      this.form = _.mapValues(this.form, () => null)
+    },
     getRank(subscription) {
       let rank = "";
       switch (subscription.rank) {
@@ -500,14 +524,7 @@ export default {
             type: "success",
             confirmButtonText: "Back"
           });
-          selected.forEach(id => {
-            console.log(id);
-            if (id !== 1) {
-              let index = _.findIndex(self.items, { id });
-              self.$delete(self.items, index);
-            }
-          });
-          self.selected = [];
+          self.$inertia.reload()
         })
         .catch(errors => {
           console.log(errors);
@@ -570,7 +587,7 @@ export default {
     toggleStatus(user) {
       let self = this;
       self.toggleForm.user_id = user.id;
-      let index = _.findIndex(self.items, { id: user.id });
+      let index = _.findIndex(self.items.data, { id: user.id });
       self.toggleForm
         .post(route("users.toggleStatus").url())
         .then(({ data }) => {
@@ -607,7 +624,7 @@ export default {
             confirmButtonText: "Back"
           });
           user.active = true;
-          self.items.splice(index, 1, user);
+          self.items.data.splice(index, 1, user);
         });
     },
     getStatus(status) {
@@ -637,8 +654,8 @@ export default {
         );
         let updated = payload.data.updated;
         _.map(updated, id => {
-          let index = _.findIndex(self.items, { id });
-          self.items[index].active = false;
+          let index = _.findIndex(self.items.data, { id });
+          self.items.data[index].active = false;
         });
         toggleModal.fire({
           title: "Success",
@@ -673,8 +690,8 @@ export default {
         let updated = payload.data.updated;
         console.log(updated);
         _.map(updated, id => {
-          let index = _.findIndex(self.items, { id });
-          self.items[index].active = true;
+          let index = _.findIndex(self.items.data, { id });
+          self.items.data[index].active = true;
         });
         toggleModal.fire({
           title: "Success",
@@ -694,7 +711,7 @@ export default {
     deleteUser(user) {
       let self = this;
       self.deleteUserForm.user_id = user.id;
-      let index = _.findIndex(self.items, { id: user.id });
+      let index = _.findIndex(self.items.data, { id: user.id });
       let toggleModal = swal.mixin({
         confirmButtonClass: "v-btn blue-grey  subheading white--text",
         buttonsStyling: false
@@ -709,7 +726,7 @@ export default {
               type: "success",
               confirmButtonText: "Back"
             });
-            self.$delete(self.items, index);
+            self.$inertia.reload()
           } else {
             toggleModal.fire({
               title: "Forbidden Action!",
@@ -730,7 +747,15 @@ export default {
   watch: {
     status(newValue) {
       this.togglestatus = newValue;
-    }
+    },
+    form: {
+      handler: _.throttle(function() {
+        let query = _.pickBy(this.form)
+        let url = this.route('users.index', Object.keys(query).length ? query : { remember: "forget"}).url()
+        this.$inertia.replace(url)
+      }, 150),
+      deep: true,
+    },
   }
 };
 </script>

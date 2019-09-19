@@ -6,7 +6,7 @@ Route::get('logout')->name('logout')->uses('Auth\LoginController@showLogoutForm'
 Route::post('logout')->name('logout.attempt')->uses('Auth\LoginController@logout')->middleware('auth');
 
 Route::get('/')->name('dashboard')->uses('DashboardController')->middleware('auth');
-Route::get('/members')->name('users.index')->uses('UsersController@index')->middleware('auth');
+Route::get('/members')->name('users.index')->uses('UsersController@index')->middleware('remember','auth');
 Route::get('/members/create')->name('users.create')->uses('UsersController@create')->middleware('auth');
 Route::post('/members/store')->name('users.store')->uses('UsersController@store')->middleware('auth');
 Route::get('/members/{user}/edit')->name('users.edit')->uses('UsersController@edit')->middleware('auth');

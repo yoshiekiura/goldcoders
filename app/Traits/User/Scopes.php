@@ -4,8 +4,6 @@ namespace App\Traits\User;
 
 trait Scopes
 {
-
-
     /**
      * @param $query
      * @param array    $filters
@@ -20,9 +18,13 @@ trait Scopes
                       ->orWhere('lname', 'like', '%'.$search.'%')
                       ->orWhere('email', 'like', '%'.$search.'%');
             });
-        })->when($filters['role'] ?? null, function ($query, $role) {
+        })->when($filters['roles'] ?? null, function ($query, $roles) {
             // member , paymaster or admin
-            $query->role($role);
+            $query->role($roles);
+        })->when($filters['orderBy'] ?? null, function ($query, $orderBy) {
+            $query->orderBy($orderBy);
+        })->when($filters['sortBy'] ?? null, function ($query, $sortBy) {
+            $query->orderBy($sortBy);
         })->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ('with' === $trashed) {
                 $query->withTrashed();
@@ -37,7 +39,7 @@ trait Scopes
      */
     public function scopeOrderByName($query)
     {
-        $query->orderBy('lname')->orderBy('fname')->orderBy('mname')->orderBy('suffix');
+        $query->orderBy('lname')->orderBy('fname');
     }
 
     /**
