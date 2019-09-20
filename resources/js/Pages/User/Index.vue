@@ -10,12 +10,47 @@
           solo-inverted
           hide-details
           prepend-inner-icon="search"
-          label="Search"
+          label="Search User"
+          @click:append="reset()"
+          append-icon="refresh"
+        ></v-text-field>
+        <div class="flex-grow-1"></div>
+        <v-text-field
+          v-model="form.sponsor"
+          clearable
+          flat
+          solo-inverted
+          hide-details
+          prepend-inner-icon="person"
+          label="Search Sponsor"
           @click:append="reset()"
           append-icon="refresh"
         ></v-text-field>
 
         <div class="flex-grow-1"></div>
+        <v-select
+          v-model="form.role"
+          :items="roles"
+          label="Filter Roles"
+          clearable
+          hide-details
+          solo-inverted
+          prepend-inner-icon="group"
+          flat
+        ></v-select>
+        <div class="flex-grow-1"></div>
+        <v-select
+          v-model="form.status"
+          :items="statuses"
+          label="Filter Status"
+          clearable
+          hide-details
+          solo-inverted
+          prepend-inner-icon="group"
+          flat
+        ></v-select>
+        <div class="flex-grow-1"></div>
+
         <v-btn color="accent" dark @click="createUser">
           Create New User
           <v-icon right>person_add</v-icon>
@@ -373,9 +408,10 @@ export default {
     form: {
       search: "",
       sortBy: "",
-      orderBy: ""
-      // active: '',
-      // roles: '',
+      orderBy: "",
+      sponsor: "",
+      active: "",
+      role: ""
     },
     statuses: ["active", "inactive"]
   }),
@@ -443,11 +479,10 @@ export default {
     this.form.search = this.filters.search;
     this.form.orderBy = this.filters.orderBy;
     this.form.sortBy = this.filters.sortBy;
-    this.form.roles = this.filters.roles;
+    this.form.role = this.filters.role;
     this.form.active = this.filters.active;
+    this.form.sponsor = this.filters.sponsor;
     this.roles = this.$page.roles;
-    // this.form.active = this.filters.active
-    // this.form.roles = this.filters.roles
   },
   mounted() {
     let self = this;

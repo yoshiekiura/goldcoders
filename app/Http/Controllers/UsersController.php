@@ -106,9 +106,9 @@ class UsersController extends Controller
         $this->authorize('view', auth()->user());
 
         return Inertia::render('User/Index', [
-            'filters' => Request::all('search', 'sortBy', 'orderBy', 'status'),
+            'filters' => Request::all('search', 'sponsor', 'role', 'status'),
             'users'   => User::orderByName()
-                ->filter(Request::only('search', 'sortBy', 'orderBy', 'status'))
+                ->filter(Request::only('search', 'sponsor', 'role', 'status'))
                 ->paginate()
                 ->transform(function ($user) {
                     return [

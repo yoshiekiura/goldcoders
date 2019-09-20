@@ -18,18 +18,20 @@ trait Scopes
                       ->orWhere('lname', 'like', '%'.$search.'%')
                       ->orWhere('email', 'like', '%'.$search.'%');
             });
-        })->when($filters['roles'] ?? null, function ($query, $roles) {
-            // member , paymaster or admin
-            $query->role($roles);
-        })->when($filters['orderBy'] ?? null, function ($query, $orderBy) {
-            $query->orderBy($orderBy);
-        })->when($filters['sortBy'] ?? null, function ($query, $sortBy) {
-            $query->orderBy($sortBy);
-        })->when($filters['trashed'] ?? null, function ($query, $trashed) {
-            if ('with' === $trashed) {
-                $query->withTrashed();
-            } elseif ('only' === $trashed) {
-                $query->onlyTrashed();
+        })->when($filters['sponsor'] ?? null, function ($query, $sponsor) {
+            $query->whereHas('sponsor', function ($query) use ($sponsor) {
+                $query->where('fname', 'like', '%'.$sponsor.'%')
+                      ->orWhere('mname', 'like', '%'.$sponsor.'%')
+                      ->orWhere('lname', 'like', '%'.$sponsor.'%')
+                      ->orWhere('email', 'like', '%'.$sponsor.'%');
+            });
+        })->when($filters['role'] ?? null, function ($query, $role) {
+            $query->role($role);
+        })->when($filters['status'] ?? null, function ($query, $status) {
+            if ('active' === $status) {
+                $query->where('active', true);
+            } elseif ('inactive' === $status) {
+                $query->where('active', false);
             }
         });
     }
