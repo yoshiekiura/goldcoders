@@ -3,52 +3,6 @@
     <v-container fluid>
       <!-- User Main Detail -->
       <v-card-title>
-        <v-text-field
-          v-model="form.search"
-          clearable
-          flat
-          solo-inverted
-          hide-details
-          prepend-inner-icon="search"
-          label="Search User"
-          @click:append="reset()"
-          append-icon="refresh"
-        ></v-text-field>
-        <div class="flex-grow-1"></div>
-        <v-text-field
-          v-model="form.sponsor"
-          clearable
-          flat
-          solo-inverted
-          hide-details
-          prepend-inner-icon="person"
-          label="Search Sponsor"
-          @click:append="reset()"
-          append-icon="refresh"
-        ></v-text-field>
-
-        <div class="flex-grow-1"></div>
-        <v-select
-          v-model="form.role"
-          :items="roles"
-          label="Filter Roles"
-          clearable
-          hide-details
-          solo-inverted
-          prepend-inner-icon="group"
-          flat
-        ></v-select>
-        <div class="flex-grow-1"></div>
-        <v-select
-          v-model="form.status"
-          :items="statuses"
-          label="Filter Status"
-          clearable
-          hide-details
-          solo-inverted
-          prepend-inner-icon="group"
-          flat
-        ></v-select>
         <div class="flex-grow-1"></div>
 
         <v-btn color="accent" dark @click="createUser">
@@ -58,16 +12,14 @@
       </v-card-title>
       <v-data-table
         v-model="selected"
-        :loading="loading"
         :headers="headers"
         :items="users.data"
-        :search="search"
         light
         item-key="id"
         show-expand
         :expanded.sync="expanded"
-        show-select
         :sort-by="sortBy"
+        show-select
         :sort-desc="sortDesc"
         :items-per-page="5"
         multi-sort
@@ -84,60 +36,51 @@
         <template v-slot:top>
           <v-toolbar dark color="blue-grey darken-4" class="mb-1">
             <v-text-field
-              v-model="search"
+              v-model="form.search"
               clearable
               flat
               solo-inverted
               hide-details
-              prepend-inner-icon="contacts"
-              label="Filter By Name"
+              prepend-inner-icon="search"
+              label="Search User"
+              @click:append="reset()"
+              append-icon="refresh"
             ></v-text-field>
             <div class="flex-grow-1"></div>
             <v-text-field
-              v-model="filterSponsor"
+              v-model="form.sponsor"
               clearable
               flat
               solo-inverted
               hide-details
               prepend-inner-icon="person"
-              label="Filter By Sponsor"
+              label="Search Sponsor"
+              @click:append="reset()"
+              append-icon="refresh"
             ></v-text-field>
+
             <div class="flex-grow-1"></div>
             <v-select
-              v-model="filterRole"
+              v-model="form.role"
               :items="roles"
-              label="Filter By Roles"
+              label="Filter Roles"
               clearable
               hide-details
               solo-inverted
               prepend-inner-icon="group"
               flat
-              multiple
-            >
-              <template v-slot:selection="{ item, index }">
-                <v-chip v-if="index === 0">
-                  <span>{{ item }}</span>
-                </v-chip>
-                <span
-                  v-if="index === 1"
-                  class="grey--text caption"
-                >(+{{ filterRole.length - 1 }} others)</span>
-              </template>
-            </v-select>
-
+            ></v-select>
             <div class="flex-grow-1"></div>
-
             <v-select
-              label="Filter By Status"
-              flat
+              v-model="form.status"
+              :items="statuses"
+              label="Filter Status"
+              clearable
               hide-details
               solo-inverted
-              clearable
-              prepend-inner-icon="verified_user"
-              :items="statuses"
-              v-model="filterStatus"
+              prepend-inner-icon="group"
+              flat
             ></v-select>
-
             <template v-if="can('manage_users')">
               <div class="flex-grow-1"></div>
 
@@ -156,6 +99,7 @@
             </template>
           </v-toolbar>
         </template>
+        <!-- Table Rows -->
         <template v-slot:item.name="{ item }">{{ item.name.toUpperCase() }}</template>
         <template v-slot:item.sponsor="{ item }">
           <span v-if="item.sponsor">{{ item.sponsor.toUpperCase() }}</span>
@@ -302,23 +246,6 @@
                       />
                     </v-flex>
                   </v-layout>
-                  <v-layout row wrap>
-                    <v-flex xs12>
-                      <p class="title accent--text">Active Subscription</p>
-                    </v-flex>
-                    <v-flex v-if="props.item.subscriptions.length >0" xs12>
-                      <v-chip
-                        v-for="subscription in props.item.subscriptions"
-                        :key="subscription.id"
-                      >
-                        <v-avatar class="primary white--text">
-                          <span class="headline">{{ getRank(subscription).charAt(0).toUpperCase() }}</span>
-                        </v-avatar>
-                        {{ getSubscriptionName(subscription) }}
-                      </v-chip>
-                    </v-flex>
-                    <v-flex v-else xs12>NO ACTIVE SUBSCRIPTION YET</v-flex>
-                  </v-layout>
                 </v-container>
               </v-card-title>
             </v-card>
@@ -398,13 +325,8 @@ export default {
     },
     page: 1,
     togglestatus: false,
-    loading: false,
     sortBy: ["name", "sponsor", "roles", "active"],
-    sortByValue: "name",
     sortDesc: [false, true],
-    filterRole: [],
-    filterStatus: "",
-    filterSponsor: "",
     form: {
       search: "",
       sortBy: "",
@@ -427,49 +349,17 @@ export default {
         {
           text: "Sponsor",
           value: "sponsor",
-          sortable: true,
-          filter: value => {
-            if (!this.filterSponsor) return true;
-            if (value) {
-              return (
-                this.filterSponsor.toLowerCase().trim() ===
-                value.toLowerCase().trim()
-              );
-            }
-          }
+          sortable: true
         },
         {
           text: "Roles",
           value: "roles",
-          sortable: true,
-          filter: value => {
-            if (this.filterRole.length <= 0) return true;
-
-            if (this.filterRole.length === 1) {
-              return this.filterRole.some(r => value.indexOf(r) >= 0);
-            } else {
-              return _.isEqual(this.filterRole.sort(), value);
-            }
-          }
+          sortable: true
         },
         {
           text: "Status",
           value: "active",
           sortable: true,
-          filter: value => {
-            let status = false;
-            let active = ["active"];
-            let inactive = ["inactive"];
-            if (active.includes(this.filterStatus)) {
-              status = true;
-            }
-            if (inactive.includes(this.filterStatus)) {
-              status = false;
-            }
-            if (!this.filterStatus) return true;
-
-            return status === value;
-          }
         },
         { text: "Actions", value: "action", sortable: false }
       ];
@@ -494,46 +384,6 @@ export default {
   methods: {
     reset() {
       this.form = _.mapValues(this.form, () => null);
-    },
-    getRank(subscription) {
-      let rank = "";
-      switch (subscription.rank) {
-        case "1ex":
-          rank = "Executive";
-          break;
-        case "1br":
-          rank = "Bronze";
-          break;
-        case "1sl":
-          rank = "Silver";
-          break;
-        case "1gd":
-          rank = "Gold";
-          break;
-        case "1gd":
-          rank = "Gold";
-          break;
-        case "1dm":
-          rank = "Diamond";
-          break;
-        case "1lt":
-          rank = "Elite";
-          break;
-        default:
-          break;
-      }
-      return rank;
-    },
-    getSubscriptionName(subscription) {
-      let name = "";
-
-      name =
-        this.toProperCase(subscription.plan) +
-        " " +
-        this.getRank(subscription) +
-        " - " +
-        subscription.amount;
-      return name;
     },
     viewReferrals(user) {
       vm.$router.push({
@@ -604,15 +454,6 @@ export default {
           self.selected = [];
           Bus.$emit("close-modal-mass-mail");
         });
-    },
-    toggleOrderByData() {
-      if (this.orderByData === "ASC") {
-        this.orderByData = "DESC";
-        this.orderColor = "orange";
-      } else {
-        this.orderByData = "ASC";
-        this.orderColor = "teal";
-      }
     },
     editUser(user) {
       this.$inertia.visit(route("users.edit", { user: user.id }).url());
