@@ -13,17 +13,23 @@ trait Scopes
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {
             $query->where(function ($query) use ($search) {
-                $query->where('fname', 'like', '%'.$search.'%')
-                      ->orWhere('mname', 'like', '%'.$search.'%')
-                      ->orWhere('lname', 'like', '%'.$search.'%')
-                      ->orWhere('email', 'like', '%'.$search.'%');
+                $names = explode(' ', $search);
+
+                foreach ($names as $name) {
+                    $query->where('fname', 'like', '%'.$name.'%')
+                          ->orWhere('mname', 'like', '%'.$name.'%')
+                          ->orWhere('lname', 'like', '%'.$name.'%');
+                }
             });
         })->when($filters['sponsor'] ?? null, function ($query, $sponsor) {
             $query->whereHas('sponsor', function ($query) use ($sponsor) {
-                $query->where('fname', 'like', '%'.$sponsor.'%')
-                      ->orWhere('mname', 'like', '%'.$sponsor.'%')
-                      ->orWhere('lname', 'like', '%'.$sponsor.'%')
-                      ->orWhere('email', 'like', '%'.$sponsor.'%');
+                $names = explode(' ', $sponsor);
+
+                foreach ($names as $name) {
+                    $query->where('fname', 'like', '%'.$name.'%')
+                          ->orWhere('mname', 'like', '%'.$name.'%')
+                          ->orWhere('lname', 'like', '%'.$name.'%');
+                }
             });
         })->when($filters['role'] ?? null, function ($query, $role) {
             $query->role($role);
