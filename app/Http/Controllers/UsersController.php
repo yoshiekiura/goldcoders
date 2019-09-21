@@ -111,7 +111,7 @@ class UsersController extends Controller
         }
 
         return Inertia::render('User/Index', [
-            'filters'  => Request::all('search', 'sponsor', 'role', 'status','page'),
+            'filters'  => Request::all('search', 'sponsor', 'role', 'status','page','per_page'),
             'per_page' => $per_page,
             'users'    => User::orderByName()
                 ->filter(Request::only('search', 'sponsor', 'role', 'status'))

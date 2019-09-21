@@ -22,9 +22,9 @@
         light
         item-key="id"
         show-expand
+        :page.sync="page"
         :expanded.sync="expanded"
-        :items-per-page="form.per_page"
-        :server-items-length="$page.users.links.length - 2"
+        hide-default-footer
         :sort-by="sortBy"
         show-select
         :sort-desc="sortDesc"
@@ -285,9 +285,8 @@ export default {
     deleteUserForm: new Form({
       user_id: null
     }),
-    page: 1,
     togglestatus: false,
-    sortBy: ["name", "sponsor", "roles", "active"],
+    sortBy: [],
     sortDesc: [false, true],
     form: {
       search: "",
@@ -297,7 +296,8 @@ export default {
       active: "",
       role: ""
     },
-    statuses: ["active", "inactive"]
+    statuses: ["active", "inactive"],
+    page: 1
   }),
   computed: {
     headers() {
@@ -339,29 +339,42 @@ export default {
   },
   mounted() {
     let self = this;
-    // set page
-
+    // listen on mail event
     Bus.$on("send-mass-mail", form => {
       self.massMail(form);
     });
   },
   methods: {
-    fetchUsers() {
+    getParams(url) {
+      var params = {};
+      var parser = document.createElement("a");
+      parser.href = url;
+      var query = parser.search.substring(1);
+      var vars = query.split("&");
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        params[pair[0]] = decodeURIComponent(pair[1]);
+      }
+      return params;
+    },
+    loadPage() {
       let self = this;
 
-      let query = `?`;
-      let url = `/members`;
-      let qs = window.location.search;
+      let url = new URL(window.location.href);
 
-      // if(self.form.per_page > 0){
-      //   url= `${url}?per_page=${self.form.per_page}`
-      // }
+      let qs = url.search;
 
-      // check if page is included in the
-      // if it is then we use & instead of ?2
-      // let url = self.users.links[1]['url']
-      url = `${url}${query}page=${self.page}`;
-      self.$inertia.replace(url);
+      let sp = new URLSearchParams(qs);
+
+      sp.delete("page");
+      
+      sp.append("page", self.page);
+
+      url.search = sp.toString();
+
+      let new_url = url.toString();
+
+      self.$inertia.replace(new_url);
     },
     reset() {
       this.form = _.mapValues(this.form, () => null);
@@ -512,6 +525,7 @@ export default {
     },
     form: {
       handler: _.throttle(function() {
+        this.page = 1;
         let query = _.pickBy(this.form);
         let url = this.route(
           "users.index",
@@ -522,8 +536,10 @@ export default {
       deep: true
     },
     page: {
-      handler() {
-        this.fetchUsers();
+      handler(newVal) {
+        if (newVal !== 1) {
+          this.loadPage();
+        }
       }
     }
   }
