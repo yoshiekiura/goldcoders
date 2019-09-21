@@ -2,6 +2,11 @@
   <main-layout title="User Management">
     <v-container fluid>
       <!-- User Main Detail -->
+      <v-pagination
+        v-if="$page.users.links.length  !== 3"
+        v-model="page"
+        :length="$page.users.links.length -2"
+      />
       <v-card-title>
         <div class="flex-grow-1"></div>
 
@@ -18,10 +23,11 @@
         item-key="id"
         show-expand
         :expanded.sync="expanded"
+        :items-per-page="form.per_page"
+        :server-items-length="$page.users.links.length - 2"
         :sort-by="sortBy"
         show-select
         :sort-desc="sortDesc"
-        :items-per-page="5"
         multi-sort
         class="elevation-1"
         :footer-props="{
@@ -142,11 +148,6 @@
             <v-icon>fa-trash</v-icon>
           </v-btn>
         </template>
-
-        <template
-          slot="pageText"
-          slot-scope="{ pageStart, pageStop }"
-        >From {{ pageStart }} to {{ pageStop }}</template>
 
         <template v-slot:expanded-item="props">
           <td colspan="12" fluid pa-0 ma-0>
@@ -273,44 +274,17 @@ export default {
   },
   mixins: [Acl, validationError, confirmation],
   data: () => ({
-    contentClass: { grey: true, "lighten-4": true, "accent--text": true },
     dialog: false,
     expanded: [],
     // server side
-    orderByData: "ASC",
-    orderColor: "teal",
-    items: [],
-    total_items: 0,
     selected: [],
-    pagination: {
-      descending: false,
-      sortBy: "name",
-      rowsPerPage: 50,
-      page: 1
-    },
-    rows_per_page_items: [5, 10, 25, 50],
-    current_user: {},
-    usersForm: new Form({}),
     toggleForm: new Form({
       user_id: null
     }),
-    search: "",
     roles: [],
-    permissions: [],
-    rolesForm: new Form({
-      roles: []
-    }),
-    permissionsForm: new Form({
-      permissions: []
-    }),
     deleteUserForm: new Form({
       user_id: null
     }),
-    meta: {
-      current_page: 1,
-      last_page: 1,
-      per_page: 50
-    },
     page: 1,
     togglestatus: false,
     sortBy: ["name", "sponsor", "roles", "active"],
@@ -354,22 +328,41 @@ export default {
     }
   },
   created() {
-    this.form.search = this.filters.search;
-    this.form.orderBy = this.filters.orderBy;
-    this.form.sortBy = this.filters.sortBy;
-    this.form.role = this.filters.role;
-    this.form.active = this.filters.active;
-    this.form.sponsor = this.filters.sponsor;
-    this.roles = this.$page.roles;
+    let self = this;
+    self.form.search = self.filters.search;
+    self.form.orderBy = self.filters.orderBy;
+    self.form.sortBy = self.filters.sortBy;
+    self.form.role = self.filters.role;
+    self.form.active = self.filters.active;
+    self.form.sponsor = self.filters.sponsor;
+    self.roles = self.$page.roles;
   },
   mounted() {
     let self = this;
+    // set page
 
     Bus.$on("send-mass-mail", form => {
       self.massMail(form);
     });
   },
   methods: {
+    fetchUsers() {
+      let self = this;
+
+      let query = `?`;
+      let url = `/members`;
+      let qs = window.location.search;
+
+      // if(self.form.per_page > 0){
+      //   url= `${url}?per_page=${self.form.per_page}`
+      // }
+
+      // check if page is included in the
+      // if it is then we use & instead of ?2
+      // let url = self.users.links[1]['url']
+      url = `${url}${query}page=${self.page}`;
+      self.$inertia.replace(url);
+    },
     reset() {
       this.form = _.mapValues(this.form, () => null);
     },
@@ -433,7 +426,7 @@ export default {
     toggleStatus(user) {
       let self = this;
       self.toggleForm.user_id = user.id;
-      let index = _.findIndex(self.items.data, { id: user.id });
+      let index = _.findIndex(self.users.data, { id: user.id });
       self.$inertia.post(route("users.toggleStatus").url(), self.toggleForm);
       swal.fire({
         title: "<strong>Success!</u></strong>",
@@ -527,6 +520,11 @@ export default {
         this.$inertia.replace(url);
       }, 150),
       deep: true
+    },
+    page: {
+      handler() {
+        this.fetchUsers();
+      }
     }
   }
 };

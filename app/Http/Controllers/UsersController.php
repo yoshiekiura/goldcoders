@@ -104,13 +104,19 @@ class UsersController extends Controller
     public function index()
     {
         $this->authorize('view', auth()->user());
+        $per_page = 10;
+
+        if (request()->per_page) {
+            $per_page = intval(request()->per_page);
+        }
 
         return Inertia::render('User/Index', [
-            'filters' => Request::all('search', 'sponsor', 'role', 'status'),
-            'users'   => User::orderByName()
+            'filters'  => Request::all('search', 'sponsor', 'role', 'status','page'),
+            'per_page' => $per_page,
+            'users'    => User::orderByName()
                 ->filter(Request::only('search', 'sponsor', 'role', 'status'))
-                ->paginate()
-                ->transform(function ($user) {
+                ->paginate($per_page)
+                ->transform(function ($user, $per_page) {
                     return [
                         'id'                => $user->id,
                         'email'             => $user->email,
@@ -129,9 +135,11 @@ class UsersController extends Controller
                         'permanent_address' => $user->permanent_address,
                         'current_address'   => $user->current_address,
                         // 'email_verified_at' => $user->email_verified_at,
-                        'roles'             => $user->role_list,
-                        // 'permissions'       => $user->permission_list,
-                        // fix subscription to return proper data for subscriptions
+                        'roles'             => $user->role_list
+
+// 'permissions'       => $user->permission_list,
+
+// fix subscription to return proper data for subscriptions
                         // 'subscriptions'     => $user->subscriptions
                     ];
                 })
