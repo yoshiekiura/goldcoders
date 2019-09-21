@@ -128,11 +128,11 @@ class UsersController extends Controller
                         'mobile_no'         => $user->mobile_no,
                         'permanent_address' => $user->permanent_address,
                         'current_address'   => $user->current_address,
-                        'email_verified_at' => $user->email_verified_at,
+                        // 'email_verified_at' => $user->email_verified_at,
                         'roles'             => $user->role_list,
-                        'permissions'       => $user->permission_list,
+                        // 'permissions'       => $user->permission_list,
                         // fix subscription to return proper data for subscriptions
-                        'subscriptions'     => $user->subscriptions
+                        // 'subscriptions'     => $user->subscriptions
                     ];
                 })
         ]);
