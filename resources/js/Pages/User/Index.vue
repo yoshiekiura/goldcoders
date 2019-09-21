@@ -359,7 +359,7 @@ export default {
         {
           text: "Status",
           value: "active",
-          sortable: true,
+          sortable: true
         },
         { text: "Actions", value: "action", sortable: false }
       ];
@@ -424,15 +424,13 @@ export default {
       form
         .post(route("users.massMail").url())
         .then(response => {
-          let toggleModal = swal.mixin({
-            confirmButtonClass: "v-btn blue-grey  subheading white--text",
-            buttonsStyling: false
-          });
-          toggleModal.fire({
-            title: "Success!",
-            html: '<p class="title">' + response.data.message + "</p>",
+          swal.fire({
+            title: "<strong>Success!</u></strong>",
             type: "success",
-            confirmButtonText: "Back"
+            html: "<b>" + response.data.message + "</b>",
+            focusConfirm: true,
+            confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
+            confirmButtonAriaLabel: "Back!"
           });
           self.selected = [];
           Bus.$emit("close-modal-mass-mail");
@@ -440,15 +438,13 @@ export default {
         .catch(errors => {
           console.log(errors);
           if (errors.response.data.message) {
-            let toggleModal = swal.mixin({
-              confirmButtonClass: "v-btn blue-grey  subheading white--text",
-              buttonsStyling: false
-            });
-            toggleModal.fire({
-              title: "Oops! Something Went Wrong...",
-              html: '<p class="title">' + errors.response.data.message + "</p>",
-              type: "error",
-              confirmButtonText: "Back"
+            swal.fire({
+              title: "<strong>Success!</u></strong>",
+              type: "success",
+              html: "<b>" + response.data.message + "</b>",
+              focusConfirm: true,
+              confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
+              confirmButtonAriaLabel: "Back!"
             });
           }
           self.selected = [];
