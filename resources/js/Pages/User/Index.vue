@@ -106,6 +106,7 @@
         </template>
         <template v-slot:item.active="{ item }">
           <v-switch
+            :disabled="!can('manage_users')"
             color="green darken-4"
             :label="getStatus(item.active)"
             v-model="item.active"
@@ -133,24 +134,11 @@
             >{{ role.toUpperCase() }}</span>
           </v-chip>
         </template>
-        <template v-slot:item.action="{item}">
+        <template v-if="can('manage_users')" v-slot:item.action="{item}">
           <v-btn text icon color="blue" class="compress--icon" @click="editUser(item)">
             <v-icon>edit</v-icon>
           </v-btn>
-          <v-btn text icon color="green" class="compress--icon" @click="viewSubscriptions(item)">
-            <v-icon>attach_money</v-icon>
-          </v-btn>
-          <v-btn text icon color="indigo" class="compress--icon" @click="viewReferrals(item)">
-            <v-icon>fa-users</v-icon>
-          </v-btn>
-          <v-btn
-            :disabled="!can('manage_users')"
-            text
-            icon
-            color="error"
-            class="compress--icon"
-            @click="openDialog(item)"
-          >
+          <v-btn text icon color="error" class="compress--icon" @click="openDialog(item)">
             <v-icon>fa-trash</v-icon>
           </v-btn>
         </template>
@@ -384,18 +372,6 @@ export default {
   methods: {
     reset() {
       this.form = _.mapValues(this.form, () => null);
-    },
-    viewReferrals(user) {
-      vm.$router.push({
-        name: "user-referrals",
-        params: { user: `${user.id}` }
-      });
-    },
-    viewSubscriptions(user) {
-      vm.$router.push({
-        name: "user-subscriptions",
-        params: { id: `${user.id}` }
-      });
     },
     viewMassMailModal() {
       Bus.$emit("open-modal-mass-mail", this.selected);
