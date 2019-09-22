@@ -5,8 +5,15 @@
       <v-pagination
         v-if="$page.users.links.length  !== 3"
         v-model="page"
-        :length="$page.users.links.length -2"
+        :length="parseInt($page.users.links.length - 2)"
       />
+      <v-text-field
+        v-model.number="per_page"
+        label="Items per page"
+        type="number"
+        min="-1"
+        max="15"
+      ></v-text-field>
       <v-card-title>
         <div class="flex-grow-1"></div>
 
@@ -24,19 +31,14 @@
         show-expand
         :page.sync="page"
         :expanded.sync="expanded"
+        :server-items-length="parseInt($page.users.links.length -2)"
+        :items-per-page="-1"
         hide-default-footer
         :sort-by="sortBy"
         show-select
         :sort-desc="sortDesc"
         multi-sort
         class="elevation-1"
-        :footer-props="{
-      showFirstLastPage: true,
-      firstIcon: 'mdi-arrow-collapse-left',
-      lastIcon: 'mdi-arrow-collapse-right',
-      prevIcon: 'mdi-minus',
-      nextIcon: 'mdi-plus'
-    }"
       >
         <!-- toolbar search -->
         <template v-slot:top>
@@ -297,7 +299,8 @@ export default {
       role: ""
     },
     statuses: ["active", "inactive"],
-    page: 1
+    page: 1,
+    per_page: 10
   }),
   computed: {
     headers() {
@@ -345,19 +348,7 @@ export default {
     });
   },
   methods: {
-    getParams(url) {
-      var params = {};
-      var parser = document.createElement("a");
-      parser.href = url;
-      var query = parser.search.substring(1);
-      var vars = query.split("&");
-      for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split("=");
-        params[pair[0]] = decodeURIComponent(pair[1]);
-      }
-      return params;
-    },
-    loadPage() {
+    setQueryString(query, val) {
       let self = this;
 
       let url = new URL(window.location.href);
@@ -366,9 +357,9 @@ export default {
 
       let sp = new URLSearchParams(qs);
 
-      sp.delete("page");
-      
-      sp.append("page", self.page);
+      sp.delete(query);
+
+      sp.append(query, val);
 
       url.search = sp.toString();
 
@@ -526,6 +517,7 @@ export default {
     form: {
       handler: _.throttle(function() {
         this.page = 1;
+        this.per_page = 10;
         let query = _.pickBy(this.form);
         let url = this.route(
           "users.index",
@@ -537,9 +529,12 @@ export default {
     },
     page: {
       handler(newVal) {
-        if (newVal !== 1) {
-          this.loadPage();
-        }
+        this.setQueryString("page", newVal);
+      }
+    },
+    per_page: {
+      handler(newVal) {
+        this.setQueryString("per_page", newVal);
       }
     }
   }

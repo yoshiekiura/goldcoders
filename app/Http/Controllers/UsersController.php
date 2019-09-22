@@ -104,6 +104,7 @@ class UsersController extends Controller
     public function index()
     {
         $this->authorize('view', auth()->user());
+
         $per_page = 10;
 
         if (request()->per_page) {
@@ -111,7 +112,7 @@ class UsersController extends Controller
         }
 
         return Inertia::render('User/Index', [
-            'filters'  => Request::all('search', 'sponsor', 'role', 'status','page','per_page'),
+            'filters'  => Request::all('search', 'sponsor', 'role', 'status','page'),
             'per_page' => $per_page,
             'users'    => User::orderByName()
                 ->filter(Request::only('search', 'sponsor', 'role', 'status'))
