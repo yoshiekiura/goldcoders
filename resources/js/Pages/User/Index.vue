@@ -534,6 +534,7 @@ export default {
     },
     per_page: {
       handler(newVal) {
+        this.page = 1;
         this.setQueryString("per_page", newVal);
       }
     }
