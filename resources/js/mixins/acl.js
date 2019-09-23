@@ -1,7 +1,7 @@
 export default {
   methods: {
     isLoggedIn() {
-      return !!this.$page.isLoggedIn;
+      return !!this.$page.auth.isLoggedIn;
     },
     hasRole(payload) {
       let me = this.$page.auth.user;

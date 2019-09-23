@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Models\Role;
 use Inertia\Inertia;
-use App\Models\Permission;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\UrlWindow;
@@ -38,20 +37,17 @@ class AppServiceProvider extends ServiceProvider
         Inertia::version(function () {
             return md5_file(public_path('mix-manifest.json'));
         });
-
-        Inertia::share(function () {
-            $user        = Auth::user();
-            $roles       = Role::all()->pluck('name')->toArray();
-            $permissions = Permission::all()->pluck('name')->toArray();
-            return [
-                'app'         => [
-                    'name' => Config::get('app.name')
-                ],
-                'roles'       => $roles,
-                'permissions' => $permissions,
-                'isLoggedIn'  => $user ? true : false,
-                'auth'        => [
-                    'user' => $user ? [
+        Inertia::share([
+            // Synchronously
+            'app'    => [
+                'name' => Config::get('app.name')
+            ],
+            // Lazily
+            'auth'   => function () {
+                $user = Auth::user();
+                return [
+                    'isLoggedIn' => $user ? true : false,
+                    'user'       => $user ? [
                         'id'                => $user->id,
                         'sponsor'           => $user->sponsor,
                         'email'             => $user->email,
@@ -68,18 +64,22 @@ class AppServiceProvider extends ServiceProvider
                         'mobile_no'         => $user->mobile_no,
                         'permanent_address' => $user->permanent_address,
                         'current_address'   => $user->current_address,
-                        // 'email_verified_at' => $user->email_verified_at,
+                        'email_verified_at' => $user->email_verified_at,
                         'roles'             => $user->role_list,
-                        // 'permissions'       => $user->permission_list,
                         'can'               => $user->can
                     ] : null
-                ],
-                'flash'       => [
-                    'success' => Session::get('success'),
-                ],
-                'errors'      => Session::get('errors') ? Session::get('errors')->getBag('default')->getMessages() : (object) []
-            ];
-        });
+                ];
+            },
+            'roles'  => function () {
+                return Role::all()->pluck('name')->toArray();
+            },
+            'flash'  => [
+                'success' => Session::get('success')
+            ],
+            'errors' => Session::get('errors') ? Session::get('errors')->getBag('default')->getMessages() : (object) []
+
+        ]);
+
         $this->registerLengthAwarePaginator();
     }
 
