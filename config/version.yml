@@ -7,16 +7,16 @@ current:
   minor: 0
   patch: 5
   git_absorb: git-local
-  prerelease: 1-g02366da
+  prerelease: 2-g297d69d
   buildmetadata: ''
-  commit: 02366d
+  commit: 297d69
   timestamp:
     year: 2019
     month: 9
-    day: 23
+    day: 27
     hour: 1
-    minute: 37
-    second: 35
+    minute: 46
+    second: 52
     timezone: UTC
 commit:
   length: 6
