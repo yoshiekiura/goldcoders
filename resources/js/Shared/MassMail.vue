@@ -1,39 +1,22 @@
 <template>
-  <v-dialog 
-    v-model="dialog" 
-    fullscreen 
-    hide-overlay 
-    transition="dialog-bottom-transition">
+  <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
     <v-card>
-      <v-toolbar 
-        dark 
-        color="accent">
-        <v-btn 
-          icon 
-          dark 
-          @click.native="dialog = false">
+      <v-toolbar dark color="accent">
+        <v-btn icon dark @click.native="dialog = false">
           <v-icon>arrow_back</v-icon>
         </v-btn>
-        <v-spacer/>
+        <v-spacer />
         <v-toolbar-title>Compose Mail</v-toolbar-title>
-        <v-spacer/>
+        <v-spacer />
         <v-toolbar-items>
-          <v-btn 
-            :disabled="errors.any()" 
-            dark 
-            text
-            @click="submit">Send Mail
+          <v-btn :disabled="errors.any()" dark text @click="submit">
+            Send Mail
             <v-icon right>fa-send</v-icon>
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-layout 
-        row 
-        wrap>
-        <v-flex 
-          xs12 
-          md8 
-          offset-md2>
+      <v-layout row wrap>
+        <v-flex xs12 md8 offset-md2>
           <v-text-field
             v-validate="{ required: true}"
             v-model="form.subject"
@@ -44,19 +27,10 @@
             data-vv-name="subject"
           />
         </v-flex>
-        <v-flex 
-          xs12 
-          md8 
-          offset-md2>
-          <v-switch 
-            v-model="form.with_panel" 
-            label="With Panel"/>
+        <v-flex xs12 md8 offset-md2>
+          <v-switch v-model="form.with_panel" label="With Panel" />
         </v-flex>
-        <v-flex 
-          v-if="form.with_panel" 
-          xs12 
-          md8 
-          offset-md2>
+        <v-flex v-if="form.with_panel" xs12 md8 offset-md2>
           <v-textarea
             v-validate="{ required: form.with_panel}"
             v-model="form.panel_message"
@@ -71,10 +45,7 @@
             persistent-hint
           />
         </v-flex>
-        <v-flex 
-          xs12 
-          md8 
-          offset-md2>
+        <v-flex xs12 md8 offset-md2>
           <v-textarea
             v-validate="{ required: true}"
             v-model="form.message"
@@ -87,19 +58,10 @@
             data-vv-name="message"
           />
         </v-flex>
-        <v-flex 
-          xs12 
-          md8 
-          offset-md2>
-          <v-switch 
-            v-model="form.with_button" 
-            label="With Call To Action"/>
+        <v-flex xs12 md8 offset-md2>
+          <v-switch v-model="form.with_button" label="With Call To Action" />
         </v-flex>
-        <v-flex 
-          v-if="form.with_button" 
-          xs12 
-          md8 
-          offset-md2>
+        <v-flex v-if="form.with_button" xs12 md8 offset-md2>
           <v-text-field
             v-validate="{ required: form.with_button}"
             v-model="form.button_url"
@@ -110,11 +72,7 @@
             data-vv-name="button_url"
           />
         </v-flex>
-        <v-flex 
-          v-if="form.with_button" 
-          xs12 
-          md8 
-          offset-md2>
+        <v-flex v-if="form.with_button" xs12 md8 offset-md2>
           <v-select
             v-validate="{ required: form.with_button}"
             v-model="form.button_color"
@@ -126,11 +84,7 @@
             data-vv-name="button_color"
           />
         </v-flex>
-        <v-flex 
-          v-if="form.with_button" 
-          xs12 
-          md8 
-          offset-md2>
+        <v-flex v-if="form.with_button" xs12 md8 offset-md2>
           <v-text-field
             v-validate="{ required: form.with_button}"
             v-model="form.button_message"
@@ -141,10 +95,7 @@
             data-vv-name="button_message"
           />
         </v-flex>
-        <v-flex 
-          xs12 
-          md8 
-          offset-md2>
+        <v-flex xs12 md8 offset-md2>
           <v-text-field
             v-validate="{ required: true}"
             v-model="form.signature"
@@ -155,10 +106,7 @@
             data-vv-name="signature"
           />
         </v-flex>
-        <v-flex 
-          xs12 
-          md8 
-          offset-md2>
+        <v-flex xs12 md8 offset-md2>
           <v-btn
             :loading="form.busy"
             :disabled="errors.any()"
@@ -167,7 +115,8 @@
             color="accent"
             dark
             @click="submit()"
-          >Send Mail
+          >
+            Send Mail
             <v-icon right>fa-send</v-icon>
           </v-btn>
         </v-flex>
@@ -220,15 +169,13 @@ export default {
         if (result) {
           Bus.$emit("send-mass-mail", this.form);
         } else {
-          let modal = swal.mixin({
-            confirmButtonClass: "v-btn blue-grey  subheading white--text",
-            buttonsStyling: false
-          });
-          modal({
-            title: "Validation Error!",
-            html: '<p class="title">Please Complete Form To Send Mail!</p>',
+          swal.fire({
+            title: "<strong>Validation Error!</u></strong>",
             type: "error",
-            confirmButtonText: "Back"
+            html: " <b>Please Complete Form to Send Email!</b>",
+            focusConfirm: true,
+            confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
+            confirmButtonAriaLabel: "Back!"
           });
         }
       });

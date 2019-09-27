@@ -5,18 +5,18 @@ current:
   label: v
   major: 1
   minor: 0
-  patch: 0
+  patch: 5
   git_absorb: git-local
-  prerelease: 4-g6a8dfa3
+  prerelease: 1-g02366da
   buildmetadata: ''
-  commit: 6a8dfa
+  commit: 02366d
   timestamp:
     year: 2019
     month: 9
     day: 23
     hour: 1
-    minute: 36
-    second: 37
+    minute: 37
+    second: 35
     timezone: UTC
 commit:
   length: 6
