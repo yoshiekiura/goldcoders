@@ -30,8 +30,16 @@
       />
       <v-link
         title="Manage Users"
-        href="users.index"
+        :href="route('users.index').url()"
         icon="fa-users"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+      <v-link
+        title="Referrals"
+        :href="route('referrals.index').url()"
+        icon="fa-sitemap"
         link-color="white"
         active-color="#BA9A5a"
         icon-color="#fafafa"

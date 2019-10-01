@@ -1,20 +1,12 @@
 <template>
-  <v-list-item
-    :class="[{ styleAvatar: avatarOn }]"
-    @click.native="navigate(href)"
-  >
+  <v-list-item :class="[{ styleAvatar: avatarOn }]" @click.native="navigate(href)">
     <v-list-item-action v-if="iconOn && !avatarOn">
       <v-icon
         :style="{color: isActive(href) ? activeColor : iconColor, cursor: href ? 'pointer' : ''}"
-      >
-      {{ icon }}
-      </v-icon>
+      >{{ icon }}</v-icon>
     </v-list-item-action>
     <v-list-item-avatar v-if="iconOn && avatarOn">
-         <v-img 
-        :src="avatar" 
-         >
-         </v-img>
+      <v-img :src="avatar"></v-img>
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title :style="{color: isActive(href) ? activeColor : linkColor}">
@@ -24,9 +16,7 @@
     <v-list-item-action v-if="iconOn && avatarOn">
       <v-icon
         :style="{color: isActive(href) ? activeColor : iconColor, cursor: href ? 'pointer' : ''}"
-      >
-      {{ icon }}
-      </v-icon>
+      >{{ icon }}</v-icon>
     </v-list-item-action>
   </v-list-item>
 </template>
@@ -91,17 +81,41 @@ export default {
     }
   },
   methods: {
-   isActive() {
-      return this.route().current(this.href)
+    isActive() {
+      return this.route().current(this.href);
     },
     navigate(href) {
       let self = this;
       /* if valid url */
       if (self.isURL(href)) {
-        window.open(href);
+        // check if link belongs to same domain
+        if (self.getHostName(href) == window.location.hostname) {
+          this.$inertia.replace(href);
+        } else {
+          window.open(href);
+        }
       } else {
         /* when using vue router path */
-        this.$inertia.visit(this.route(href), { method: 'get', data: {}, replace: false, preserveScroll: false, preserveState: false })
+        this.$inertia.visit(this.route(href), {
+          method: "get",
+          data: {},
+          replace: false,
+          preserveScroll: false,
+          preserveState: false
+        });
+      }
+    },
+    getHostName(url) {
+      var match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
+      if (
+        match != null &&
+        match.length > 2 &&
+        typeof match[2] === "string" &&
+        match[2].length > 0
+      ) {
+        return match[2];
+      } else {
+        return null;
       }
     },
     isURL(str) {

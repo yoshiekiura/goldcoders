@@ -5,12 +5,9 @@ namespace App\Providers;
 use App\Models\Role;
 use Inertia\Inertia;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\UrlWindow;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -115,57 +112,22 @@ class AppServiceProvider extends ServiceProvider
 
                 public function toArray()
                 {
+                    $total_pages     = ceil($this->total() / $this->perPage());
+                    $show_pagination = false;
+
+                    if ($total_pages > 1) {
+                        $show_pagination = true;
+                    }
+
                     return [
-                        'data'  => $this->items->toArray(),
-                        'links' => $this->links()
+                        'data' => $this->items->toArray(),
+                        'meta' => [
+                            'page'        => $this->currentPage(),
+                            'total_pages' => $total_pages,
+                            'per_page'    => $this->perPage(),
+                            'visible'     => $show_pagination
+                        ]
                     ];
-                }
-
-                /**
-                 * @param $view
-                 * @param array   $data
-                 */
-                public function links($view = null, $data = [])
-                {
-                    $this->appends(Request::all());
-
-                    $window = UrlWindow::make($this);
-
-                    $elements = array_filter([
-                        $window['first'],
-                        is_array($window['slider']) ? '...' : null,
-                        $window['slider'],
-                        is_array($window['last']) ? '...' : null,
-                        $window['last']
-                    ]);
-
-                    return Collection::make($elements)->flatMap(function ($item) {
-                        if (is_array($item)) {
-                            return Collection::make($item)->map(function ($url, $page) {
-                                return [
-                                    'url'    => $url,
-                                    'label'  => $page,
-                                    'active' => $this->currentPage() === $page
-                                ];
-                            });
-                        } else {
-                            return [
-                                [
-                                    'url'    => null,
-                                    'label'  => '...',
-                                    'active' => false
-                                ]
-                            ];
-                        }
-                    })->prepend([
-                        'url'    => $this->previousPageUrl(),
-                        'label'  => 'Previous',
-                        'active' => false
-                    ])->push([
-                        'url'    => $this->nextPageUrl(),
-                        'label'  => 'Next',
-                        'active' => false
-                    ]);
                 }
             };
         });

@@ -18,4 +18,5 @@ Route::post('/users/massActivate', 'UsersController@massActivate')->name('users.
 Route::post('/users/massDeactivate', 'UsersController@massDeactivate')->name('users.massDeactivate')->middleware('auth');
 Route::post('/users/massMail', 'UsersController@massMail')->name('users.massMail')->middleware('auth');
 
-// routes for profile, settings, change password
+//Referrals
+Route::get('/referrals/{user?}')->name('referrals.index')->uses('UsersController@referrals')->middleware('remember','auth');

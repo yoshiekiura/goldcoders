@@ -78,4 +78,20 @@ class UserPolicy
             return true;
         }
     }
+
+    /**
+     * @param User $user
+     */
+    public function view_referrals(User $user)
+    {
+        $auth = auth()->user();
+
+        if ($auth->can('manage_users')) {
+            return true;
+        }
+
+        if ($auth->id === $user->sp_id) {
+            return true;
+        }
+    }
 }

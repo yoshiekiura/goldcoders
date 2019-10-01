@@ -77,7 +77,7 @@ class User extends Authenticatable
                 $user->sp_id = $sponsor->id;
             }
 
-            if ($sponsorID = request()->sponsor_id) {
+            if ($sponsorID = request()->sp_id) {
                 /* override cookie with current request */
                 $sponsor     = self::find($sponsorID);
                 $user->sp_id = $sponsor->id;

@@ -3,12 +3,13 @@
     <v-container fluid>
       <!-- User Main Detail -->
       <v-pagination
-        v-if="$page.users.links.length  !== 3"
-        v-model="page"
-        :length="parseInt($page.users.links.length - 2)"
+        v-if="users.meta.visible"
+        v-model="form.page"
+        :length="users.meta.total_pages"
+        :total-visible="10"
       />
       <v-text-field
-        v-model.number="per_page"
+        v-model.number="form.per_page"
         label="Items per page"
         type="number"
         min="-1"
@@ -29,9 +30,9 @@
         light
         item-key="id"
         show-expand
-        :page.sync="page"
+        :page.sync="form.page"
         :expanded.sync="expanded"
-        :server-items-length="parseInt($page.users.links.length -2)"
+        :server-items-length="users.meta.total_pages"
         :items-per-page="-1"
         hide-default-footer
         :sort-by="sortBy"
@@ -51,8 +52,6 @@
               hide-details
               prepend-inner-icon="search"
               label="Search User"
-              @click:append="reset()"
-              append-icon="refresh"
             ></v-text-field>
             <div class="flex-grow-1"></div>
             <v-text-field
@@ -63,8 +62,6 @@
               hide-details
               prepend-inner-icon="person"
               label="Search Sponsor"
-              @click:append="reset()"
-              append-icon="refresh"
             ></v-text-field>
 
             <div class="flex-grow-1"></div>
@@ -292,15 +289,13 @@ export default {
     sortDesc: [false, true],
     form: {
       search: "",
-      sortBy: "",
-      orderBy: "",
       sponsor: "",
-      active: "",
-      role: ""
+      status: "",
+      role: "",
+      page: 1,
+      per_page: 10
     },
-    statuses: ["active", "inactive"],
-    page: 1,
-    per_page: 10
+    statuses: ["active", "inactive"]
   }),
   computed: {
     headers() {
@@ -333,12 +328,16 @@ export default {
   created() {
     let self = this;
     self.form.search = self.filters.search;
-    self.form.orderBy = self.filters.orderBy;
-    self.form.sortBy = self.filters.sortBy;
     self.form.role = self.filters.role;
-    self.form.active = self.filters.active;
+    self.form.status = self.filters.status;
     self.form.sponsor = self.filters.sponsor;
+    self.form.page = parseInt(self.users.meta.page);
+    self.form.per_page = parseInt(self.users.meta.per_page);
     self.roles = self.$page.roles;
+    self.debouncedGetUsers = _.debounce(self.fetchUsers, 50);
+  },
+  remember:{
+    data: ['form'],
   },
   mounted() {
     let self = this;
@@ -348,27 +347,17 @@ export default {
     });
   },
   methods: {
-    setQueryString(query, val) {
-      let self = this;
-
-      let url = new URL(window.location.href);
-
-      let qs = url.search;
-
-      let sp = new URLSearchParams(qs);
-
-      sp.delete(query);
-
-      sp.append(query, val);
-
-      url.search = sp.toString();
-
-      let new_url = url.toString();
-
-      self.$inertia.replace(new_url);
+    fetchUsers() {
+      let query = _.pickBy(this.form);
+      let url = this.route(
+        "users.index",
+        Object.keys(query).length ? query : { remember: "forget" }
+      ).url();
+      this.$inertia.replace(url);
     },
-    reset() {
-      this.form = _.mapValues(this.form, () => null);
+    updateSelect() {
+      this.$set(this.form, "status", this.form["status"]);
+      console.log("updating");
     },
     viewMassMailModal() {
       Bus.$emit("open-modal-mass-mail", this.selected);
@@ -514,29 +503,31 @@ export default {
     status(newValue) {
       this.togglestatus = newValue;
     },
-    form: {
-      handler: _.throttle(function() {
-        this.page = 1;
-        this.per_page = 10;
-        let query = _.pickBy(this.form);
-        let url = this.route(
-          "users.index",
-          Object.keys(query).length ? query : { remember: "forget" }
-        ).url();
-        this.$inertia.replace(url);
-      }, 150),
-      deep: true
+    "form.search"() {
+      this.form.page = 1;
+      this.debouncedGetUsers();
     },
-    page: {
-      handler(newVal) {
-        this.setQueryString("page", newVal);
-      }
+    "form.role"() {
+      this.form.page = 1;
+      this.debouncedGetUsers();
     },
-    per_page: {
-      handler(newVal) {
-        this.page = 1;
-        this.setQueryString("per_page", newVal);
+    "form.status"() {
+      this.form.page = 1;
+      this.debouncedGetUsers();
+    },
+    "form.per_page"() {
+      this.form.page = 1;
+      this.debouncedGetUsers();
+    },
+    "form.sponsor"() {
+      this.form.page = 1;
+      this.debouncedGetUsers();
+    },
+    "form.page"(newVal) {
+      if (this.form.page !== 1) {
+        this.debouncedGetUsers();
       }
+      // issue on redirect back for page
     }
   }
 };

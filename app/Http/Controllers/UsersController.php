@@ -107,17 +107,16 @@ class UsersController extends Controller
 
         $per_page = 10;
 
-        if (request()->per_page) {
+        if (request()->per_page && is_int(intval(request()->per_page)) && request()->per_page > 0) {
             $per_page = intval(request()->per_page);
         }
 
         return Inertia::render('User/Index', [
-            'filters'  => Request::all('search', 'sponsor', 'role', 'status','page'),
-            'per_page' => $per_page,
-            'users'    => User::orderByName()
+            'filters' => Request::all('search', 'sponsor', 'role', 'status', 'page', 'per_page'),
+            'users'   => User::orderByName()
                 ->filter(Request::only('search', 'sponsor', 'role', 'status'))
                 ->paginate($per_page)
-                ->transform(function ($user, $per_page) {
+                ->transform(function ($user) {
                     return [
                         'id'                => $user->id,
                         'email'             => $user->email,
@@ -135,13 +134,7 @@ class UsersController extends Controller
                         'mobile_no'         => $user->mobile_no,
                         'permanent_address' => $user->permanent_address,
                         'current_address'   => $user->current_address,
-                        // 'email_verified_at' => $user->email_verified_at,
                         'roles'             => $user->role_list
-
-// 'permissions'       => $user->permission_list,
-
-// fix subscription to return proper data for subscriptions
-                        // 'subscriptions'     => $user->subscriptions
                     ];
                 })
         ]);
@@ -199,7 +192,6 @@ class UsersController extends Controller
             // remove null value of image_url
             $image_urls = array_filter($image_urls->toArray());
 
-// delete all uploads
             if (count($image_urls) > 0) {
                 Storage::delete($image_urls);
             }
@@ -242,6 +234,60 @@ class UsersController extends Controller
         }
 
         return response()->json(['message' => 'Sending Mail!'], 200);
+    }
+
+    /**
+     * @param $id
+     */
+    public function referrals($user = null)
+    {
+        $user = User::with('sponsor')->find($user);
+        //  Set Default User as Authenticated User
+        $auth = request()->user()->load('sponsor');
+
+        // add a logic to check if the user can view that id
+        $this->authorize('view', $auth);
+
+        if (!$user) {
+            $user = $auth;
+        }
+
+        $referrals = $user->referrals();
+
+        $per_page = 10;
+
+        if (request()->per_page && is_int(intval(request()->per_page)) && request()->per_page > 0) {
+            $per_page = intval(request()->per_page);
+        }
+
+        return Inertia::render('User/Referrals', [
+            'filters'  => Request::all('search', 'status', 'page', 'per_page', 'user'),
+            'sponsor'  => $user,
+            'per_page' => $per_page,
+            'users'    => $referrals
+                ->filter(Request::only('search', 'status'))
+                ->paginate($per_page)
+                ->transform(function ($user, $per_page) {
+                    return [
+                        'id'                => $user->id,
+                        'email'             => $user->email,
+                        'username'          => $user->username,
+                        'name'              => $user->name,
+                        'photo_url'         => $user->photo_url,
+                        'fname'             => $user->fname,
+                        'mname'             => $user->mname,
+                        'lname'             => $user->lname,
+                        'suffix'            => $user->suffix,
+                        'avatar'            => $user->avatar,
+                        'active'            => $user->active,
+                        'dob'               => $user->dob,
+                        'mobile_no'         => $user->mobile_no,
+                        'permanent_address' => $user->permanent_address,
+                        'current_address'   => $user->current_address,
+                        'referral_count'    => $user->referrals()->count()
+                    ];
+                })
+        ]);
     }
 
     /**
@@ -314,7 +360,7 @@ class UsersController extends Controller
             $user->save();
         }
 
-        return redirect()->route('users.index');
+        return redirect()->back();
     }
 
     /**
@@ -370,15 +416,12 @@ class UsersController extends Controller
 
         $user->update($data);
 
-// update password
         if ($data['password'] && $data['password_confirmation']) {
             $user->password = $data['password'];
         }
 
-        $roles       = $data['roles'];
-        $permissions = $data['permissions'];
+        $roles = $data['roles'];
 
-// update user status active /inactive
         if ($user->isSuperAdmin()) {
             $user->active = true;
             $user->sp_id  = null;
@@ -389,20 +432,15 @@ class UsersController extends Controller
         } else {
             $user->active = $data['active'];
             $user->sp_id  = $data['sp_id'];
-            // update roles
             $user->syncRoles($roles);
-
-// update permissions
-            // $permissions = $user->syncPermissions($permissions);
         }
 
-// update paymaster if account is member only
         if ($user->hasRole('member')) {
             $user->paymaster_id = $data['paymaster_id'];
         }
 
         $user->save();
-        // return a json response
+
         return redirect()->route('users.index');
     }
 

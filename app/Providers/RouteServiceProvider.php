@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -25,6 +26,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         //
         Route::pattern('id', '[0-9]+');
+        Route::pattern('user', '[0-9]+');
         Route::pattern('hash', '[a-z0-9]+');
         Route::pattern('hex', '[a-f0-9]+');
         Route::pattern('uuid', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}');
