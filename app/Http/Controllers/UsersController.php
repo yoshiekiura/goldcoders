@@ -246,7 +246,6 @@ class UsersController extends Controller
         $auth = request()->user()->load('sponsor');
 
         // add a logic to check if the user can view that id
-        $this->authorize('view', $auth);
 
         if (!$user) {
             $user = $auth;

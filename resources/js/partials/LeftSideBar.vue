@@ -29,6 +29,7 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('manage_users')"
         title="Manage Users"
         :href="route('users.index').url()"
         icon="fa-users"
@@ -59,11 +60,13 @@
 
 <script>
 import VLink from "../Shared/VLink";
+import Acl from "../mixins/acl";
 
 export default {
   components: {
     VLink
   },
+  mixins: [Acl],
   data: () => ({
     drawer: false,
     user: null
