@@ -27,6 +27,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'manage_roles']);
         Permission::create(['name' => 'manage_permissions']);
 
+        Permission::create(['name' => 'approve_payment']);
+
         Permission::create(['name' => 'access_all']);
 
         $role = Role::create(['name' => 'admin']);
@@ -53,6 +55,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $role = Role::create(['name' => 'paymaster']);
         $role->givePermissionTo('edit_profile');
+        $role->givePermissionTo('approve_payment');
         $role->givePermissionTo('edit_link');
         $role->givePermissionTo('activate_link');
         $role->givePermissionTo('deactivate_link');
