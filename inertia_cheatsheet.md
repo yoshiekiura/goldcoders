@@ -102,3 +102,27 @@ Using Pagination (Move this logic on Base Controller)
     :items-per-page="-1"
 ></v-data-table>
 ```
+
+-   add component on create
+
+```js
+self.form.page = parseInt(self.users.meta.page);
+self.form.per_page = parseInt(self.users.meta.per_page);
+```
+
+-   add Watcher on component for per_page and page
+
+```js
+"form.per_page"() {
+      this.form.page = 1;
+      this.debouncedGetUsers();
+    },
+    "form.sponsor"() {
+      this.form.page = 1;
+      this.debouncedGetUsers();
+    },
+    "form.page"(newVal) {
+      if (this.form.page !== 1) {
+        this.debouncedGetUsers();
+      }
+```
