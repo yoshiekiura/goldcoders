@@ -97,7 +97,7 @@ export default {
       let self = this;
       self.$validator.validateAll();
       if (!self.errors.any()) {
-        self.$inertia.post(this.route("login.attempt").url(), self.form);
+        self.$inertia.post(self.route("login.attempt").url(), self.form);
       }
     },
   }
