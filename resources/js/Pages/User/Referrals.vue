@@ -38,14 +38,12 @@
           <v-toolbar dark color="blue-grey darken-4" class="mb-1">
             <v-text-field
               v-model="form.search"
-              clearable
               flat
               solo-inverted
               hide-details
               prepend-inner-icon="search"
               label="Search User"
-              @click:append="reset()"
-              append-icon="refresh"
+              clearable
             ></v-text-field>
             <div class="flex-grow-1"></div>
             <v-select
@@ -53,8 +51,6 @@
               :items="statuses"
               label="Filter Status"
               clearable
-              @click:append="reset()"
-              append-icon="refresh"
               hide-details
               solo-inverted
               prepend-inner-icon="group"
@@ -98,7 +94,6 @@ export default {
       type: Object,
       default: null
     },
-    status: Boolean,
     filters: Object
   },
   mixins: [Acl],
@@ -160,18 +155,16 @@ export default {
       }
     },
     viewReferrals(user) {
+      this.reset("search");
+      this.reset("status");
       this.$inertia.replace(route("referrals.index", { user }).url());
     },
-    reset() {
-      this.form = _.mapValues(this.form, () => null);
+    reset(key) {
+      this.form[key] = undefined;
     }
   },
   watch: {
     "form.search"() {
-      this.form.page = 1;
-      this.debouncedGetUsers();
-    },
-    "form.role"() {
       this.form.page = 1;
       this.debouncedGetUsers();
     },
