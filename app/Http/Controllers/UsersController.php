@@ -291,12 +291,12 @@ class UsersController extends Controller
     {
         $user = User::with('sponsor')->find($user);
         //  Set Default User as Authenticated User
-        $auth = request()->user()->load('sponsor');
+        $auth = request()->user();
 
 // add a logic to check if the user can view that id
 
         if (!$user) {
-            $user = $auth;
+            $user = $auth->load('sponsor');
         }
 
         $referrals = $user->referrals();
@@ -314,7 +314,7 @@ class UsersController extends Controller
             'users'    => $referrals
                 ->filter(Request::only('search', 'status'))
                 ->paginate($per_page)
-                ->transform(function ($user, $per_page) {
+                ->transform(function ($user) {
                     return [
                         'id'                => $user->id,
                         'email'             => $user->email,
