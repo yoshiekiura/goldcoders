@@ -71,9 +71,14 @@ class AppServiceProvider extends ServiceProvider
                 return Role::all()->pluck('name')->toArray();
             },
             'flash'  => [
-                'success' => Session::get('success')
+                'success' => function () {
+                    return Session::get('success');
+                }
+
             ],
-            'errors' => Session::get('errors') ? Session::get('errors')->getBag('default')->getMessages() : (object) []
+            'errors' => function () {
+                return Session::get('errors') ? Session::get('errors')->getBag('default')->getMessages() : (object) [];
+            }
 
         ]);
 
