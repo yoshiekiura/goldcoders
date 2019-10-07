@@ -236,6 +236,54 @@ class UsersController extends Controller
         return response()->json(['message' => 'Sending Mail!'], 200);
     }
 
+    public function paymasterIndex()
+    {
+        $this->authorize('approve_payment', auth()->user());
+        $per_page = 10;
+
+        if (request()->per_page && is_int(intval(request()->per_page)) && request()->per_page > 0) {
+            $per_page = intval(request()->per_page);
+        }
+
+        $users = null;
+        $user  = auth()->user();
+        // You need to update this query to fetch user with pending payments Only
+        if ($user->isSuperAdmin() || $user->hasRole('admin')) {
+            $users = User::role('member');
+        } else {
+            $users = User::where('paymaster_id', $user->id);
+        }
+
+        return Inertia::render('User/Paymaster', [
+            'filters'   => Request::all('search','sponsor', 'status', 'page', 'per_page', 'payment_status'),
+            'paymaster' => auth()->user(),
+            'users'     => $users
+                ->filter(Request::only('search','sponsor', 'status', 'payment_status'))
+                ->paginate($per_page)
+                ->transform(function ($user) {
+                    return [
+                        'id'                => $user->id,
+                        'email'             => $user->email,
+                        'username'          => $user->username,
+                        'name'              => $user->name,
+                        'photo_url'         => $user->photo_url,
+                        'fname'             => $user->fname,
+                        'mname'             => $user->mname,
+                        'lname'             => $user->lname,
+                        'suffix'            => $user->suffix,
+                        'sponsor'           => optional($user->sponsor)->name,
+                        'avatar'            => $user->avatar,
+                        'active'            => $user->active,
+                        'dob'               => $user->dob,
+                        'mobile_no'         => $user->mobile_no,
+                        'permanent_address' => $user->permanent_address,
+                        'current_address'   => $user->current_address,
+                        'roles'             => $user->role_list
+                    ];
+                })
+        ]);
+    }
+
     /**
      * @param $id
      */
@@ -245,7 +293,7 @@ class UsersController extends Controller
         //  Set Default User as Authenticated User
         $auth = request()->user()->load('sponsor');
 
-        // add a logic to check if the user can view that id
+// add a logic to check if the user can view that id
 
         if (!$user) {
             $user = $auth;
