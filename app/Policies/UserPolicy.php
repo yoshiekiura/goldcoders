@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -17,6 +18,16 @@ class UserPolicy
     public function __construct()
     {
         //we can inject here an auth user instance
+    }
+
+    /**
+     * @param User $user
+     */
+    public function approvePayment(User $user)
+    {
+        if ($user->can('approve_payment') && Auth::user()->id === $user->paymaster_id || $user->can('manage_users')) {
+            return true;
+        }
     }
 
     /**
@@ -45,6 +56,16 @@ class UserPolicy
     public function edit(User $user)
     {
         if ($user->can('manage_users')) {
+            return true;
+        }
+    }
+
+    /**
+     * @param User $user
+     */
+    public function editProfile(User $user)
+    {
+        if ($user->can('edit_profile')) {
             return true;
         }
     }
