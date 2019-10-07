@@ -38,9 +38,26 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('approve_payment')"
+        title="Paymaster Portal"
+        :href="route('paymaster.index').url()"
+        icon="fa-money"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+      <v-link
         title="Referrals"
         :href="route('referrals.index').url()"
         icon="fa-sitemap"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+      <v-link
+        title="Profile"
+        href="profile.show"
+        icon="fa-user"
         link-color="white"
         active-color="#BA9A5a"
         icon-color="#fafafa"
