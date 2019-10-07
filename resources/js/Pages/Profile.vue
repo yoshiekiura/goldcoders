@@ -5,12 +5,7 @@
       <form @submit.prevent="updateProfile()">
         <v-layout row wrap>
           <v-flex xs12 md8 offset-md2 text-xs-center>
-            <v-alert
-              :value="true"
-              type="info"
-              outlined
-              icon="fa-info-circle"
-            >Note: Your Username Will Be Your Referral Link</v-alert>
+            <app-alert></app-alert>
           </v-flex>
 
           <v-flex xs12 md8 offset-md2>
@@ -48,7 +43,6 @@
           </v-flex>
           <v-flex xs12 md8 offset-md2>
             <v-text-field
-              v-validate="{ required: true, regex: /^[a-zA-Z0-9 ]+$/ }"
               v-model="form.mname"
               :error-messages="errorMessages('mname')"
               :class="{ 'error--text': hasErrors('mname') }"
@@ -210,11 +204,12 @@ import MainLayout from "../Layouts/MainLayout";
 import Acl from "../mixins/acl";
 import validationError from "../mixins/validation-error";
 import { Form } from "vform";
-import swal from "sweetalert2";
+import AppAlert from "../partials/AppAlert";
 
 export default {
   components: {
-    MainLayout
+    MainLayout,
+    AppAlert
   },
   props: {
     account: Object
@@ -286,25 +281,18 @@ export default {
         if (self.form.password_confirmation === "") {
           delete self.form.password_confirmation;
         }
-        self.$inertia.post(self.route("profile.update").url(), self.form);
-
-        self.form.busy = false;
+        self.$inertia
+          .post(self.route("profile.update").url(), self.form, {
+            replace: true,
+            preserveState: false
+          })
+          .then(() => (self.form.busy = false));
       }
     },
     toProperCase(key) {
       let newStr = key.replace(/_/g, " ");
       return newStr.replace(/\w\S*/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-      });
-    },
-    showModal(type, message) {
-      swal.fire({
-        title: "<strong>Success!</u></strong>",
-        type: "success",
-        html: `<b>${message}</b>`,
-        focusConfirm: true,
-        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
-        confirmButtonAriaLabel: "Back!"
       });
     }
   }

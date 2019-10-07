@@ -73,6 +73,15 @@ class AppServiceProvider extends ServiceProvider
             'flash'  => [
                 'success' => function () {
                     return Session::get('success');
+                },
+                'warning' => function () {
+                    return Session::get('warning');
+                },
+                'error'   => function () {
+                    return Session::get('error');
+                },
+                'info'    => function () {
+                    return Session::get('info');
                 }
 
             ],

@@ -6,6 +6,9 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Rules\MustMatchPassword;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -15,21 +18,19 @@ class ProfileController extends Controller
 
     public function show()
     {
-        $user = auth()->user();
-        $this->authorize('edit_profile', $user);
         return Inertia::render('Profile', [
-            'account' => $user
+            'account' => Auth::user()
         ]);
     }
 
     /**
      * @param Request $request
      */
-    public function update()
+    public function update(Request $request)
     {
-        $user = auth()->user();
-
-        $data = request()->validate([
+        $user = $request->user();
+        $this->authorize('edit_profile', $user);
+        $validator = Validator::make($request->all(), [
             'fname'                 => [
                 'nullable'
             ],
@@ -68,17 +69,21 @@ class ProfileController extends Controller
                 'nullable',
                 new MustMatchPassword($user->password)
             ],
-            'password'              => ['nullable','required_with:old_password', 'confirmed', 'min:8'],
+            'password'              => ['nullable', 'required_with:old_password', 'confirmed', 'min:8'],
             'password_confirmation' => 'required_with:password'
         ]);
-        $user->update($data);
 
-        if (request()->has('password') && request()->has('password_confirmation')) {
-            $user->password = $data['password'];
+        if ($validator->fails()) {
+            return Redirect::route('profile.show')->with('error', 'Profile Page Form Validation Failed!')->withErrors($validator);
+        }
+
+        $user->update($validator->valid());
+
+        if ($request->has('password') && $request->has('password_confirmation')) {
+            $user->password = $validator['password'];
         }
 
         $user->save();
-
-        return redirect()->route('profile.show');
+        return Redirect::route('profile.show')->with('success', 'Profile Updated!');
     }
 }
