@@ -19,6 +19,7 @@
         "pragmarx/version": "^1.0.2",
         "predis/predis": "^1.1.1",
         "reinink/remember-query-strings": "^0.1.0",
+        "spatie/laravel-medialibrary": "^7.14",
         "spatie/laravel-permission": "^3.0",
         "tightenco/ziggy": "^0.8.0"
     },

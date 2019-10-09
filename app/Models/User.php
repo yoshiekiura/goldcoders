@@ -9,11 +9,13 @@ use App\Traits\User\Relationships;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use Notifiable, HasRoles, Sluggable, Mutators, Relationships, Methods, Scopes;
+    use Notifiable, HasRoles, Sluggable, Mutators, Relationships, Methods, Scopes, HasMediaTrait;
 
     /**
      * @var array

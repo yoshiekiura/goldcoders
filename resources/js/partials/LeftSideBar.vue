@@ -63,6 +63,14 @@
         icon-color="#fafafa"
       />
       <v-link
+        title="KYC"
+        href="kyc.show"
+        icon="assignment_turned_in"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+      <v-link
         title="Logout"
         href="logout"
         icon="power_settings_new"

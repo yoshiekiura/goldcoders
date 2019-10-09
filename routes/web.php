@@ -25,3 +25,5 @@ Route::get('/paymaster-user-management')->name('paymaster.index')->uses('UsersCo
 // Profile Page
 Route::get('/profile')->name('profile.show')->uses('ProfileController@show')->middleware('remember', 'auth');
 Route::post('/profile/update')->name('profile.update')->uses('ProfileController@update')->middleware('remember', 'auth');
+Route::get('/kyc')->name('kyc.show')->uses('KycController@show')->middleware('remember', 'auth');
+Route::post('/kyc/uploads')->name('kyc.uploads')->uses('KycController@uploads')->middleware('auth');

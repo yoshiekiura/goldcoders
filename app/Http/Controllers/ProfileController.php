@@ -80,7 +80,7 @@ class ProfileController extends Controller
         $user->update($validator->valid());
 
         if ($request->has('password') && $request->has('password_confirmation')) {
-            $user->password = $validator['password'];
+            $user->password = $validator->valid()['password'];
         }
 
         $user->save();

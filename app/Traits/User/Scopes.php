@@ -18,7 +18,8 @@ trait Scopes
                 foreach ($names as $name) {
                     $query->where('fname', 'like', '%'.$name.'%')
                           ->orWhere('mname', 'like', '%'.$name.'%')
-                          ->orWhere('lname', 'like', '%'.$name.'%');
+                          ->orWhere('lname', 'like', '%'.$name.'%')
+                          ->orWhere('username', 'like', '%'.$name.'%');
                 }
             });
         })->when($filters['sponsor'] ?? null, function ($query, $sponsor) {
@@ -28,7 +29,8 @@ trait Scopes
                 foreach ($names as $name) {
                     $query->where('fname', 'like', '%'.$name.'%')
                           ->orWhere('mname', 'like', '%'.$name.'%')
-                          ->orWhere('lname', 'like', '%'.$name.'%');
+                          ->orWhere('lname', 'like', '%'.$name.'%')
+                          ->orWhere('username', 'like', '%'.$name.'%');
                 }
             });
         })->when($filters['role'] ?? null, function ($query, $role) {
