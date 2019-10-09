@@ -1,5 +1,6 @@
 <?php
 use App\Models\User;
+use Illuminate\Support\Str;
 use App\Models\Subscription;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
@@ -21,7 +22,7 @@ class AdminSeeder extends Seeder
             'password'          => config('admin.password'),
             'username'          => config('admin.username'),
             'active'            => true,
-            'remember_token'    => str_random(10),
+            'remember_token'    => Str::random(10),
             'mobile_no'         => $faker->isbn10,
             'current_address'   => $faker->streetAddress,
             'permanent_address' => $faker->secondaryAddress,

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use Faker\Generator as Faker;
 use Illuminate\Support\Carbon;
 
@@ -19,14 +20,14 @@ $factory->define(App\Models\User::class, function (Faker $faker) {
         'username'          => $faker->unique()->userName,
         'email'             => $faker->unique()->safeEmail,
         'password'          => 'secret1234',
-        'remember_token'    => str_random(10),
+        'remember_token'    => Str::random(10),
         'mobile_no'         => $faker->isbn10,
         'current_address'   => $faker->streetAddress,
         'permanent_address' => $faker->secondaryAddress,
         'fname'             => $faker->firstName,
-        'mname'             => null, 
+        'mname'             => null,
         'lname'             => $faker->lastName,
-        'dob'               => Carbon::now()->subYears(random_int(18,25))->subMonths(random_int(1,12))->subDays(1,31),
+        'dob'               => Carbon::now()->subYears(random_int(18, 25))->subMonths(random_int(1, 12))->subDays(1, 31),
         'suffix'            => $faker->suffix
     ];
 });
