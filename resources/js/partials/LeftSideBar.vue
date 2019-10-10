@@ -54,6 +54,14 @@
         active-color="#BA9A5a"
         icon-color="#fafafa"
       />
+            <v-link
+        title="Gateway"
+        :href="route('gateway').url()"
+        icon="card_travel"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
       <v-link
         title="Profile"
         href="profile.show"
