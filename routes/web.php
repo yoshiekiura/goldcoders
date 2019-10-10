@@ -18,6 +18,13 @@ Route::post('/users/massActivate', 'UsersController@massActivate')->name('users.
 Route::post('/users/massDeactivate', 'UsersController@massDeactivate')->name('users.massDeactivate')->middleware('auth');
 Route::post('/users/massMail', 'UsersController@massMail')->name('users.massMail')->middleware('auth');
 
+Route::get('/gateway')->name('gateway')->uses('GatewayController@index');
+Route::get('/gateway/create')->name('gateway.create')->uses('GatewayController@create');
+Route::post('/gateway')->name('gateway.store')->uses('GatewayController@store');
+Route::post('/gateway/delete')->name('gateway.delete')->uses('GatewayController@delete');
+Route::get('/gateway/{gateway}/edit')->name('gateway.edit')->uses('GatewayController@edit');
+Route::post('/gateway/update')->name('gateway.update')->uses('GatewayController@update');
+
 //Referrals
 Route::get('/referrals/{user?}')->name('referrals.index')->uses('UsersController@referrals')->middleware('remember', 'auth');
 // Paymaster
