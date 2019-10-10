@@ -30,7 +30,7 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :disabled="$page.auth.user.active"
+          :readonly="$page.auth.user.active"
           v-validate="{ required: true, regex: /^[a-zA-Z0-9 ]+$/ }"
           v-model="form.fname"
           :error-messages="errorMessages('fname')"
@@ -42,7 +42,7 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :disabled="$page.auth.user.active"
+          :readonly="$page.auth.user.active"
           v-model="form.mname"
           :error-messages="errorMessages('mname')"
           :class="{ 'error--text': hasErrors('mname') }"
@@ -53,7 +53,7 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :disabled="$page.auth.user.active"
+          :readonly="$page.auth.user.active"
           v-validate="{ required: true, regex: /^[a-zA-Z0-9 ]+$/ }"
           v-model="form.lname"
           :error-messages="errorMessages('lname')"
@@ -65,7 +65,7 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :disabled="$page.auth.user.active"
+          :readonly="$page.auth.user.active"
           v-model="form.suffix"
           :error-messages="errorMessages('suffix')"
           :class="{ 'error--text': hasErrors('suffix') }"
@@ -131,7 +131,7 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :disabled="$page.auth.user.active"
+          :readonly="$page.auth.user.active"
           v-validate="{ required: false }"
           v-model="form.permanent_address"
           :error-messages="errorMessages('permanent_address')"
