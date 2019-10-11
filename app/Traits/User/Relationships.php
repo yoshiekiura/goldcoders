@@ -30,6 +30,7 @@ trait Relationships
         return $this->belongsTo(User::class, 'paymaster_id');
     }
 
+
     public function underlings()
     {
         return $this->hasMany(User::class, 'paymaster_id');
