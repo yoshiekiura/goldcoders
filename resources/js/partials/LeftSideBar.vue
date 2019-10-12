@@ -54,7 +54,16 @@
         active-color="#BA9A5a"
         icon-color="#fafafa"
       />
-            <v-link
+      <v-link
+        v-if="can('add_access_token')"
+        title="Connect API"
+        href="ctrader.view"
+        icon="fa-plug"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+      <v-link
         title="Gateway"
         :href="route('gateway').url()"
         icon="card_travel"
