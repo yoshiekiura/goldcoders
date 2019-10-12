@@ -3,7 +3,7 @@
   <main-layout title="Connect Ctrader Account">
     <v-container fill-height>
       <v-row justify="center">
-        <v-btn color="accent" @click="connectApi">
+        <v-btn v-if="!hasAccessToken || hasExpiredAccessToken" color="accent" @click="connectApi">
           Connect Ctrader Account
           <v-icon right>fa-plug</v-icon>
         </v-btn>
@@ -22,14 +22,15 @@ export default {
   },
   props: {
     account: Object,
+    expired: Boolean,
   },
   mixins: [Acl],
   computed: {
     hasAccessToken() {
-      return false;
+      return !!this.account.ctrader_token
     },
     hasExpiredAccessToken() {
-      return false;
+      return this.expired;
     }
   },
   methods: {

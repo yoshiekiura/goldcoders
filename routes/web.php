@@ -39,3 +39,4 @@ Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController
 // this url will receive our authorization code that we can use to get access token
 Route::get('/ctrader/connect/redirect')->name('ctrader.redirect')->uses('ConnectApiController@redirect');
 Route::get('/ctrader')->name('ctrader.view')->uses('ConnectApiController@view');
+Route::get('/ctrader/refresh_token')->name('ctrader.refresh_token')->uses('ConnectApiController@refreshToken');

@@ -88,12 +88,13 @@ class ConnectApi
      */
     public function getAccessToken($code)
     {
-        $params                  = [];
-        $params['grant_type']    = static::GRANT_TOKEN;
-        $params['code']          = $code;
-        $params['redirect_uri']  = $this->redirect_uri;
-        $params['client_id']     = $this->client_id;
-        $params['client_secret'] = $this->client_secret;
+        $params = [
+            'grant_type'    => static::GRANT_TOKEN,
+            'code'          => $code,
+            'redirect_uri'  => $this->redirect_uri,
+            'client_id'     => $this->client_id,
+            'client_secret' => $this->client_secret
+        ];
 
         return $this->makeCall('GET', $this->endpoint, $params);
     }
@@ -103,12 +104,13 @@ class ConnectApi
      */
     public function getAuthorizationCodeLink()
     {
-        $params                 = [];
-        $params['client_id']    = $this->client_id;
-        $params['redirect_uri'] = $this->redirect_uri;
-        $params['scope']        = $this->scope;
-        $query_string =$params['client_id'].'&redirect_uri='.$params['redirect_uri'].'&scope='.$params['scope'];
-        return $this->endpoint.'?client_id='.$query_string;
+        $params = [
+            'client_id'    => $this->client_id,
+            'redirect_uri' => $this->redirect_uri,
+            'scope'        => $this->scope
+        ];
+        $query_string = urldecode(http_build_query($params));
+        return $this->endpoint.'?'.$query_string;
     }
 
     /**
@@ -131,13 +133,15 @@ class ConnectApi
      */
     public function getRenewToken($refresh_token)
     {
-        $params = [];
+        $params = [
+            'grant_type'    => static::GRANT_REFRESH_TOKEN,
+            'refresh_token' => $refresh_token,
+            'redirect_uri'  => $this->redirect_uri,
+            'client_id'     => $this->client_id,
+            'client_secret' => $this->client_secret
+        ];
 
-        $params['grant_type']    = $this->setGrantType(static::GRANT_REFRESH_TOKEN);
-        $params['refresh_token'] = $refresh_token;
-        $params['client_id']     = $this->client_id;
-        $params['client_secret'] = $this->client_secret;
-        $this->makeCall('GET', $this->endpoint, $params);
+        return $this->makeCall('GET',$this->endpoint,$params);
     }
 
     public function getScope()

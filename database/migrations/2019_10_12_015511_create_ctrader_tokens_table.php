@@ -25,8 +25,9 @@ class CreateCtraderTokensTable extends Migration
     {
         Schema::create('ctrader_tokens', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id')->nullable()->comment('Paymaster user ID');
+            $table->unsignedBigInteger('user_id')->unique()->comment('Paymaster user ID');
             $table->string('access_token');
+            $table->string('refresh_token');
             $table->string('token_type');
             $table->timestamp('expires_in');
             $table->timestamps();
