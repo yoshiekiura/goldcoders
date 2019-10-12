@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Ctrader;
 
 use GuzzleHttp\Client;
 
@@ -59,9 +59,9 @@ class ConnectApi
     public $version;
 
     /**
-     * @param $version
+     * @param $segment = 'token|auth'
      */
-    public function __construct($segment = 'auth')
+    public function __construct($segment = 'token')
     {
         $this->client_id     = config('ctrader.client_id');
         $this->client_secret = config('ctrader.client_secret');
@@ -89,22 +89,26 @@ class ConnectApi
     public function getAccessToken($code)
     {
         $params                  = [];
-        $params['grant_type']    = $this->setGrantType();
+        $params['grant_type']    = static::GRANT_TOKEN;
         $params['code']          = $code;
         $params['redirect_uri']  = $this->redirect_uri;
         $params['client_id']     = $this->client_id;
         $params['client_secret'] = $this->client_secret;
-        $this->makeCall('GET', $this->endpoint, $params);
+
+        return $this->makeCall('GET', $this->endpoint, $params);
     }
 
-    public function getAuthorizationCode()
+    /**
+     * @return mixed
+     */
+    public function getAuthorizationCodeLink()
     {
-        $params                  = [];
-        $params['client_id']     = $this->client_id;
-        $params['client_secret'] = $this->client_secret;
-        $params['redirect_uri']  = $this->redirect_uri;
-        $params['scope']         = $this->scope;
-        $this->makeCall('GET', $this->endpoint, $params);
+        $params                 = [];
+        $params['client_id']    = $this->client_id;
+        $params['redirect_uri'] = $this->redirect_uri;
+        $params['scope']        = $this->scope;
+        $query_string =$params['client_id'].'&redirect_uri='.$params['redirect_uri'].'&scope='.$params['scope'];
+        return $this->endpoint.'?client_id='.$query_string;
     }
 
     /**
@@ -113,13 +117,13 @@ class ConnectApi
      */
     public function getEndpoint($segment = 'auth')
     {
-        $url = self::PROTOCOL.$this->subdomain.'.'.self::DOMAIN;
+        $url = static::PROTOCOL.$this->subdomain.'.'.static::DOMAIN;
 
         if (1 == $this->version) {
-            return $url.self::V1.$segment;
+            return $url.static::V1.$segment;
         }
 
-        return $url.self::V2.$segment;
+        return $url.static::V2.$segment;
     }
 
     /**
@@ -129,7 +133,7 @@ class ConnectApi
     {
         $params = [];
 
-        $params['grant_type']    = $this->setGrantType(self::GRANT_REFRESH_TOKEN);
+        $params['grant_type']    = $this->setGrantType(static::GRANT_REFRESH_TOKEN);
         $params['refresh_token'] = $refresh_token;
         $params['client_id']     = $this->client_id;
         $params['client_secret'] = $this->client_secret;
@@ -149,8 +153,8 @@ class ConnectApi
      */
     public function makeCall($method, $uri, $params)
     {
-        $client   = new Client(['base_uri', self::DOMAIN]);
-        $response = $client->request($method, $uri, $params);
+        $client   = new Client();
+        $response = $client->request($method, $uri, ['query' => $params]);
         $data     = $response->getBody()->getContents();
         $data     = json_decode($data, true);
         return $data;
@@ -159,7 +163,7 @@ class ConnectApi
     /**
      * @param $grant_type
      */
-    public function setGrantType($grant_type = self::GRANT_TOKEN)
+    public function setGrantType($grant_type)
     {
         $this->grant_type = $grant_type;
     }
