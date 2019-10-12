@@ -34,3 +34,8 @@ Route::get('/profile')->name('profile.show')->uses('ProfileController@show')->mi
 Route::post('/profile/update')->name('profile.update')->uses('ProfileController@update')->middleware('remember', 'auth');
 Route::get('/kyc')->name('kyc.show')->uses('KycController@show')->middleware('remember', 'auth');
 Route::post('/kyc/uploads')->name('kyc.uploads')->uses('KycController@uploads')->middleware('auth');
+// return a view that user can click to redirect to ctrader login and allow our app permission
+Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController@connect');
+// this url will receive our authorization code that we can use to get access token
+Route::get('/ctrader/connect/redirect')->name('ctrader.redirect')->uses('ConnectApiController@redirect');
+Route::get('/ctrader')->name('ctrader.view')->uses('ConnectApiController@view');
