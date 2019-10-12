@@ -21,6 +21,16 @@ class UserPolicy
     }
 
     /**
+     * @param User $User
+     */
+    public function add_access_token(User $user)
+    {
+        if ($user->can('add_access_token')) {
+            return true;
+        }
+    }
+
+    /**
      * @param User $user
      */
     public function approvePayment(User $user)
