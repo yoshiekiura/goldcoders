@@ -12,7 +12,7 @@ return [
     'trading_proxy_country' => env('CTRADER_PROXY', 'hk'),
     'version'               => env('CTRADER_VERSION', 2),
     'scope'                 => [
-        'accounts'
+        'accounts',
         // 'trading'
     ],
     'drpm'                  => 180, //   deals request/min

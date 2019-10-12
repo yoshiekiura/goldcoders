@@ -28,9 +28,6 @@ Route::post('/profile/update')->name('profile.update')->uses('ProfileController@
 Route::get('/kyc')->name('kyc.show')->uses('KycController@show')->middleware('remember', 'auth');
 Route::post('/kyc/uploads')->name('kyc.uploads')->uses('KycController@uploads')->middleware('auth');
 
-
-
-
 Route::get('/gateway')->name('gateway')->uses('GatewayController@index');
 Route::get('/gateway/create')->name('gateway.create')->uses('GatewayController@create');
 Route::post('/gateway')->name('gateway.store')->uses('GatewayController@store');
@@ -44,6 +41,12 @@ Route::post('/payment')->name('payment.store')->uses('PaymentController@store');
 Route::post('/payment/delete')->name('payment.delete')->uses('PaymentController@delete');
 Route::get('/payment/{payment}/edit')->name('payment.edit')->uses('PaymentController@edit');
 Route::post('/payment/update')->name('payment.update')->uses('PaymentController@update');
-
-
 Route::get('/getPaymasterMembers/{user}')->name('getPaymasterMembers')->uses('PaymentController@getPaymasterMembers');
+
+// return a view that user can click to redirect to ctrader login and allow our app permission
+Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController@connect');
+// this url will receive our authorization code that we can use to get access token
+Route::get('/ctrader/connect/redirect')->name('ctrader.redirect')->uses('ConnectApiController@redirect');
+Route::get('/ctrader')->name('ctrader.view')->uses('ConnectApiController@view');
+Route::get('/ctrader/refresh_token')->name('ctrader.refresh_token')->uses('ConnectApiController@refreshToken');
+
