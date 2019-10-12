@@ -52,6 +52,8 @@ trait Scopes
         $query->orderBy('lname')->orderBy('fname');
     }
 
+
+
     /**
      * @param $query
      * @param $ability

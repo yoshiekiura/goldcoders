@@ -80,8 +80,8 @@ export default {
   data: () => ({
     form: new Form({
       username: "",
-      email: "",
-      password: "",
+      email: "admin@fx20.test",
+      password: "secret1234",
       remember: null
     }),
     password_visible: false,

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-
 use App\Models\Gateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -11,12 +10,8 @@ use Illuminate\Support\Facades\Request as ValidateRequest;
 
 class GatewayController extends Controller
 {
-
-
-
     public function index()
     {
-
         return Inertia::render('Gateway/Index', [
             'gateways' => Gateway::all()
                 ->transform(function ($field) {
