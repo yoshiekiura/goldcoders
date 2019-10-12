@@ -32,7 +32,7 @@
                     clearable
                     deletable-chips
                     prepend-icon="fa-user"
-                    :error-messages="$page.errors['master.id']"
+                    :error-messages="$page.errors.paymaster_id"
                   />
 
                   <v-autocomplete
@@ -48,7 +48,7 @@
                     clearable
                     deletable-chips
                     prepend-icon="fa-user"
-                    :error-messages="$page.errors['member.id']"
+                    :error-messages="$page.errors.member_id"
                   />
 
                   <v-dialog
@@ -74,6 +74,45 @@
                       <v-btn color="primary" @click="$refs.dialog1.save(form.date_enter)">OK</v-btn>
                     </v-date-picker>
                   </v-dialog>
+
+                  <v-file-input
+                    v-model="form.images"
+                    placeholder="Upload your documents"
+                    label="Documents"
+                    multiple
+                    prepend-icon="mdi-camera"
+                    :show-size="1000"
+                    counter
+                    accept="image/*"
+                  >
+                    <!-- :rules="rules" -->
+                    <template v-slot:selection="{ text }">
+                      <v-chip small label color="primary">{{ text }}</v-chip>
+                    </template>
+                  </v-file-input>
+
+                  <v-card v-if="images.length > 0">
+                    <v-container fluid>
+                      <v-row>
+                        <v-col
+                          v-for="(image,key) in images"
+                          :key="key"
+                          class="d-flex child-flex"
+                          cols="4"
+                        >
+                          <v-card flat tile class="d-flex">
+                            <v-img :src="image" aspect-ratio="1" class="grey lighten-2">
+                              <template v-slot:placeholder>
+                                <v-row class="fill-height ma-0" align="center" justify="center">
+                                  <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                </v-row>
+                              </template>
+                            </v-img>
+                          </v-card>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -91,6 +130,8 @@
                       v-model="form.amount"
                       class="primary--text"
                       label="Amount"
+                      prepend-icon="mdi-credit-card"
+                      prefend
                       :error-messages="$page.errors.amount"
                     />
 
@@ -108,8 +149,35 @@
                       clearable
                       deletable-chips
                       prepend-icon="fa-user"
-                      :error-messages="$page.errors['master.id']"
+                      :error-messages="$page.errors['gateway.value']"
                     />
+
+                    <!-- <div v-if="details.length > 0">
+                      <div v-for="(item , index) in details" :key="index">
+
+                        <v-layout align-center justify-center row>
+                          <v-text-field
+                            v-model="details[index]"
+                            class="primary--text"
+                            :label="index"
+                            prepend-icon="assignment"
+                            :error-messages="$page.errors.name"
+                          />
+                        </v-layout>
+                      </div>
+                    </div>-->
+
+                    <!-- <div v-for="(item , index) in form.details" :key="index">
+                      <v-layout align-center justify-center row>
+                        <v-text-field
+                          v-model="form.gateway.details[index].value"
+                          class="primary--text"
+                          :label="form.gateway.details[index].name"
+                          prepend-icon="assignment"
+                          :error-messages="$page.errors.name"
+                        />
+                      </v-layout>
+                    </div>-->
 
                     <div v-for="(item , index) in form.gateway.details" :key="index">
                       <v-layout align-center justify-center row>
@@ -120,8 +188,6 @@
                           prepend-icon="assignment"
                           :error-messages="$page.errors.name"
                         />
-
-
                       </v-layout>
                     </div>
                   </v-flex>
@@ -141,6 +207,16 @@
               >
                 <span class="white--text">Create {{ name }}</span>
               </v-btn>
+              <v-btn
+                class="ma-2"
+                depressed
+                color="indigo darken-4"
+                :loading="form.busy"
+                :disabled="errors.any() || form.busy"
+                @click.native="test()"
+              >
+                <span class="white--text">Create {{ name }}</span>
+              </v-btn>
             </v-layout>
           </v-card>
         </v-flex>
@@ -153,6 +229,7 @@
 <script>
 import MainLayout from "@/Layouts/MainLayout";
 import AdminDashPanel from "@/Shared/AdminDashPanel";
+import objectToFormData from "object-to-formdata";
 
 export default {
   components: {
@@ -164,6 +241,7 @@ export default {
     paymasters: Array,
     gateways: Array
   },
+  created() {},
   computed: {
     getMembers() {
       if (this.form.paymaster_id != null) {
@@ -174,32 +252,99 @@ export default {
   },
   data() {
     return {
+      rules: [
+        value =>
+          !value.length ||
+          value.reduce((size, file) => size + file.size, 0) < 2000000 ||
+          "Documents size should be less than 2 MB!"
+      ],
       dialog: false,
       name: "Payment",
       modal1: false,
+      images: [],
+
       form: {
-        paymaster_id: null,
-        member_id: null,
-        gateway: [],
+        paymaster_id: 2,
+        member_id: 4,
+        gateway: {},
         date_enter: null,
         date_activated: null,
-        amount: 0,
-        file: null,
+        amount: 123,
+        files: [],
         busy: false,
-        imageUrl: null
-      },
-      selected: []
+        images: null
+      }
     };
   },
   methods: {
+    test() {
+      let gateway = this.form.gateway.details;
+
+      console.table(this.toProperty(gateway));
+    },
     submit() {
       let self = this;
       self.form.busy = true;
+
+      let gateway = this.form.gateway.details;
+
+      //   let arr = [];
+      //   gate.forEach(function(item, index) {
+      //     let test = {};
+      //     test[item.name] = item.value;
+      //     arr.push(test);
+      //   });
+      //   this.form.gateway.details = arr;
+
+      this.form.gateway.details = this.toProperty(gateway);
+
+      // this.form.gateway.details.forEach(function(val,index){
+      //    console.log(val[index].name +  '    ' val[index].name );
+      // });
+
+      //   self.form.images = objectToFormData(self.form.images);
+      // .post(self.route("payment.store").url(), objectToFormData(self.form), {
+      // .post(self.route("payment.store").url(), self.form, {
+
       self.$inertia
-        .post(self.route("payment.store").url(), self.form)
+        .post(self.route("payment.store").url(), objectToFormData(self.form), {
+          replace: true,
+          preserveState: true
+        })
         .then(() => (self.form.busy = false));
     },
+    toProperty(items) {
+      let arr = [];
+      items.forEach(function(item, index) {
+        let temp = {};
+        temp[item.name] = item.value;
+        arr.push(temp);
+      });
 
+      return arr;
+    }
+  },
+  watch: {
+    "form.gateway"(val, oldVal) {},
+    "form.images": {
+      handler: function(val, oldVal) {
+        let self = this;
+        self.images = [];
+        if (val) {
+          var filesAmount = val.length;
+          for (let i = 0; i < filesAmount; i++) {
+            var reader = new FileReader();
+
+            reader.onload = function(event) {
+              self.images.push(event.target.result);
+            };
+
+            reader.readAsDataURL(val[i]);
+          }
+        }
+      },
+      deep: true
+    }
   }
 };
 </script>

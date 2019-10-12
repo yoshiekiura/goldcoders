@@ -18,13 +18,6 @@ Route::post('/users/massActivate', 'UsersController@massActivate')->name('users.
 Route::post('/users/massDeactivate', 'UsersController@massDeactivate')->name('users.massDeactivate')->middleware('auth');
 Route::post('/users/massMail', 'UsersController@massMail')->name('users.massMail')->middleware('auth');
 
-Route::get('/gateway')->name('gateway')->uses('GatewayController@index');
-Route::get('/gateway/create')->name('gateway.create')->uses('GatewayController@create');
-Route::post('/gateway')->name('gateway.store')->uses('GatewayController@store');
-Route::post('/gateway/delete')->name('gateway.delete')->uses('GatewayController@delete');
-Route::get('/gateway/{gateway}/edit')->name('gateway.edit')->uses('GatewayController@edit');
-Route::post('/gateway/update')->name('gateway.update')->uses('GatewayController@update');
-
 //Referrals
 Route::get('/referrals/{user?}')->name('referrals.index')->uses('UsersController@referrals')->middleware('remember', 'auth');
 // Paymaster
@@ -34,3 +27,23 @@ Route::get('/profile')->name('profile.show')->uses('ProfileController@show')->mi
 Route::post('/profile/update')->name('profile.update')->uses('ProfileController@update')->middleware('remember', 'auth');
 Route::get('/kyc')->name('kyc.show')->uses('KycController@show')->middleware('remember', 'auth');
 Route::post('/kyc/uploads')->name('kyc.uploads')->uses('KycController@uploads')->middleware('auth');
+
+
+
+
+Route::get('/gateway')->name('gateway')->uses('GatewayController@index');
+Route::get('/gateway/create')->name('gateway.create')->uses('GatewayController@create');
+Route::post('/gateway')->name('gateway.store')->uses('GatewayController@store');
+Route::post('/gateway/delete')->name('gateway.delete')->uses('GatewayController@delete');
+Route::get('/gateway/{gateway}/edit')->name('gateway.edit')->uses('GatewayController@edit');
+Route::post('/gateway/update')->name('gateway.update')->uses('GatewayController@update');
+
+Route::get('/payment')->name('payment')->uses('PaymentController@index');
+Route::get('/payment/create')->name('payment.create')->uses('PaymentController@create');
+Route::post('/payment')->name('payment.store')->uses('PaymentController@store');
+Route::post('/payment/delete')->name('payment.delete')->uses('PaymentController@delete');
+Route::get('/payment/{payment}/edit')->name('payment.edit')->uses('PaymentController@edit');
+Route::post('/payment/update')->name('payment.update')->uses('PaymentController@update');
+
+
+Route::get('/getPaymasterMembers/{user}')->name('getPaymasterMembers')->uses('PaymentController@getPaymasterMembers');

@@ -75,6 +75,45 @@
                       <v-btn color="primary" @click="$refs.dialog1.save(form.date_enter)">OK</v-btn>
                     </v-date-picker>
                   </v-dialog>
+
+                  <v-file-input
+                    v-model="form.images"
+                    placeholder="Upload your documents"
+                    label="Documents"
+                    multiple
+                    prepend-icon="mdi-camera"
+                    :show-size="1000"
+                    counter
+                    accept="image/*"
+                  >
+                    <!-- :rules="rules" -->
+                    <template v-slot:selection="{ text }">
+                      <v-chip small label color="primary">{{ text }}</v-chip>
+                    </template>
+                  </v-file-input>
+
+                  <v-card v-if="images.length > 0">
+                    <v-container fluid>
+                      <v-row>
+                        <v-col
+                          v-for="(image,key) in images"
+                          :key="key"
+                          class="d-flex child-flex"
+                          cols="4"
+                        >
+                          <v-card flat tile class="d-flex">
+                            <v-img :src="image" aspect-ratio="1" class="grey lighten-2">
+                              <template v-slot:placeholder>
+                                <v-row class="fill-height ma-0" align="center" justify="center">
+                                  <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                </v-row>
+                              </template>
+                            </v-img>
+                          </v-card>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -97,13 +136,12 @@
 
                     <v-autocomplete
                       :items="gateways"
-                      v-model="form.gateway"
+                      v-model="form.gateway_id"
                       required
                       color="blue-grey"
                       label="Gateway"
                       item-text="name"
                       item-value="value"
-                      return-object
                       light
                       chips
                       clearable
@@ -111,8 +149,7 @@
                       prepend-icon="fa-user"
                       :error-messages="$page.errors['master.id']"
                     />
-
-                    <div v-for="(item , index) in form.gateway.details" :key="index">
+                    <div v-for="(item, index) in form.gateway.details" :key="index">
                       <v-layout align-center justify-center row>
                         <v-text-field
                           v-model="form.gateway.details[index].value"
@@ -153,6 +190,8 @@
 import MainLayout from "@/Layouts/MainLayout";
 import AdminDashPanel from "@/Shared/AdminDashPanel";
 import AppAlert from "@/partials/AppAlert";
+import objectToFormData from "object-to-formdata";
+// import OT from "../../mixins/object_transform";
 
 export default {
   components: {
@@ -160,11 +199,19 @@ export default {
     AdminDashPanel,
     AppAlert
   },
+  //   mixins: [OT],
   props: {
     payment: Object,
     users: Array,
     paymasters: Array,
-    gateways: Array
+    gateways: Array,
+    documents: Array
+  },
+  created() {
+    this.images = this.documents;
+    let gateway = this.payment.gateway.details;
+    this.payment.gateway.details = this.toKeyValue(gateway);
+    // this.payment.gateway.details = OT.toKeyValue(gateway);
   },
   computed: {
     getMembers() {
@@ -179,6 +226,7 @@ export default {
       dialog: false,
       name: "Payment",
       modal1: false,
+      details: this.payment.gateway.details,
       form: {
         id: this.payment.id,
         paymaster_id: this.payment.paymaster_id,
@@ -189,18 +237,104 @@ export default {
         gateway: this.payment.gateway,
         file: null,
         busy: false,
-        imageUrl: null
+        images: null
       },
-      selected: []
+      images: []
     };
   },
   methods: {
+    prepareForm() {
+      return new Form({
+        id: this.form.id,
+        paymaster_id: this.form.paymaster_id,
+        member_id: this.form.member_id,
+        date_enter: this.form.date_enter,
+        amount: this.form.amount,
+        gateway_id: this.form.gateway_id,
+        gateway: this.form.gateway,
+        file: this.form.file,
+        images: this.form.images
+      });
+
+      //   return newForm;
+    },
     submit() {
       this.form.busy = true;
+
+      let gateway = this.form.gateway.details;
+      //   this.form.gateway.details = this.toProperty(gateway);
+
+        let newForm = _.clone(this.form);
+        newForm.gateway.details = this.toProperty(gateway);
+      // let newForm = this.prepareForm;
+
+
+
       this.$inertia
-        .post(this.route("payment.update").url(), this.form)
+        .post(
+          this.route("payment.update").url(),
+          objectToFormData(this.form),
+        )
         .then(() => ((this.form.busy = false), (this.alert = true)));
+
+
+
+
+    //   this.$inertia
+    //     .post(
+    //       this.route("payment.update").url(),
+    //       objectToFormData(newForm),
+    //     )
+    //     .then(() => ((this.form.busy = false), (this.alert = true)));
+    },
+    toKeyValue(items) {
+      let arr = [];
+      items.forEach(function(item, index) {
+        let obj = Object.create(item);
+        let getKey = Object.keys(item).toString();
+        obj.name = getKey;
+        obj.value = item[getKey];
+        arr.push(obj);
+      });
+      return arr;
+    },
+    toProperty(items) {
+      let arr = [];
+      items.forEach(function(item, index) {
+        let temp = {};
+        temp[item.name] = item.value;
+        arr.push(temp);
+      });
+
+      return arr;
     }
+  },
+
+  watch: {
+    "form.gateway_id"(val, oldVal) {
+      let a = _.filter(this.gateways, ["value", val]);
+      this.form.gateway = a[0];
+    }
+  },
+
+  "form.images": {
+    handler: function(val, oldVal) {
+      let self = this;
+      self.images = [];
+      if (val) {
+        var filesAmount = val.length;
+        for (let i = 0; i < filesAmount; i++) {
+          var reader = new FileReader();
+
+          reader.onload = function(event) {
+            self.images.push(event.target.result);
+          };
+
+          reader.readAsDataURL(val[i]);
+        }
+      }
+    },
+    deep: true
   }
 };
 </script>

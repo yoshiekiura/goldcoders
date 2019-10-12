@@ -38,7 +38,6 @@ class PaymentController extends Controller
 
     public function create()
     {
-
         $paymasters  = User::role('paymaster')->get();
         return Inertia::render('Payment/Create', [
             'paymasters'  => $paymasters,
@@ -71,6 +70,9 @@ class PaymentController extends Controller
 
     public function store()
     {
+
+
+        $data = ValidateRequest::all();
         ValidateRequest::validate([
             'paymaster_id' => ['required', 'exists:users,id'],
             'member_id' => ['required', 'exists:users,id'],
@@ -80,7 +82,6 @@ class PaymentController extends Controller
             'gateway' => ['required']
         ]);
 
-        $data = ValidateRequest::all();
 
         $pay = new Payment;
         $pay->paymaster_id = $data['paymaster_id'];
@@ -90,6 +91,13 @@ class PaymentController extends Controller
         $pay->date_enter = $data['date_enter'];
         $pay->amount = $data['amount'];
         $pay->save();
+
+
+        $pay->clearMediaCollection('payment');
+        $pay->addAllMediaFromRequest()
+            ->each(function ($fileAdder) {
+                $fileAdder->toMediaCollection('payment');
+            });
 
         return Redirect::route('payment')->with('success', 'Payment was successfully created.');
     }
@@ -104,9 +112,15 @@ class PaymentController extends Controller
     public function edit(Payment $payment)
     {
 
+        $media  = $payment->getMedia('payment');
+        $images = [];
+        foreach ($media as $item) {
+            array_push($images, $item->getFullUrl());
+        }
+
         $paymasters  = User::role('paymaster')->get();
         return Inertia::render('Payment/Edit', [
-
+            'documents' => $images,
             'payment' => [
                 'id' => $payment->id,
                 'paymaster_id' => $payment->paymaster_id,
@@ -161,20 +175,13 @@ class PaymentController extends Controller
         $pay->amount = $data['amount'];
         $pay->save();
 
-        // return Redirect::route('payment')->with('success', 'Payment was successfully created.');
 
+        $pay->clearMediaCollection('payment');
+        $pay->addAllMediaFromRequest()
+            ->each(function ($fileAdder) {
+                $fileAdder->toMediaCollection('payment');
+            });
 
-
-        // $request = ValidateRequest::all();
-        // $payment = payment::findorfail($request['id']);
-        // $payment->update(
-        //     ValidateRequest::validate([
-        //         'name' => ['required', 'max:50'],
-        //         'type' => ['required', 'max:50'],
-        //         'status' => [],
-        //         'details' => ['required'],
-        //     ])
-        // );
         return Redirect::route('payment.edit', $pay)->with('success', 'Payment was successfully updated.');
     }
 }
