@@ -85,7 +85,6 @@
                     counter
                     accept="image/*"
                   >
-                    <!-- :rules="rules" -->
                     <template v-slot:selection="{ text }">
                       <v-chip small label color="primary">{{ text }}</v-chip>
                     </template>
@@ -152,33 +151,6 @@
                       :error-messages="$page.errors['gateway.value']"
                     />
 
-                    <!-- <div v-if="details.length > 0">
-                      <div v-for="(item , index) in details" :key="index">
-
-                        <v-layout align-center justify-center row>
-                          <v-text-field
-                            v-model="details[index]"
-                            class="primary--text"
-                            :label="index"
-                            prepend-icon="assignment"
-                            :error-messages="$page.errors.name"
-                          />
-                        </v-layout>
-                      </div>
-                    </div>-->
-
-                    <!-- <div v-for="(item , index) in form.details" :key="index">
-                      <v-layout align-center justify-center row>
-                        <v-text-field
-                          v-model="form.gateway.details[index].value"
-                          class="primary--text"
-                          :label="form.gateway.details[index].name"
-                          prepend-icon="assignment"
-                          :error-messages="$page.errors.name"
-                        />
-                      </v-layout>
-                    </div>-->
-
                     <div v-for="(item , index) in form.gateway.details" :key="index">
                       <v-layout align-center justify-center row>
                         <v-text-field
@@ -207,16 +179,7 @@
               >
                 <span class="white--text">Create {{ name }}</span>
               </v-btn>
-              <v-btn
-                class="ma-2"
-                depressed
-                color="indigo darken-4"
-                :loading="form.busy"
-                :disabled="errors.any() || form.busy"
-                @click.native="test()"
-              >
-                <span class="white--text">Create {{ name }}</span>
-              </v-btn>
+
             </v-layout>
           </v-card>
         </v-flex>
@@ -264,12 +227,12 @@ export default {
       images: [],
 
       form: {
-        paymaster_id: 2,
-        member_id: 4,
+        paymaster_id: null,
+        member_id: null,
         gateway: {},
         date_enter: null,
         date_activated: null,
-        amount: 123,
+        amount: 0,
         files: [],
         busy: false,
         images: null
@@ -277,35 +240,11 @@ export default {
     };
   },
   methods: {
-    test() {
-      let gateway = this.form.gateway.details;
-
-      console.table(this.toProperty(gateway));
-    },
     submit() {
       let self = this;
       self.form.busy = true;
-
       let gateway = this.form.gateway.details;
-
-      //   let arr = [];
-      //   gate.forEach(function(item, index) {
-      //     let test = {};
-      //     test[item.name] = item.value;
-      //     arr.push(test);
-      //   });
-      //   this.form.gateway.details = arr;
-
       this.form.gateway.details = this.toProperty(gateway);
-
-      // this.form.gateway.details.forEach(function(val,index){
-      //    console.log(val[index].name +  '    ' val[index].name );
-      // });
-
-      //   self.form.images = objectToFormData(self.form.images);
-      // .post(self.route("payment.store").url(), objectToFormData(self.form), {
-      // .post(self.route("payment.store").url(), self.form, {
-
       self.$inertia
         .post(self.route("payment.store").url(), objectToFormData(self.form), {
           replace: true,
@@ -325,7 +264,6 @@ export default {
     }
   },
   watch: {
-    "form.gateway"(val, oldVal) {},
     "form.images": {
       handler: function(val, oldVal) {
         let self = this;

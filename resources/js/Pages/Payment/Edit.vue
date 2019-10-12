@@ -86,7 +86,6 @@
                     counter
                     accept="image/*"
                   >
-                    <!-- :rules="rules" -->
                     <template v-slot:selection="{ text }">
                       <v-chip small label color="primary">{{ text }}</v-chip>
                     </template>
@@ -173,7 +172,7 @@
                 color="indigo darken-4"
                 :loading="form.busy"
                 :disabled="errors.any() || form.busy"
-                @click.native="submit()"
+                @click="submit()"
               >
                 <span class="white--text">Update {{ name }}</span>
               </v-btn>
@@ -209,8 +208,10 @@ export default {
   },
   created() {
     this.images = this.documents;
-    let gateway = this.payment.gateway.details;
-    this.payment.gateway.details = this.toKeyValue(gateway);
+    this.payment.gateway.details = this.toKeyValue(
+      this.payment.gateway.details
+    );
+    // let gateway = this.payment.gateway.details;
     // this.payment.gateway.details = OT.toKeyValue(gateway);
   },
   computed: {
@@ -226,6 +227,7 @@ export default {
       dialog: false,
       name: "Payment",
       modal1: false,
+      images: [],
       details: this.payment.gateway.details,
       form: {
         id: this.payment.id,
@@ -238,54 +240,18 @@ export default {
         file: null,
         busy: false,
         images: null
-      },
-      images: []
+      }
     };
   },
   methods: {
-    prepareForm() {
-      return new Form({
-        id: this.form.id,
-        paymaster_id: this.form.paymaster_id,
-        member_id: this.form.member_id,
-        date_enter: this.form.date_enter,
-        amount: this.form.amount,
-        gateway_id: this.form.gateway_id,
-        gateway: this.form.gateway,
-        file: this.form.file,
-        images: this.form.images
-      });
-
-      //   return newForm;
-    },
     submit() {
       this.form.busy = true;
-
-      let gateway = this.form.gateway.details;
-      //   this.form.gateway.details = this.toProperty(gateway);
-
-        let newForm = _.clone(this.form);
-        newForm.gateway.details = this.toProperty(gateway);
-      // let newForm = this.prepareForm;
-
-
-
+      let gateway = _.cloneDeep(this.form.gateway.details);
+      let newForm = _.cloneDeep(this.form);
+      newForm.gateway.details = this.toPropertyValue(gateway);
       this.$inertia
-        .post(
-          this.route("payment.update").url(),
-          objectToFormData(this.form),
-        )
+        .post(this.route("payment.update").url(), objectToFormData(newForm))
         .then(() => ((this.form.busy = false), (this.alert = true)));
-
-
-
-
-    //   this.$inertia
-    //     .post(
-    //       this.route("payment.update").url(),
-    //       objectToFormData(newForm),
-    //     )
-    //     .then(() => ((this.form.busy = false), (this.alert = true)));
     },
     toKeyValue(items) {
       let arr = [];
@@ -298,43 +264,38 @@ export default {
       });
       return arr;
     },
-    toProperty(items) {
+    toPropertyValue(items) {
       let arr = [];
       items.forEach(function(item, index) {
         let temp = {};
         temp[item.name] = item.value;
         arr.push(temp);
       });
-
       return arr;
     }
   },
-
   watch: {
+    "form.images": {
+      handler: function(val, oldVal) {
+        let self = this;
+        self.images = [];
+        if (val) {
+          var filesAmount = val.length;
+          for (let i = 0; i < filesAmount; i++) {
+            var reader = new FileReader();
+            reader.onload = function(event) {
+              self.images.push(event.target.result);
+            };
+            reader.readAsDataURL(val[i]);
+          }
+        }
+      },
+      deep: true
+    },
     "form.gateway_id"(val, oldVal) {
       let a = _.filter(this.gateways, ["value", val]);
       this.form.gateway = a[0];
     }
-  },
-
-  "form.images": {
-    handler: function(val, oldVal) {
-      let self = this;
-      self.images = [];
-      if (val) {
-        var filesAmount = val.length;
-        for (let i = 0; i < filesAmount; i++) {
-          var reader = new FileReader();
-
-          reader.onload = function(event) {
-            self.images.push(event.target.result);
-          };
-
-          reader.readAsDataURL(val[i]);
-        }
-      }
-    },
-    deep: true
   }
 };
 </script>
