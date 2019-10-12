@@ -30,6 +30,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'approve_payment']);
 
         Permission::create(['name' => 'access_all']);
+        Permission::create(['name' => 'add_access_token']);
 
         $role = Role::create(['name' => 'admin']);
         $role->givePermissionTo('edit_profile');
@@ -45,6 +46,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $role->givePermissionTo('manage_users');
         $role->givePermissionTo('manage_roles');
         $role->givePermissionTo('manage_permissions');
+        $role->givePermissionTo('add_access_token');
         $role->givePermissionTo('access_all');
 
         $role = Role::create(['name' => 'member']);
@@ -63,5 +65,6 @@ class RolesAndPermissionsSeeder extends Seeder
         $role->givePermissionTo('add_media');
         $role->givePermissionTo('edit_media');
         $role->givePermissionTo('delete_media');
+        $role->givePermissionTo('add_access_token');
     }
 }
