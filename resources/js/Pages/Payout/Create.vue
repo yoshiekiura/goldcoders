@@ -1,14 +1,13 @@
 <template>
   <main-layout :title="name">
     <v-container grid-list-md>
-      <app-alert></app-alert>
       <v-layout row my-4>
         <inertia-link
           class="headline font-weight-thin inertia-link"
-          :href="route('payment')"
+          :href="route('payout')"
         >{{ name }}</inertia-link>
         <span class="headline font-weight-thin mx-1">/</span>
-        <span class="headline font-weight-thin">Edit</span>
+        <span class="headline font-weight-thin">Create</span>
       </v-layout>
 
       <v-layout row>
@@ -33,7 +32,7 @@
                     clearable
                     deletable-chips
                     prepend-icon="fa-user"
-                    :error-messages="$page.errors['paymaster_id']"
+                    :error-messages="$page.errors.paymaster_id"
                   />
 
                   <v-autocomplete
@@ -49,30 +48,30 @@
                     clearable
                     deletable-chips
                     prepend-icon="fa-user"
-                    :error-messages="$page.errors['member_id']"
+                    :error-messages="$page.errors.member_id"
                   />
 
                   <v-dialog
                     ref="dialog1"
                     v-model="modal1"
-                    :return-value.sync="form.date_paid"
+                    :return-value.sync="form.date_payout"
                     persistent
                     width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-model="form.date_paid"
-                        :error-messages="$page.errors.date_paid"
-                        label="Date Enter"
+                        v-model="form.date_payout"
+                        :error-messages="$page.errors.date_payout"
+                        label="Date Payout"
                         prepend-icon="event"
                         readonly
                         v-on="on"
                       />
                     </template>
-                    <v-date-picker v-model="form.date_paid" scrollable>
+                    <v-date-picker v-model="form.date_payout" scrollable>
                       <v-spacer />
                       <v-btn color="primary" @click="modal1 = false">Cancel</v-btn>
-                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_paid)">OK</v-btn>
+                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_payout)">OK</v-btn>
                     </v-date-picker>
                   </v-dialog>
 
@@ -130,30 +129,34 @@
                       v-model="form.amount"
                       class="primary--text"
                       label="Amount"
+                      prepend-icon="mdi-credit-card"
+                      prefend
                       :error-messages="$page.errors.amount"
                     />
 
                     <v-autocomplete
                       :items="gateways"
-                      v-model="form.gateway_id"
+                      v-model="form.payout_details"
                       required
                       color="blue-grey"
                       label="Gateway"
                       item-text="name"
                       item-value="value"
+                      return-object
                       light
                       chips
                       clearable
                       deletable-chips
                       prepend-icon="fa-user"
-                      :error-messages="$page.errors['payment_details.value']"
+                      :error-messages="$page.errors['payout_details.value']"
                     />
-                    <div v-for="(item, index) in form.payment_details.details" :key="index">
+
+                    <div v-for="(item , index) in form.payout_details.details" :key="index">
                       <v-layout align-center justify-center row>
                         <v-text-field
-                          v-model="form.payment_details.details[index].value"
+                          v-model="form.payout_details.details[index].value"
                           class="primary--text"
-                          :label="form.payment_details.details[index].name"
+                          :label="form.payout_details.details[index].name"
                           prepend-icon="assignment"
                           :error-messages="$page.errors.name"
                         />
@@ -161,9 +164,11 @@
                     </div>
                   </v-flex>
 
+                  <!-- END of Fields -->
                 </v-flex>
               </v-layout>
             </v-container>
+
             <v-layout align-center justify-center row fill-height py-3>
               <v-btn
                 class="ma-2"
@@ -171,9 +176,9 @@
                 color="indigo darken-4"
                 :loading="form.busy"
                 :disabled="errors.any() || form.busy"
-                @click="submit()"
+                @click.native="submit()"
               >
-                <span class="white--text">Update {{ name }}</span>
+                <span class="white--text">Create {{ name }}</span>
               </v-btn>
             </v-layout>
           </v-card>
@@ -187,30 +192,21 @@
 <script>
 import MainLayout from "@/Layouts/MainLayout";
 import AdminDashPanel from "@/Shared/AdminDashPanel";
-import AppAlert from "@/partials/AppAlert";
 import objectToFormData from "object-to-formdata";
 import OT from "../../mixins/object_transform";
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
-    AppAlert
+    AdminDashPanel
   },
   mixins: [OT],
   props: {
-    payment: Object,
     users: Array,
     paymasters: Array,
-    gateways: Array,
-    documents: Array
+    gateways: Array
   },
-  created() {
-    this.images = this.documents;
-    this.payment.payment_details.details = this.toKeyValue(
-      this.payment.payment_details.details
-    );
-  },
+  created() {},
   computed: {
     getMembers() {
       if (this.form.paymaster_id != null) {
@@ -221,19 +217,25 @@ export default {
   },
   data() {
     return {
+      rules: [
+        value =>
+          !value.length ||
+          value.reduce((size, file) => size + file.size, 0) < 2000000 ||
+          "Documents size should be less than 2 MB!"
+      ],
       dialog: false,
-      name: "Payment",
+      name: "Payout",
       modal1: false,
       images: [],
+
       form: {
-        id: this.payment.id,
-        paymaster_id: this.payment.paymaster_id,
-        member_id: this.payment.member_id,
-        date_paid: this.payment.date_paid,
-        amount: this.payment.amount,
-        gateway_id: this.payment.gateway_id,
-        payment_details: this.payment.payment_details,
-        file: null,
+        paymaster_id: null,
+        member_id: null,
+        payout_details: {},
+        date_payout: null,
+        date_approved: null,
+        amount: 0,
+        files: [],
         busy: false,
         images: null
       }
@@ -241,13 +243,16 @@ export default {
   },
   methods: {
     submit() {
-      this.form.busy = true;
-      let gateway = _.cloneDeep(this.form.payment_details.details);
-      let newForm = _.cloneDeep(this.form);
-      newForm.payment_details.details = this.toPropertyValue(gateway);
-      this.$inertia
-        .post(this.route("payment.update").url(), objectToFormData(newForm))
-        .then(() => ((this.form.busy = false), (this.alert = true)));
+      let self = this;
+      self.form.busy = true;
+      let payout_details = this.form.payout_details.details;
+      this.form.payout_details.details = this.toPropertyValue(payout_details);
+      self.$inertia
+        .post(self.route("payout.store").url(), objectToFormData(self.form), {
+          replace: true,
+          preserveState: true
+        })
+        .then(() => (self.form.busy = false));
     },
   },
   watch: {
@@ -259,6 +264,7 @@ export default {
           var filesAmount = val.length;
           for (let i = 0; i < filesAmount; i++) {
             var reader = new FileReader();
+
             reader.onload = function(event) {
               self.images.push(event.target.result);
             };
@@ -267,13 +273,6 @@ export default {
         }
       },
       deep: true
-    },
-    "form.gateway_id"(val, oldVal) {
-      console.log(`new value here ${val}`);
-      if (!val) return (this.form.payment_details = {});
-
-      let a = _.filter(this.gateways, ["value", val]);
-      this.form.payment_details = a[0];
     }
   }
 };

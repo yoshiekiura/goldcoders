@@ -5,7 +5,7 @@
       <v-layout row my-4>
         <inertia-link
           class="headline font-weight-thin inertia-link"
-          :href="route('payment')"
+          :href="route('payout')"
         >{{ name }}</inertia-link>
         <span class="headline font-weight-thin mx-1">/</span>
         <span class="headline font-weight-thin">Edit</span>
@@ -55,24 +55,24 @@
                   <v-dialog
                     ref="dialog1"
                     v-model="modal1"
-                    :return-value.sync="form.date_paid"
+                    :return-value.sync="form.date_payout"
                     persistent
                     width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-model="form.date_paid"
-                        :error-messages="$page.errors.date_paid"
+                        v-model="form.date_payout"
+                        :error-messages="$page.errors.date_payout"
                         label="Date Enter"
                         prepend-icon="event"
                         readonly
                         v-on="on"
                       />
                     </template>
-                    <v-date-picker v-model="form.date_paid" scrollable>
+                    <v-date-picker v-model="form.date_payout" scrollable>
                       <v-spacer />
                       <v-btn color="primary" @click="modal1 = false">Cancel</v-btn>
-                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_paid)">OK</v-btn>
+                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_payout)">OK</v-btn>
                     </v-date-picker>
                   </v-dialog>
 
@@ -146,14 +146,14 @@
                       clearable
                       deletable-chips
                       prepend-icon="fa-user"
-                      :error-messages="$page.errors['payment_details.value']"
+                      :error-messages="$page.errors['payout_details.value']"
                     />
-                    <div v-for="(item, index) in form.payment_details.details" :key="index">
+                    <div v-for="(item, index) in form.payout_details.details" :key="index">
                       <v-layout align-center justify-center row>
                         <v-text-field
-                          v-model="form.payment_details.details[index].value"
+                          v-model="form.payout_details.details[index].value"
                           class="primary--text"
-                          :label="form.payment_details.details[index].name"
+                          :label="form.payout_details.details[index].name"
                           prepend-icon="assignment"
                           :error-messages="$page.errors.name"
                         />
@@ -199,7 +199,7 @@ export default {
   },
   mixins: [OT],
   props: {
-    payment: Object,
+    payout: Object,
     users: Array,
     paymasters: Array,
     gateways: Array,
@@ -207,8 +207,8 @@ export default {
   },
   created() {
     this.images = this.documents;
-    this.payment.payment_details.details = this.toKeyValue(
-      this.payment.payment_details.details
+    this.payout.payout_details.details = this.toKeyValue(
+      this.payout.payout_details.details
     );
   },
   computed: {
@@ -222,17 +222,17 @@ export default {
   data() {
     return {
       dialog: false,
-      name: "Payment",
+      name: "Payout",
       modal1: false,
       images: [],
       form: {
-        id: this.payment.id,
-        paymaster_id: this.payment.paymaster_id,
-        member_id: this.payment.member_id,
-        date_paid: this.payment.date_paid,
-        amount: this.payment.amount,
-        gateway_id: this.payment.gateway_id,
-        payment_details: this.payment.payment_details,
+        id: this.payout.id,
+        paymaster_id: this.payout.paymaster_id,
+        member_id: this.payout.member_id,
+        date_payout: this.payout.date_payout,
+        amount: this.payout.amount,
+        gateway_id: this.payout.gateway_id,
+        payout_details: this.payout.payout_details,
         file: null,
         busy: false,
         images: null
@@ -242,11 +242,11 @@ export default {
   methods: {
     submit() {
       this.form.busy = true;
-      let gateway = _.cloneDeep(this.form.payment_details.details);
+      let gateway = _.cloneDeep(this.form.payout_details.details);
       let newForm = _.cloneDeep(this.form);
-      newForm.payment_details.details = this.toPropertyValue(gateway);
+      newForm.payout_details.details = this.toPropertyValue(gateway);
       this.$inertia
-        .post(this.route("payment.update").url(), objectToFormData(newForm))
+        .post(this.route("payout.update").url(), objectToFormData(newForm))
         .then(() => ((this.form.busy = false), (this.alert = true)));
     },
   },
@@ -269,11 +269,9 @@ export default {
       deep: true
     },
     "form.gateway_id"(val, oldVal) {
-      console.log(`new value here ${val}`);
-      if (!val) return (this.form.payment_details = {});
-
+      if (!val) return (this.form.payout_details = {});
       let a = _.filter(this.gateways, ["value", val]);
-      this.form.payment_details = a[0];
+      this.form.payout_details = a[0];
     }
   }
 };

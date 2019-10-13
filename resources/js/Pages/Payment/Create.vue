@@ -62,7 +62,7 @@
                       <v-text-field
                         v-model="form.date_paid"
                         :error-messages="$page.errors.date_paid"
-                        label="Date Enter"
+                        label="Date Paid"
                         prepend-icon="event"
                         readonly
                         v-on="on"
@@ -163,8 +163,6 @@
                       </v-layout>
                     </div>
                   </v-flex>
-
-                  <!-- END of Fields -->
                 </v-flex>
               </v-layout>
             </v-container>
@@ -180,7 +178,6 @@
               >
                 <span class="white--text">Create {{ name }}</span>
               </v-btn>
-
             </v-layout>
           </v-card>
         </v-flex>
@@ -194,12 +191,14 @@
 import MainLayout from "@/Layouts/MainLayout";
 import AdminDashPanel from "@/Shared/AdminDashPanel";
 import objectToFormData from "object-to-formdata";
+import OT from "../../mixins/object_transform";
 
 export default {
   components: {
     MainLayout,
     AdminDashPanel
   },
+  mixins: [OT],
   props: {
     users: Array,
     paymasters: Array,
@@ -253,16 +252,6 @@ export default {
         })
         .then(() => (self.form.busy = false));
     },
-    toPropertyValue(items) {
-      let arr = [];
-      if(!items) return arr
-      items.forEach(function(item, index) {
-        let temp = {};
-        temp[item.name] = item.value;
-        arr.push(temp);
-      });
-      return arr;
-    }
   },
   watch: {
     "form.images": {
