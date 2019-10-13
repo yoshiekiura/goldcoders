@@ -13,12 +13,12 @@ class Payment extends Model implements HasMedia
 
     protected $table = 'payments';
     protected $casts = [
-        'gateway_details' => 'array'
+        'payment_details' => 'array'
     ];
 
     protected $fillable = [
-        'paymaster_id', 'member_id', 'date_enter', 'date_activated', 'activated', 'amount', 'gateway_id',
-        'gateway_details'
+        'paymaster_id', 'member_id', 'date_paid', 'date_approved', 'approved', 'amount', 'gateway_id',
+        'payment_details'
     ];
 
     public function paymaster()
@@ -29,5 +29,6 @@ class Payment extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'member_id');
     }
+
 
 }

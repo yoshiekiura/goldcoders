@@ -22,16 +22,16 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('member_id')->nullable();
             $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->date('date_enter')->default(now());
-            $table->date('date_activated')->nullable();
-            $table->boolean('activated')->default(false);
+            $table->date('date_paid')->default(now());
+            $table->date('date_approved')->nullable();
+            $table->boolean('approved')->default(false);
 
             $table->double('amount', 12, 2)->nullable()->default(0);
 
             $table->unsignedBigInteger('gateway_id')->nullable();
             $table->foreign('gateway_id')->references('id')->on('gateways')->onDelete('cascade');
 
-            $table->json('gateway_details')->nullable();
+            $table->json('payment_details')->nullable();
 
             $table->timestamps();
         });

@@ -31,10 +31,11 @@
                     class="primary--text"
                     label="Type"
                     prepend-icon="assessment"
-                    :error-messages="$page.errors.name"
+                    :error-messages="$page.errors.type"
                   />
 
-                  <v-switch v-model="form.status" label="Active ?"></v-switch>
+                  <v-switch v-model="form.active" label="Active ?"></v-switch>
+                  <v-switch v-model="form.for_payout" label="For Payout ?"></v-switch>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -62,14 +63,12 @@
                           class="primary--text"
                           label="Field Name"
                           prepend-icon="assignment"
-                          :error-messages="$page.errors.name"
                         />
                         <v-text-field
                           v-model="form.details[index].value"
                           class="primary--text"
                           label="Field Value"
                           prepend-icon="assignment"
-                          :error-messages="$page.errors.name"
                         />
                         <v-btn @click="deleteField(item)" small icon fab color="grey">
                           <v-icon>delete</v-icon>
@@ -121,7 +120,8 @@ export default {
         busy: false,
         name: null,
         type: null,
-        status: false,
+        active: false,
+        for_payout: false,
         details: [
           {
             name: null,
@@ -129,7 +129,6 @@ export default {
           }
         ]
       },
-      selected: []
     };
   },
   methods: {

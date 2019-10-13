@@ -19,7 +19,8 @@ class GatewayController extends Controller
                         'id' => $field->id,
                         'name' => $field->name,
                         'type' => $field->type,
-                        'status' => $field->status,
+                        'active' => $field->active,
+                        'for_payout' => $field->for_payout
                     ];
                 }),
         ]);
@@ -36,7 +37,8 @@ class GatewayController extends Controller
             ValidateRequest::validate([
                 'name' => ['required', 'max:50'],
                 'type' => ['required', 'max:50'],
-                'status' => [],
+                'active' => [],
+                'for_payout' => [],
                 'details' => ['required'],
             ])
         );
@@ -58,7 +60,8 @@ class GatewayController extends Controller
                 'id' => $gateway->id,
                 'name' => $gateway->name,
                 'type' => $gateway->type,
-                'status' => $gateway->status,
+                'active' => $gateway->active,
+                'for_payout' => $gateway->for_payout,
                 'details' => $gateway->details,
             ]
         ]);
@@ -72,7 +75,8 @@ class GatewayController extends Controller
             ValidateRequest::validate([
                 'name' => ['required', 'max:50'],
                 'type' => ['required', 'max:50'],
-                'status' => [],
+                'active' => [],
+                'for_payout' => [],
                 'details' => ['required'],
             ])
         );

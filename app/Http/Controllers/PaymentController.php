@@ -7,7 +7,6 @@ use Inertia\Inertia;
 use App\Models\Gateway;
 use App\Models\Payment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request as ValidateRequest;
@@ -29,8 +28,8 @@ class PaymentController extends Controller
                         'member_name' => $field->member->name,
 
                         'amount' => $field->amount,
-                        'date_enter' => $field->date_enter,
-                        'activated' => $field->activated,
+                        'date_paid' => $field->date_paid,
+                        'approved' => $field->approved,
                     ];
                 }),
         ]);
@@ -41,7 +40,7 @@ class PaymentController extends Controller
         $paymasters  = User::role('paymaster')->get();
         return Inertia::render('Payment/Create', [
             'paymasters'  => $paymasters,
-            'gateways'  => Gateway::orderByName()->whereStatus(true)
+            'gateways'  => Gateway::orderByName()->whereActive(true)
                 ->get()
                 ->transform(function ($field) {
                     return [
@@ -71,32 +70,30 @@ class PaymentController extends Controller
     public function store()
     {
 
-
         $data = ValidateRequest::all();
         ValidateRequest::validate([
             'paymaster_id' => ['required', 'exists:users,id'],
             'member_id' => ['required', 'exists:users,id'],
-            'date_enter' => ['required', 'date'],
+            'date_paid' => ['required', 'date'],
             'amount' => ['required', 'numeric'],
-            'gateway.value' => ['required', 'exists:gateways,id'],
-            'gateway' => ['required']
+            'payment_details.value' => ['required', 'exists:gateways,id'],
+            'payment_details' => ['required']
         ]);
 
 
         $pay = new Payment;
         $pay->paymaster_id = $data['paymaster_id'];
         $pay->member_id = $data['member_id'];
-        $pay->gateway_id = $data['gateway']['value'];
-        $pay->gateway_details = $data['gateway'];
-        $pay->date_enter = $data['date_enter'];
+        $pay->gateway_id = $data['payment_details']['value'];
+        $pay->payment_details = $data['payment_details'];
+        $pay->date_paid = $data['date_paid'];
         $pay->amount = $data['amount'];
         $pay->save();
 
-
-        $pay->clearMediaCollection('payment');
+        $pay->clearMediaCollection('payments');
         $pay->addAllMediaFromRequest()
             ->each(function ($fileAdder) {
-                $fileAdder->toMediaCollection('payment');
+                $fileAdder->toMediaCollection('payments');
             });
 
         return Redirect::route('payment')->with('success', 'Payment was successfully created.');
@@ -112,7 +109,7 @@ class PaymentController extends Controller
     public function edit(Payment $payment)
     {
 
-        $media  = $payment->getMedia('payment');
+        $media  = $payment->getMedia('payments');
         $images = [];
         foreach ($media as $item) {
             array_push($images, $item->getFullUrl());
@@ -126,12 +123,12 @@ class PaymentController extends Controller
                 'paymaster_id' => $payment->paymaster_id,
                 'member_id' => $payment->member_id,
                 'amount' => $payment->amount,
-                'date_enter' => $payment->date_enter,
+                'date_paid' => $payment->date_paid,
                 'gateway_id' => $payment->gateway_id,
-                'gateway' => $payment->gateway_details,
+                'payment_details' => $payment->payment_details,
             ],
             'paymasters'  => $paymasters,
-            'gateways'  => Gateway::orderByName()->whereStatus(true)
+            'gateways'  => Gateway::orderByName()->whereActive(true)
                 ->get()
                 ->transform(function ($field) {
                     return [
@@ -155,13 +152,17 @@ class PaymentController extends Controller
     public function update()
     {
 
+
+
+        $data = ValidateRequest::all();
+
         ValidateRequest::validate([
             'paymaster_id' => ['required', 'exists:users,id'],
             'member_id' => ['required', 'exists:users,id'],
-            'date_enter' => ['required', 'date'],
+            'date_paid' => ['required', 'date'],
             'amount' => ['required', 'numeric'],
-            'gateway.value' => ['required', 'exists:gateways,id'],
-            'gateway' => ['required']
+            'payment_details.value' => ['required', 'exists:gateways,id'],
+            'payment_details' => ['required']
         ]);
 
         $data = ValidateRequest::all();
@@ -169,18 +170,19 @@ class PaymentController extends Controller
         $pay = Payment::findorfail($data['id']);
         $pay->paymaster_id = $data['paymaster_id'];
         $pay->member_id = $data['member_id'];
-        $pay->gateway_id = $data['gateway']['value'];
-        $pay->gateway_details = $data['gateway'];
-        $pay->date_enter = $data['date_enter'];
+        $pay->gateway_id = $data['payment_details']['value'];
+        $pay->payment_details = $data['payment_details'];
+        $pay->date_paid = $data['date_paid'];
         $pay->amount = $data['amount'];
         $pay->save();
 
-
-        $pay->clearMediaCollection('payment');
-        $pay->addAllMediaFromRequest()
-            ->each(function ($fileAdder) {
-                $fileAdder->toMediaCollection('payment');
-            });
+        if ($data['images']) {
+            $pay->clearMediaCollection('payments');
+            $pay->addAllMediaFromRequest()
+                ->each(function ($fileAdder) {
+                    $fileAdder->toMediaCollection('payments');
+                });
+        }
 
         return Redirect::route('payment.edit', $pay)->with('success', 'Payment was successfully updated.');
     }

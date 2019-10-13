@@ -33,7 +33,7 @@
                     clearable
                     deletable-chips
                     prepend-icon="fa-user"
-                    :error-messages="$page.errors['master.id']"
+                    :error-messages="$page.errors['paymaster_id']"
                   />
 
                   <v-autocomplete
@@ -49,30 +49,30 @@
                     clearable
                     deletable-chips
                     prepend-icon="fa-user"
-                    :error-messages="$page.errors['member.id']"
+                    :error-messages="$page.errors['member_id']"
                   />
 
                   <v-dialog
                     ref="dialog1"
                     v-model="modal1"
-                    :return-value.sync="form.date_enter"
+                    :return-value.sync="form.date_paid"
                     persistent
                     width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-model="form.date_enter"
-                        :error-messages="$page.errors.date_enter"
+                        v-model="form.date_paid"
+                        :error-messages="$page.errors.date_paid"
                         label="Date Enter"
                         prepend-icon="event"
                         readonly
                         v-on="on"
                       />
                     </template>
-                    <v-date-picker v-model="form.date_enter" scrollable>
+                    <v-date-picker v-model="form.date_paid" scrollable>
                       <v-spacer />
                       <v-btn color="primary" @click="modal1 = false">Cancel</v-btn>
-                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_enter)">OK</v-btn>
+                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_paid)">OK</v-btn>
                     </v-date-picker>
                   </v-dialog>
 
@@ -146,14 +146,14 @@
                       clearable
                       deletable-chips
                       prepend-icon="fa-user"
-                      :error-messages="$page.errors['master.id']"
+                      :error-messages="$page.errors['payment_details.value']"
                     />
-                    <div v-for="(item, index) in form.gateway.details" :key="index">
+                    <div v-for="(item, index) in form.payment_details.details" :key="index">
                       <v-layout align-center justify-center row>
                         <v-text-field
-                          v-model="form.gateway.details[index].value"
+                          v-model="form.payment_details.details[index].value"
                           class="primary--text"
-                          :label="form.gateway.details[index].name"
+                          :label="form.payment_details.details[index].name"
                           prepend-icon="assignment"
                           :error-messages="$page.errors.name"
                         />
@@ -208,8 +208,8 @@ export default {
   },
   created() {
     this.images = this.documents;
-    this.payment.gateway.details = this.toKeyValue(
-      this.payment.gateway.details
+    this.payment.payment_details.details = this.toKeyValue(
+      this.payment.payment_details.details
     );
     // let gateway = this.payment.gateway.details;
     // this.payment.gateway.details = OT.toKeyValue(gateway);
@@ -228,15 +228,15 @@ export default {
       name: "Payment",
       modal1: false,
       images: [],
-      details: this.payment.gateway.details,
+      //   details: this.payment.payment_details.details,
       form: {
         id: this.payment.id,
         paymaster_id: this.payment.paymaster_id,
         member_id: this.payment.member_id,
-        date_enter: this.payment.date_enter,
+        date_paid: this.payment.date_paid,
         amount: this.payment.amount,
         gateway_id: this.payment.gateway_id,
-        gateway: this.payment.gateway,
+        payment_details: this.payment.payment_details,
         file: null,
         busy: false,
         images: null
@@ -246,15 +246,16 @@ export default {
   methods: {
     submit() {
       this.form.busy = true;
-      let gateway = _.cloneDeep(this.form.gateway.details);
+      let gateway = _.cloneDeep(this.form.payment_details.details);
       let newForm = _.cloneDeep(this.form);
-      newForm.gateway.details = this.toPropertyValue(gateway);
+      newForm.payment_details.details = this.toPropertyValue(gateway);
       this.$inertia
         .post(this.route("payment.update").url(), objectToFormData(newForm))
         .then(() => ((this.form.busy = false), (this.alert = true)));
     },
     toKeyValue(items) {
       let arr = [];
+      if (!items) return arr;
       items.forEach(function(item, index) {
         let obj = Object.create(item);
         let getKey = Object.keys(item).toString();
@@ -266,6 +267,7 @@ export default {
     },
     toPropertyValue(items) {
       let arr = [];
+      if (!items) return arr;
       items.forEach(function(item, index) {
         let temp = {};
         temp[item.name] = item.value;
@@ -293,8 +295,11 @@ export default {
       deep: true
     },
     "form.gateway_id"(val, oldVal) {
+      console.log(`new value here ${val}`);
+      if (!val) return (this.form.payment_details = {});
+
       let a = _.filter(this.gateways, ["value", val]);
-      this.form.gateway = a[0];
+      this.form.payment_details = a[0];
     }
   }
 };

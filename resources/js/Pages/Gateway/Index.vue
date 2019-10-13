@@ -41,8 +41,11 @@
                 class="elevation-1"
                 :items="gateways"
               >
-                <template v-slot:item.status="{ item }">
-                  <v-chip :color="getColor(item.status)" dark>{{ getStatus(item.status) }}</v-chip>
+                <template v-slot:item.active="{ item }">
+                  <v-chip :color="getColor(item.active)" dark>{{ getStatus(item.active) }}</v-chip>
+                </template>
+                <template v-slot:item.for_payout="{ item }">
+                  <v-chip :color="getColor(item.for_payout)" dark>{{ getStatus(item.for_payout) }}</v-chip>
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
@@ -101,7 +104,8 @@ export default {
     headers: [
       { text: "Name", value: "name", align: "left", sortable: true },
       { text: "Type", value: "type", align: "left", sortable: true },
-      { text: "Status", value: "status", align: "center", sortable: true },
+      { text: "Active", value: "active", align: "center", sortable: true },
+      { text: "For Payout", value: "for_payout", align: "center", sortable: true },
       { text: "Actions", value: "actions", align: "center", sortable: false }
     ],
     search: "",
@@ -139,8 +143,8 @@ export default {
       let self = this;
       self.$inertia.visit(this.route("gateway.edit", data).url(), self.form);
     },
-    getColor(status) {
-      if (status) return "green";
+    getColor(active) {
+      if (active) return "green";
       else return "red";
     },
     getStatus(val) {
