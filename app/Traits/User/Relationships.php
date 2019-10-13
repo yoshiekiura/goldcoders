@@ -3,6 +3,7 @@
 namespace App\Traits\User;
 
 use App\Models\User;
+use App\Models\Ctrader;
 use App\Models\Subscription;
 
 trait Relationships
@@ -42,5 +43,10 @@ trait Relationships
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function ctraderToken()
+    {
+        return $this->hasOne(Ctrader::class, 'user_id');
     }
 }
