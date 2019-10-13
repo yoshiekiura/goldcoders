@@ -50,3 +50,6 @@ Route::get('/ctrader/connect/redirect')->name('ctrader.redirect')->uses('Connect
 Route::get('/ctrader')->name('ctrader.view')->uses('ConnectApiController@view');
 Route::get('/ctrader/refresh_token')->name('ctrader.refresh_token')->uses('ConnectApiController@refreshToken');
 
+Route::get('/ctrader/getAccounts')->name('ctrader.getAccounts')->uses('AccountsApiController@getAccounts');
+Route::get('/ctrader/account/{trading_account_id}/trading-history')->name('ctrader.getAccount')->uses('AccountsApiController@getAccount');
+Route::get('/ctrader/account/{trading_account_id}/cashflow')->name('ctrader.getCashFlow')->uses('AccountsApiController@getCashFlow');
