@@ -54,24 +54,24 @@
                   <v-dialog
                     ref="dialog1"
                     v-model="modal1"
-                    :return-value.sync="form.date_enter"
+                    :return-value.sync="form.date_paid"
                     persistent
                     width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-model="form.date_enter"
-                        :error-messages="$page.errors.date_enter"
-                        label="Date Enter"
+                        v-model="form.date_paid"
+                        :error-messages="$page.errors.date_paid"
+                        label="Date Paid"
                         prepend-icon="event"
                         readonly
                         v-on="on"
                       />
                     </template>
-                    <v-date-picker v-model="form.date_enter" scrollable>
+                    <v-date-picker v-model="form.date_paid" scrollable>
                       <v-spacer />
                       <v-btn color="primary" @click="modal1 = false">Cancel</v-btn>
-                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_enter)">OK</v-btn>
+                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_paid)">OK</v-btn>
                     </v-date-picker>
                   </v-dialog>
 
@@ -136,7 +136,7 @@
 
                     <v-autocomplete
                       :items="gateways"
-                      v-model="form.gateway"
+                      v-model="form.payment_details"
                       required
                       color="blue-grey"
                       label="Gateway"
@@ -148,26 +148,25 @@
                       clearable
                       deletable-chips
                       prepend-icon="fa-user"
-                      :error-messages="$page.errors['gateway.value']"
+                      :error-messages="$page.errors['payment_details.value']"
                     />
 
-                    <div v-for="(item , index) in form.gateway.details" :key="index">
+                    <div v-for="(item , index) in form.payment_details.details" :key="index">
                       <v-layout align-center justify-center row>
                         <v-text-field
-                          v-model="form.gateway.details[index].value"
+                          v-model="form.payment_details.details[index].value"
                           class="primary--text"
-                          :label="form.gateway.details[index].name"
+                          :label="form.payment_details.details[index].name"
                           prepend-icon="assignment"
                           :error-messages="$page.errors.name"
                         />
                       </v-layout>
                     </div>
                   </v-flex>
-
-                  <!-- END of Fields -->
                 </v-flex>
               </v-layout>
             </v-container>
+
             <v-layout align-center justify-center row fill-height py-3>
               <v-btn
                 class="ma-2"
@@ -179,7 +178,6 @@
               >
                 <span class="white--text">Create {{ name }}</span>
               </v-btn>
-
             </v-layout>
           </v-card>
         </v-flex>
@@ -193,12 +191,14 @@
 import MainLayout from "@/Layouts/MainLayout";
 import AdminDashPanel from "@/Shared/AdminDashPanel";
 import objectToFormData from "object-to-formdata";
+import OT from "../../mixins/object_transform";
 
 export default {
   components: {
     MainLayout,
     AdminDashPanel
   },
+  mixins: [OT],
   props: {
     users: Array,
     paymasters: Array,
@@ -229,9 +229,9 @@ export default {
       form: {
         paymaster_id: null,
         member_id: null,
-        gateway: {},
-        date_enter: null,
-        date_activated: null,
+        payment_details: {},
+        date_paid: null,
+        date_approved: null,
         amount: 0,
         files: [],
         busy: false,
@@ -243,8 +243,8 @@ export default {
     submit() {
       let self = this;
       self.form.busy = true;
-      let gateway = this.form.gateway.details;
-      this.form.gateway.details = this.toProperty(gateway);
+      let payment_details = this.form.payment_details.details;
+      this.form.payment_details.details = this.toPropertyValue(payment_details);
       self.$inertia
         .post(self.route("payment.store").url(), objectToFormData(self.form), {
           replace: true,
@@ -252,16 +252,6 @@ export default {
         })
         .then(() => (self.form.busy = false));
     },
-    toProperty(items) {
-      let arr = [];
-      items.forEach(function(item, index) {
-        let temp = {};
-        temp[item.name] = item.value;
-        arr.push(temp);
-      });
-
-      return arr;
-    }
   },
   watch: {
     "form.images": {
@@ -276,7 +266,6 @@ export default {
             reader.onload = function(event) {
               self.images.push(event.target.result);
             };
-
             reader.readAsDataURL(val[i]);
           }
         }

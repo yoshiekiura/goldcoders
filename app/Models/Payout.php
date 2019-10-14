@@ -6,19 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
-class Payment extends Model implements HasMedia
+class Payout extends Model implements HasMedia
 {
-
     use HasMediaTrait;
-
-    protected $table = 'payments';
     protected $casts = [
-        'payment_details' => 'array'
+        'payout_details' => 'array'
     ];
 
     protected $fillable = [
-        'paymaster_id', 'member_id', 'date_paid', 'date_approved', 'approved', 'amount', 'gateway_id',
-        'payment_details'
+        'paymaster_id', 'member_id', 'date_payout', 'date_approved', 'approved', 'amount', 'gateway_id',
+        'payout_details'
     ];
 
     public function paymaster()
@@ -29,6 +26,5 @@ class Payment extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'member_id');
     }
-
 
 }

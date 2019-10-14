@@ -81,6 +81,14 @@
         icon-color="#fafafa"
       />
       <v-link
+        title="Payout"
+        :href="route('payout').url()"
+        icon="fa-money"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+      <v-link
         title="Profile"
         href="profile.show"
         icon="fa-user"

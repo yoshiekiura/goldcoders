@@ -12,10 +12,17 @@ class Gateway extends Model
     ];
 
 
-    protected $fillable = ['name', 'type', 'status','details'];
+    protected $fillable = ['name', 'type', 'active','for_payout','details'];
 
     public function scopeOrderByName($query)
     {
         $query->orderBy('name');
     }
+
+
+    public function scopeForPayout($query)
+    {
+        $query->where('for_payout', true);
+    }
+
 }

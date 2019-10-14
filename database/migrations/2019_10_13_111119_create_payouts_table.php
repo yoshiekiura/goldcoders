@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentsTable extends Migration
+class CreatePayoutsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class CreatePaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('payouts', function (Blueprint $table) {
             $table->bigIncrements('id');
+
 
             $table->unsignedBigInteger('paymaster_id')->nullable();
             $table->foreign('paymaster_id')->references('id')->on('users')->onDelete('cascade');
@@ -22,7 +23,7 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('member_id')->nullable();
             $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->date('date_paid')->default(now());
+            $table->date('date_payout')->default(now());
             $table->date('date_approved')->nullable();
             $table->boolean('approved')->default(false);
 
@@ -31,7 +32,7 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('gateway_id')->nullable();
             $table->foreign('gateway_id')->references('id')->on('gateways')->onDelete('cascade');
 
-            $table->json('payment_details')->nullable();
+            $table->json('payout_details')->nullable();
 
             $table->timestamps();
         });
@@ -44,6 +45,6 @@ class CreatePaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('payouts');
     }
 }

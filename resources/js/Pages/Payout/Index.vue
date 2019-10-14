@@ -11,7 +11,7 @@
                   <span class="headline font-weight-thin">{{ name }} Listing</span>
                 </v-flex>
                 <v-flex pr-4 xs12 md4 offset-md4>
-                  <inertia-link class="btn" :href="route('gateway.create')">
+                  <inertia-link class="btn" :href="route('payout.create')">
                     <v-btn block text color="primary" dark>
                       Add New {{ name }}
                       <v-icon right color="primary">fa-plus</v-icon>
@@ -39,13 +39,10 @@
                 :search="search"
                 item-key="name"
                 class="elevation-1"
-                :items="gateways"
+                :items="payouts"
               >
-                <template v-slot:item.active="{ item }">
-                  <v-chip :color="getColor(item.active)" dark>{{ getStatus(item.active) }}</v-chip>
-                </template>
-                <template v-slot:item.for_payout="{ item }">
-                  <v-chip :color="getColor(item.for_payout)" dark>{{ getStatus(item.for_payout) }}</v-chip>
+                <template v-slot:item.approved="{ item }">
+                  <v-chip :color="getColor(item.approved)" dark>{{ getStatus(item.approved) }}</v-chip>
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
@@ -80,7 +77,6 @@ import ModalLayout from "@/Layouts/ModalLayout";
 import AppAlert from "@/partials/AppAlert";
 import swal from "sweetalert2";
 
-
 export default {
   components: {
     MainLayout,
@@ -89,23 +85,24 @@ export default {
     AppAlert
   },
   props: {
-    gateways: Array,
+    payouts: Array,
     link: String
   },
 
   computed: {},
 
   data: () => ({
-    name: "Gateway",
+    name: "Payout",
     form: {
       id: null,
       busy: false
     },
     headers: [
-      { text: "Name", value: "name", align: "left", sortable: true },
-      { text: "Type", value: "type", align: "left", sortable: true },
-      { text: "Active", value: "active", align: "center", sortable: true },
-      { text: "For Payout", value: "for_payout", align: "center", sortable: true },
+      { text: "Paymaster", value: "paymaster_name", align: "left", sortable: true },
+      { text: "Member", value: "member_name", align: "left", sortable: true },
+      { text: "Amount", value: "amount", align: "center", sortable: true },
+      { text: "Date Payout", value: "date_payout", align: "center", sortable: true },
+      { text: "Approved", value: "approved", align: "center", sortable: true },
       { text: "Actions", value: "actions", align: "center", sortable: false }
     ],
     search: "",
@@ -132,7 +129,7 @@ export default {
         .then(result => {
           if (result.value) {
             this.form.busy = true;
-            this.$inertia.post(this.route("gateway.delete").url(), data);
+            this.$inertia.post(this.route("payout.delete").url(), data);
             this.alert.model = true;
           }
         });
@@ -141,14 +138,14 @@ export default {
       this.form.busy = true;
       this.form.id = data.id;
       let self = this;
-      self.$inertia.visit(this.route("gateway.edit", data).url(), self.form);
+      self.$inertia.visit(this.route("payout.edit", data).url(), self.form);
     },
-    getColor(active) {
-      if (active) return "green";
+    getColor(status) {
+      if (status) return "green";
       else return "red";
     },
     getStatus(val) {
-      return val ? "Active" : "Inactive";
+      return val ? "Yes" : "No";
     }
   }
 };

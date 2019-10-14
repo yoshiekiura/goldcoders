@@ -17,7 +17,8 @@ class CreateGatewaysTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('type');
-            $table->boolean('status')->default(false);
+            $table->boolean('active')->default(false);
+            $table->boolean('for_payout')->default(false);
             $table->json('details');
 
             // $table->unsignedBigInteger('payment_id')->nullable();

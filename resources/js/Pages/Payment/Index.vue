@@ -41,8 +41,8 @@
                 class="elevation-1"
                 :items="payments"
               >
-                <template v-slot:item.activated="{ item }">
-                  <v-chip :color="getColor(item.activated)" dark>{{ getStatus(item.activated) }}</v-chip>
+                <template v-slot:item.approved="{ item }">
+                  <v-chip :color="getColor(item.approved)" dark>{{ getStatus(item.approved) }}</v-chip>
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
@@ -101,8 +101,8 @@ export default {
       { text: "Paymaster", value: "paymaster_name", align: "left", sortable: true },
       { text: "Member", value: "member_name", align: "left", sortable: true },
       { text: "Amount", value: "amount", align: "center", sortable: true },
-      { text: "Date Enter", value: "date_enter", align: "center", sortable: true },
-      { text: "Activated", value: "activated", align: "center", sortable: true },
+      { text: "Date Paid", value: "date_paid", align: "center", sortable: true },
+      { text: "Approved", value: "approved", align: "center", sortable: true },
       { text: "Actions", value: "actions", align: "center", sortable: false }
     ],
     search: "",

@@ -43,6 +43,14 @@ Route::get('/payment/{payment}/edit')->name('payment.edit')->uses('PaymentContro
 Route::post('/payment/update')->name('payment.update')->uses('PaymentController@update');
 Route::get('/getPaymasterMembers/{user}')->name('getPaymasterMembers')->uses('PaymentController@getPaymasterMembers');
 
+Route::get('/payout')->name('payout')->uses('PayoutController@index');
+Route::get('/payout/create')->name('payout.create')->uses('PayoutController@create');
+Route::post('/payout')->name('payout.store')->uses('PayoutController@store');
+Route::post('/payout/delete')->name('payout.delete')->uses('PayoutController@delete');
+Route::get('/payout/{payout}/edit')->name('payout.edit')->uses('PayoutController@edit');
+Route::post('/payout/update')->name('payout.update')->uses('PayoutController@update');
+
+
 // return a view that user can click to redirect to ctrader login and allow our app permission
 Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController@connect');
 // this url will receive our authorization code that we can use to get access token

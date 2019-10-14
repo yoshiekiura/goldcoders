@@ -32,10 +32,13 @@
                     class="primary--text"
                     label="Type"
                     prepend-icon="assessment"
-                    :error-messages="$page.errors.name"
+                    :error-messages="$page.errors.type"
                   />
 
-                  <v-switch v-model="form.status" label="Active ?"></v-switch>
+                  <v-switch v-model="form.active" label="Active ?"></v-switch>
+                  <v-switch v-model="form.for_payout" label="For Payout ?"></v-switch>
+
+
                 </v-flex>
               </v-layout>
             </v-container>
@@ -63,14 +66,12 @@
                           class="primary--text"
                           label="Field Name"
                           prepend-icon="assignment"
-                          :error-messages="$page.errors.name"
                         />
                         <v-text-field
                           v-model="form.details[index].value"
                           class="primary--text"
                           label="Field Value"
                           prepend-icon="assignment"
-                          :error-messages="$page.errors.name"
                         />
                         <v-btn @click="deleteField(item)" small icon fab color="grey">
                           <v-icon>delete</v-icon>
@@ -131,7 +132,8 @@ export default {
         id: this.gateway.id,
         name: this.gateway.name,
         type: this.gateway.type,
-        status: this.gateway.status,
+        active: this.gateway.active,
+        for_payout: this.gateway.for_payout,
         details: this.gateway.details
       },
       items: [],
@@ -146,8 +148,8 @@ export default {
     },
     addField() {
       this.form.details.push({
-        amount: "",
-        rank: null
+        name: "",
+        value: ""
       });
     },
     submit() {

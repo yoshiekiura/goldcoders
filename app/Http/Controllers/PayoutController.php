@@ -5,19 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Gateway;
-use App\Models\Payment;
+use App\Models\Payout;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request as ValidateRequest;
 
-class PaymentController extends Controller
+class PayoutController extends Controller
 {
     public function index()
     {
 
-        return Inertia::render('Payment/Index', [
-            'payments' => Payment::with('paymaster', 'member')->get()
+        return Inertia::render('Payout/Index', [
+            'payouts' => Payout::with('paymaster', 'member')->get()
                 ->transform(function ($field) {
                     return [
                         'id' => $field->id,
@@ -28,7 +28,7 @@ class PaymentController extends Controller
                         'member_name' => $field->member->name,
 
                         'amount' => $field->amount,
-                        'date_paid' => $field->date_paid,
+                        'date_payout' => $field->date_payout,
                         'approved' => $field->approved,
                     ];
                 }),
@@ -38,9 +38,9 @@ class PaymentController extends Controller
     public function create()
     {
         $paymasters  = User::role('paymaster')->get();
-        return Inertia::render('Payment/Create', [
+        return Inertia::render('Payout/Create', [
             'paymasters'  => $paymasters,
-            'gateways'  => Gateway::orderByName()->whereActive(true)
+            'gateways'  => Gateway::orderByName()->whereActive(true)->ForPayout()
                 ->get()
                 ->transform(function ($field) {
                     return [
@@ -61,12 +61,6 @@ class PaymentController extends Controller
         ]);
     }
 
-
-    public function getPaymasterMembers(User $user)
-    {
-        return UserResource::collection(User::where('paymaster_id', $user->id)->get());
-    }
-
     public function store()
     {
 
@@ -74,58 +68,57 @@ class PaymentController extends Controller
         ValidateRequest::validate([
             'paymaster_id' => ['required', 'exists:users,id'],
             'member_id' => ['required', 'exists:users,id'],
-            'date_paid' => ['required', 'date'],
+            'date_payout' => ['required', 'date'],
             'amount' => ['required', 'numeric'],
-            'payment_details.value' => ['required', 'exists:gateways,id'],
-            'payment_details' => ['required']
+            'payout_details.value' => ['required', 'exists:gateways,id'],
+            'payout_details' => ['required']
         ]);
 
-
-        $pay = new Payment;
+        $pay = new Payout;
         $pay->paymaster_id = $data['paymaster_id'];
         $pay->member_id = $data['member_id'];
-        $pay->gateway_id = $data['payment_details']['value'];
-        $pay->payment_details = $data['payment_details'];
-        $pay->date_paid = $data['date_paid'];
+        $pay->gateway_id = $data['payout_details']['value'];
+        $pay->payout_details = $data['payout_details'];
+        $pay->date_payout = $data['date_payout'];
         $pay->amount = $data['amount'];
         $pay->save();
 
-        $pay->clearMediaCollection('payments');
+        $pay->clearMediaCollection('payouts');
         $pay->addAllMediaFromRequest()
             ->each(function ($fileAdder) {
-                $fileAdder->toMediaCollection('payments');
+                $fileAdder->toMediaCollection('payouts');
             });
 
-        return Redirect::route('payment')->with('success', 'Payment was successfully created.');
+        return Redirect::route('payout')->with('success', 'Payout was successfully created.');
     }
 
     public function delete(Request $request)
     {
-        $payment = Payment::findorfail($request->id);
-        $payment->delete();
-        return Redirect::route('payment')->with('success', 'Payment  was successfully delete.');
+        $payout = Payout::findorfail($request->id);
+        $payout->delete();
+        return Redirect::route('payout')->with('success', 'Payout  was successfully delete.');
     }
 
-    public function edit(Payment $payment)
+    public function edit(Payout $payout)
     {
 
-        $media  = $payment->getMedia('payments');
+        $media  = $payout->getMedia('payouts');
         $images = [];
         foreach ($media as $item) {
             array_push($images, $item->getFullUrl());
         }
 
         $paymasters  = User::role('paymaster')->get();
-        return Inertia::render('Payment/Edit', [
+        return Inertia::render('Payout/Edit', [
             'documents' => $images,
-            'payment' => [
-                'id' => $payment->id,
-                'paymaster_id' => $payment->paymaster_id,
-                'member_id' => $payment->member_id,
-                'amount' => $payment->amount,
-                'date_paid' => $payment->date_paid,
-                'gateway_id' => $payment->gateway_id,
-                'payment_details' => $payment->payment_details,
+            'payout' => [
+                'id' => $payout->id,
+                'paymaster_id' => $payout->paymaster_id,
+                'member_id' => $payout->member_id,
+                'amount' => $payout->amount,
+                'date_payout' => $payout->date_payout,
+                'gateway_id' => $payout->gateway_id,
+                'payout_details' => $payout->payout_details,
             ],
             'paymasters'  => $paymasters,
             'gateways'  => Gateway::orderByName()->whereActive(true)
@@ -159,31 +152,31 @@ class PaymentController extends Controller
         ValidateRequest::validate([
             'paymaster_id' => ['required', 'exists:users,id'],
             'member_id' => ['required', 'exists:users,id'],
-            'date_paid' => ['required', 'date'],
+            'date_payout' => ['required', 'date'],
             'amount' => ['required', 'numeric'],
-            'payment_details.value' => ['required', 'exists:gateways,id'],
-            'payment_details' => ['required']
+            'payout_details.value' => ['required', 'exists:gateways,id'],
+            'payout_details' => ['required']
         ]);
 
         $data = ValidateRequest::all();
 
-        $pay = Payment::findorfail($data['id']);
+        $pay = Payout::findorfail($data['id']);
         $pay->paymaster_id = $data['paymaster_id'];
         $pay->member_id = $data['member_id'];
-        $pay->gateway_id = $data['payment_details']['value'];
-        $pay->payment_details = $data['payment_details'];
-        $pay->date_paid = $data['date_paid'];
+        $pay->gateway_id = $data['payout_details']['value'];
+        $pay->payout_details = $data['payout_details'];
+        $pay->date_payout = $data['date_payout'];
         $pay->amount = $data['amount'];
         $pay->save();
 
         if ($data['images']) {
-            $pay->clearMediaCollection('payments');
+            $pay->clearMediaCollection('payouts');
             $pay->addAllMediaFromRequest()
                 ->each(function ($fileAdder) {
-                    $fileAdder->toMediaCollection('payments');
+                    $fileAdder->toMediaCollection('payouts');
                 });
         }
 
-        return Redirect::route('payment.edit', $pay)->with('success', 'Payment was successfully updated.');
+        return Redirect::route('payout.edit', $pay)->with('success', 'Payout was successfully updated.');
     }
 }
