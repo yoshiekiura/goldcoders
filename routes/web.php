@@ -50,7 +50,6 @@ Route::post('/payout/delete')->name('payout.delete')->uses('PayoutController@del
 Route::get('/payout/{payout}/edit')->name('payout.edit')->uses('PayoutController@edit');
 Route::post('/payout/update')->name('payout.update')->uses('PayoutController@update');
 
-
 // return a view that user can click to redirect to ctrader login and allow our app permission
 Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController@connect');
 // this url will receive our authorization code that we can use to get access token
@@ -58,6 +57,7 @@ Route::get('/ctrader/connect/redirect')->name('ctrader.redirect')->uses('Connect
 Route::get('/ctrader')->name('ctrader.view')->uses('ConnectApiController@view');
 Route::get('/ctrader/refresh_token')->name('ctrader.refresh_token')->uses('ConnectApiController@refreshToken');
 
-Route::get('/ctrader/getAccounts')->name('ctrader.getAccounts')->uses('AccountsApiController@getAccounts');
+Route::get('/ctrader/getAccounts/{paymaster_id?}')->name('ctrader.getAccounts')->uses('AccountsApiController@getAccounts');
+Route::get('/ctrader/updateAllAccounts')->name('ctrader.updateAllAccounts')->uses('AccountsApiController@updateAllAccounts');
 Route::get('/ctrader/account/{trading_account_id}/trading-history')->name('ctrader.getAccount')->uses('AccountsApiController@getAccount');
 Route::get('/ctrader/account/{trading_account_id}/cashflow')->name('ctrader.getCashFlow')->uses('AccountsApiController@getCashFlow');

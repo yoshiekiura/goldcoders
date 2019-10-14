@@ -67,8 +67,8 @@ class AccountsApi
      */
     public function from($time)
     {
-        $time   = \Carbon\Carbon::parse($time)->timestamp;
-        $param  = intval($time.'000');
+        // we use milliseconds for timestamp
+        $param   = \Carbon\Carbon::parse($time*1000)->timestamp;
         $params = [
             'setTimeStampFrom' => $param
         ];

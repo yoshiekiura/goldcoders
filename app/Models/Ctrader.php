@@ -30,11 +30,6 @@ class Ctrader extends Model
 
     public function isExpired()
     {
-
-        // if (Carbon::parse($this->attributes['expires_in'])->timestamp === 2628000) {
-        //     return false;
-        // }
-
         if (Carbon::parse($this->attributes['expires_in']) < Carbon::now()) {
             return true;
         }

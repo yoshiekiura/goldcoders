@@ -62,8 +62,8 @@ class ConnectApiController extends Controller
     {
         $user = Auth::user();
         $this->authorize('add_access_token', $user);
-        $api  = new ConnectApi('token');
-        $data = $api->getRenewToken($user->ctraderToken->refresh_token);
+        $api     = new ConnectApi('token');
+        $data    = $api->getRenewToken($user->ctraderToken->refresh_token);
         $ctrader = $user->ctraderToken;
         $this->fillData($ctrader, $data);
         $user->ctraderToken()->save($ctrader);
