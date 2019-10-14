@@ -9,9 +9,12 @@ use App\Models\UserFileManager;
 use App\Models\AdminFileManager;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request as ValidateRequest;
+use Spatie\MediaLibrary\ZipStreamResponse;
 
 class UserFileManagerController extends Controller
 {
+    // use ZipStreamResponse;
+
     public function index()
     {
         return Inertia::render('ContractManager/User/Index', [
@@ -29,7 +32,7 @@ class UserFileManagerController extends Controller
         ]);
     }
 
-    public function download()
+    public function view_downloadable_files()
     {
         return Inertia::render('ContractManager/User/Download', [
             'files' => AdminFileManager::whereActive(true)->get()
@@ -37,10 +40,25 @@ class UserFileManagerController extends Controller
                     return [
                         'id' => $field->id,
                         'title' => $field->title,
+                        'count' => $field->getMedia('admin_file_managers')->count(),
                     ];
                 }),
         ]);
     }
+    public function download_files(AdminFileManager $admin_file_manager)
+    {
+
+        $media = AdminFileManager::findOrFail($admin_file_manager->id)->getMedia('admin_file_managers');
+        return ZipStreamResponse::create($admin_file_manager->name . '.zip')->addMedia($media);
+
+        // $images = [];
+        // foreach ($media as $item) {
+        //     array_push($images, $item->getFullUrl());
+        // }
+        // dd($images);
+
+    }
+
 
     public function create()
     {

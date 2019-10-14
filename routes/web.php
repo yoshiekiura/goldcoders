@@ -41,6 +41,7 @@ Route::post('/payment')->name('payment.store')->uses('PaymentController@store');
 Route::post('/payment/delete')->name('payment.delete')->uses('PaymentController@delete');
 Route::get('/payment/{payment}/edit')->name('payment.edit')->uses('PaymentController@edit');
 Route::post('/payment/update')->name('payment.update')->uses('PaymentController@update');
+
 Route::get('/getPaymasterMembers/{user}')->name('getPaymasterMembers')->uses('PaymentController@getPaymasterMembers');
 
 Route::get('/payout')->name('payout')->uses('PayoutController@index');
@@ -59,7 +60,10 @@ Route::post('/admin_file_manager/delete')->name('admin_file_manager.delete')->us
 Route::get('/admin_file_manager/{admin_file_manager}/edit')->name('admin_file_manager.edit')->uses('AdminFileManagerController@edit');
 Route::post('/admin_file_manager/update')->name('admin_file_manager.update')->uses('AdminFileManagerController@update');
 
-Route::get('/user_file_manager_download')->name('user_file_manager_download')->uses('UserFileManagerController@download');
+Route::get('/user_file_manager/view_downloadable_files')->name('view_downloadable_files')->uses('UserFileManagerController@view_downloadable_files');
+Route::get('/user_file_manager/{admin_file_manager}/download_files')->name('download_files')->uses('UserFileManagerController@download_files');
+
+
 Route::get('/user_file_manager')->name('user_file_manager')->uses('UserFileManagerController@index');
 Route::get('/user_file_manager/create')->name('user_file_manager.create')->uses('UserFileManagerController@create');
 Route::post('/user_file_manager')->name('user_file_manager.store')->uses('UserFileManagerController@store');

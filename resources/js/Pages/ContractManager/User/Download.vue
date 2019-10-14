@@ -8,7 +8,7 @@
             <v-flex xs12 class="white">
               <v-layout align-center justify-space-between row>
                 <v-flex pl-4 md4>
-                  <span class="headline font-weight-thin">{{ name }} Listing</span>
+                  <span class="headline font-weight-thin">{{ name }}</span>
                 </v-flex>
                 <v-flex pr-4 xs12 md4 offset-md4></v-flex>
                 <v-flex>
@@ -75,7 +75,7 @@ export default {
   },
   computed: {},
   data: () => ({
-    name: "User File Manager Download",
+    name: "User Downloadable Files",
     form: {
       id: null,
       busy: false
@@ -88,7 +88,8 @@ export default {
         align: "center",
         sortable: false
       },
-      { text: "Title", value: "title", align: "left", sortable: true }
+      { text: "Title", value: "title", align: "left", sortable: true },
+      { text: "File Count", value: "count", align: "center", sortable: true }
     ],
     search: "",
     alert: {
@@ -99,7 +100,13 @@ export default {
   }),
   watch: {},
   methods: {
-    download(data) {}
+    download(data) {
+      let self = this;
+      self.$inertia.visit(
+        this.route("download_files", data).url(),
+        self.form
+      );
+    }
   }
 };
 </script>

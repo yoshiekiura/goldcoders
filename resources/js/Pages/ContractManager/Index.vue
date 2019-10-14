@@ -28,7 +28,7 @@
                 </v-flex>
                 <v-flex md6>
                   <v-row align="center" justify="center" class="grey lighten-5">
-                    <inertia-link class="btn" :href="route('user_file_manager_download')">
+                    <inertia-link class="btn" :href="route('view_downloadable_files')">
                       <v-btn color="indigo" x-large dark class="btn ma-2 white--text">
                         User Download Files
                         <v-icon right dark>mdi-cloud-upload</v-icon>

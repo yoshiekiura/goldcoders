@@ -20,6 +20,7 @@
 
                 <v-flex px-5>
                   <v-autocomplete
+                  autofocus
                     :items="users"
                     v-model="form.member_id"
                     required
@@ -36,7 +37,6 @@
                   />
 
                   <v-text-field
-                    autofocus
                     v-model="form.title"
                     class="primary--text"
                     label="Title"

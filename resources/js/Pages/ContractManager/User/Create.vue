@@ -19,6 +19,7 @@
 
                 <v-flex px-5>
                   <v-autocomplete
+                    autofocus
                     :items="users"
                     v-model="form.member_id"
                     required
@@ -35,7 +36,6 @@
                   />
 
                   <v-text-field
-                    autofocus
                     v-model="form.title"
                     class="primary--text"
                     label="Title"
@@ -151,7 +151,7 @@ export default {
     AdminDashPanel
   },
   props: {
-    users: Array,
+    users: Array
   },
   created() {},
   data() {
@@ -161,7 +161,6 @@ export default {
       name: "User File Manager",
       images: [],
       form: {
-
         member_id: null,
         title: null,
         date_submitted: null,
