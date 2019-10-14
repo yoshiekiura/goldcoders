@@ -50,6 +50,23 @@ Route::post('/payout/delete')->name('payout.delete')->uses('PayoutController@del
 Route::get('/payout/{payout}/edit')->name('payout.edit')->uses('PayoutController@edit');
 Route::post('/payout/update')->name('payout.update')->uses('PayoutController@update');
 
+Route::get('/contract_manager')->name('contract_manager')->uses('ContractManagerController@index');
+
+Route::get('/admin_file_manager')->name('admin_file_manager')->uses('AdminFileManagerController@index');
+Route::get('/admin_file_manager/create')->name('admin_file_manager.create')->uses('AdminFileManagerController@create');
+Route::post('/admin_file_manager')->name('admin_file_manager.store')->uses('AdminFileManagerController@store');
+Route::post('/admin_file_manager/delete')->name('admin_file_manager.delete')->uses('AdminFileManagerController@delete');
+Route::get('/admin_file_manager/{admin_file_manager}/edit')->name('admin_file_manager.edit')->uses('AdminFileManagerController@edit');
+Route::post('/admin_file_manager/update')->name('admin_file_manager.update')->uses('AdminFileManagerController@update');
+
+Route::get('/user_file_manager_download')->name('user_file_manager_download')->uses('UserFileManagerController@download');
+Route::get('/user_file_manager')->name('user_file_manager')->uses('UserFileManagerController@index');
+Route::get('/user_file_manager/create')->name('user_file_manager.create')->uses('UserFileManagerController@create');
+Route::post('/user_file_manager')->name('user_file_manager.store')->uses('UserFileManagerController@store');
+Route::post('/user_file_manager/delete')->name('user_file_manager.delete')->uses('UserFileManagerController@delete');
+Route::get('/user_file_manager/{user_file_manager}/edit')->name('user_file_manager.edit')->uses('UserFileManagerController@edit');
+Route::post('/user_file_manager/update')->name('user_file_manager.update')->uses('UserFileManagerController@update');
+
 
 // return a view that user can click to redirect to ctrader login and allow our app permission
 Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController@connect');

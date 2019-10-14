@@ -89,6 +89,14 @@
         icon-color="#fafafa"
       />
       <v-link
+        title="Contract Manager"
+        :href="route('contract_manager').url()"
+        icon="fa-file-word"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+      <v-link
         title="Profile"
         href="profile.show"
         icon="fa-user"
