@@ -7,16 +7,16 @@ current:
   minor: 0
   patch: 5
   git_absorb: git-local
-  prerelease: 48-gdb601e1
+  prerelease: 52-g6d74c39
   buildmetadata: ''
-  commit: db601e
+  commit: 6d74c3
   timestamp:
     year: 2019
     month: 10
-    day: 14
-    hour: 8
-    minute: 39
-    second: 51
+    day: 16
+    hour: 9
+    minute: 56
+    second: 1
     timezone: UTC
 commit:
   length: 6

@@ -1,5 +1,6 @@
 <template>
 <div>
+  <balance></balance>
   <p>Symbol</p>
   <p>tradedSide (buy or sell)</p>
   <p>lotsize /1000 = standard lot size</p>
