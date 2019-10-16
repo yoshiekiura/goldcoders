@@ -20,10 +20,6 @@ class ConnectApiController extends Controller
         $user = Auth::user();
         $this->authorize('add_access_token', $user);
 
-        if ($user->ctraderToken && !$user->ctraderToken->isExpired()) {
-            return redirect()->back();
-        }
-
         $api = new ConnectApi('auth');
         $url = $api->getAuthorizationCodeLink();
         return Redirect::to($url);
@@ -46,11 +42,13 @@ class ConnectApiController extends Controller
                 $ctrader = new Ctrader();
                 $this->fillData($ctrader, $data);
                 $user->ctraderToken()->save($ctrader);
-                return ['created' => true, 'ctrader' => $ctrader->fresh()];
+                // return ['created' => true, 'ctrader' => $ctrader->fresh()];
+                return redirect()->route('ctrader.view')->with('success', 'Ctrader Accounts Api Connected!');
             } else {
                 $this->fillData($token, $data);
                 $user->ctraderToken()->save($token);
-                return ['renew' => true, 'ctrader' => $user->ctraderToken];
+                // return ['modify_permission' => true, 'ctrader' => $user->ctraderToken];
+                return redirect()->route('ctrader.view')->with('success', 'Ctrader Accounts Api Modified');
             }
         }
     }
@@ -67,7 +65,8 @@ class ConnectApiController extends Controller
         $ctrader = $user->ctraderToken;
         $this->fillData($ctrader, $data);
         $user->ctraderToken()->save($ctrader);
-        return ['renew' => true, 'ctrader' => $user->ctraderToken];
+        // return ['renew' => true, 'ctrader' => $user->ctraderToken];
+        return redirect()->route('ctrader.view')->with('success', 'Ctrader Token Refresh!');
     }
 
     public function view()
@@ -89,7 +88,7 @@ class ConnectApiController extends Controller
     {
         $ctrader->access_token  = $data['access_token'];
         $ctrader->refresh_token = $data['refresh_token'];
-        $ctrader->expires_in    = Carbon::parse($data['expires_in']);
+        $ctrader->expires_in    = Carbon::parse($data['expires_in'])->setTimeZone(config('app.timezone'));
         $ctrader->token_type    = $data['tokenType'];
     }
 }
