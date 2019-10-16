@@ -63,7 +63,7 @@
                       <v-text-field
                         v-model="form.date_payout"
                         :error-messages="$page.errors.date_payout"
-                        label="Date Enter"
+                        label="Date Payout"
                         prepend-icon="event"
                         readonly
                         v-on="on"
