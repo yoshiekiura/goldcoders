@@ -152,10 +152,6 @@ class PaymentController extends Controller
     public function update()
     {
 
-
-
-        $data = ValidateRequest::all();
-
         ValidateRequest::validate([
             'paymaster_id' => ['required', 'exists:users,id'],
             'member_id' => ['required', 'exists:users,id'],
