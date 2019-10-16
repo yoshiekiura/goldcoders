@@ -71,11 +71,11 @@ Route::get('/user_file_manager/{user_file_manager}/edit')->name('user_file_manag
 Route::post('/user_file_manager/update')->name('user_file_manager.update')->uses('UserFileManagerController@update');
 
 // return a view that user can click to redirect to ctrader login and allow our app permission
-Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController@connect');
+Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController@connect')->middleware('auth');
 // this url will receive our authorization code that we can use to get access token
-Route::get('/ctrader/connect/redirect')->name('ctrader.redirect')->uses('ConnectApiController@redirect');
-Route::get('/ctrader')->name('ctrader.view')->uses('ConnectApiController@view');
-Route::get('/ctrader/refresh_token')->name('ctrader.refresh_token')->uses('ConnectApiController@refreshToken');
+Route::get('/ctrader/connect/redirect')->name('ctrader.redirect')->uses('ConnectApiController@redirect')->middleware('auth');
+Route::get('/ctrader/connect')->name('ctrader.view')->uses('ConnectApiController@view')->middleware('auth');
+Route::get('/ctrader/connect/refresh_token')->name('ctrader.refresh_token')->uses('ConnectApiController@refreshToken')->middleware('auth');
 
 Route::get('/ctrader/getAccounts/{paymaster_id?}')->name('ctrader.getAccounts')->uses('AccountsApiController@getAccounts');
 Route::get('/ctrader/updateAllAccounts')->name('ctrader.updateAllAccounts')->uses('AccountsApiController@updateAllAccounts');

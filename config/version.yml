@@ -7,17 +7,17 @@ current:
   minor: 0
   patch: 5
   git_absorb: git-local
-  prerelease: 52-g6d74c39
+  prerelease: 54-gde88ccd
   buildmetadata: ''
-  commit: 6d74c3
+  commit: de88cc
   timestamp:
     year: 2019
     month: 10
     day: 16
-    hour: 9
-    minute: 56
-    second: 1
-    timezone: UTC
+    hour: 19
+    minute: 20
+    second: 38
+    timezone: Asia/Manila
 commit:
   length: 6
   increment-by: 1
