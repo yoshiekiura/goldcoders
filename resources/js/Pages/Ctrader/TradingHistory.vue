@@ -1,5 +1,5 @@
 <template>
-  <main-layout title="Ctrader Accounts">
+  <main-layout title="Trading History">
     <v-container fluid>
       <!-- User Main Detail -->
 
