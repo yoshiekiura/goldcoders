@@ -13,6 +13,18 @@
       >
         <!-- toolbar search -->
         <template v-slot:top>
+          <v-card-text>
+            <v-chip outline color="white">
+              Current Balance: {{ balance }}
+              <v-icon small right color="green">fa-usd</v-icon>
+            </v-chip>
+            <div class="flex-grow-1"></div>
+            <v-chip outline color="white">
+              Total Deposit: {{ total_deposit }}
+              <v-icon small right color="green">fa-usd</v-icon>
+            </v-chip>
+          </v-card-text>
+
           <v-row justify="center">
             <v-btn
               text
@@ -103,11 +115,11 @@ export default {
     cursors: {
       type: Array,
       default: null
+    },
+    deposit: {
+      type: [String, Number],
+      default: null
     }
-    // balance: {
-    //   type: Number,
-    //   default: null
-    // }
   },
   mixins: [Acl],
   data: () => ({
@@ -131,7 +143,8 @@ export default {
       prev_cursor: null,
       limit: 25
     },
-    page: 0 // we just need to add or subract
+    balance: 0,
+    total_deposit: 0
   }),
 
   created() {
@@ -142,6 +155,8 @@ export default {
     self.form.cursor = self.filters.cursor; // current
     self.form.limit = self.filters.limit;
     self.debouncedGetHistory = _.debounce(self.fetchDeals, 50);
+    self.balance = this.deals[0].positionCloseDetails.balance / 100;
+    self.total_deposit = self.deposit / 100;
   },
   methods: {
     getPips(item) {

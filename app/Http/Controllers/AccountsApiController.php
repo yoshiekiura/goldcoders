@@ -109,11 +109,13 @@ class AccountsApiController extends Controller
         $limit = request()->limit ? request()->limit : '25';
 
         $cursor = request()->cursor ? request()->cursor : null;
-        if(!$cursor){
+
+        if (!$cursor) {
             Session::forget('cursors');
         }
-        $from   = request()->from ? request()->from : null;
-        $to     = request()->to ? request()->to : null;
+
+        $from = request()->from ? request()->from : null;
+        $to   = request()->to ? request()->to : null;
 
         $query = $this->api->token($this->token)->getAccount($trading_account_id);
 
@@ -152,6 +154,17 @@ class AccountsApiController extends Controller
             $cursors = Session::get('cursors');
         }
 
+        $deposit = request()->deposit;
+
+        if (!$deposit) {
+            $deposits = $this->getCashFlow($trading_account_id);
+            $deposits = $deposits['data'];
+
+            foreach ($deposits as $val) {
+                $deposit += $val['balance'];
+            }
+        }
+
         array_push($cursors, $next);
         $cursors = array_unique($cursors);
 
@@ -160,17 +173,19 @@ class AccountsApiController extends Controller
         return Inertia::render('Ctrader/TradingHistory', [
 
             'filters'            => [
-                'limit'  => $limit,
-                'from'   => $from,
-                'to'     => $to,
-                'cursor' => $cursor
+                'limit'   => $limit,
+                'from'    => $from,
+                'to'      => $to,
+                'cursor'  => $cursor,
+                'deposit' => $deposit
             ],
             'trading_account_id' => $trading_account_id,
             'paymaster'          => $user->paymaster,
             'prev_cursor'        => $cursor,
             'cursors'            => $cursors,
             'next_cursor'        => $next,
-            'deals'              => $deals['data']
+            'deals'              => $deals['data'],
+            'deposit'            => $deposit
         ]);
     }
 
