@@ -6,9 +6,9 @@ use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Ctrader;
 use App\Ctrader\AccountsApi;
-use Illuminate\Http\Request;
 use App\Models\CtraderAccount;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 
 class AccountsApiController extends Controller
 {
@@ -78,6 +78,7 @@ class AccountsApiController extends Controller
             return $collection->where('live', true);
         })->map(function ($item) use ($user_id) {
             $item['paymaster_id'] = $user_id;
+            $item['traderRegistrationTimestamp'] = intval($item['traderRegistrationTimestamp'])/1000;
             return $item;
         })->toArray();
         // delete all Old Record
@@ -99,11 +100,38 @@ class AccountsApiController extends Controller
 
     public function index()
     {
-        $user     = Auth::user();
-        $accounts = CtraderAccount::where('paymaster_id', $user->id)->get();
+        $user = Auth::user();
+
+        $per_page = 10;
+
+        if (request()->per_page && is_int(intval(request()->per_page)) && request()->per_page > 0) {
+            $per_page = intval(request()->per_page);
+        }
+
         return Inertia::render('Ctrader/Index', [
             'paymaster' => $user,
-            'accounts'  => $accounts
+            'filters'   => Request::all('search', 'broker', 'leverage', 'currency', 'live', 'demo', 'status', 'page', 'per_page'),
+            'per_page'  => $per_page,
+            'accounts'  => CtraderAccount::where('paymaster_id', $user->id)
+                ->filter(Request::only('search', 'broker', 'leverage', 'currency', 'live', 'demo', 'status'))
+                ->paginate($per_page)
+                ->transform(function ($account) {
+                    return [
+                        'id'                => $account->accountId,
+                        'account_no'        => $account->accountNumber,
+                        'broker_name'       => $account->brokerName,
+                        'broker_title'      => $account->brokerTitle,
+                        'live'              => $account->live,
+                        'currency'          => $account->depositCurrency,
+                        'leverage'          => $account->leverage,
+                        'balance'           => $account->balance,
+                        'status'            => $account->AccountStatus,
+                        'deleted'           => $account->deleted,
+                        'swap_free'         => $account->swapFree,
+                        'type'              => $account->traderAccountType,
+                        'registration_date' => $account->traderRegistrationTimestamp
+                    ];
+                })
         ]);
     }
 

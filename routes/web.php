@@ -77,7 +77,14 @@ Route::get('/ctrader/connect/redirect')->name('ctrader.redirect')->uses('Connect
 Route::get('/ctrader/connect')->name('ctrader.view')->uses('ConnectApiController@view')->middleware('auth');
 Route::get('/ctrader/connect/refresh_token')->name('ctrader.refresh_token')->uses('ConnectApiController@refreshToken')->middleware('auth');
 
-Route::get('/ctrader/getAccounts/{paymaster_id?}')->name('ctrader.getAccounts')->uses('AccountsApiController@getAccounts');
-Route::get('/ctrader/updateAllAccounts')->name('ctrader.updateAllAccounts')->uses('AccountsApiController@updateAllAccounts');
-Route::get('/ctrader/account/{trading_account_id}/trading-history')->name('ctrader.getAccount')->uses('AccountsApiController@getAccount');
-Route::get('/ctrader/account/{trading_account_id}/cashflow')->name('ctrader.getCashFlow')->uses('AccountsApiController@getCashFlow');
+
+Route::get('/ctrader/getAccounts')->name('ctrader.getAccounts')->uses('AccountsApiController@getAccounts')->middleware('auth');
+// url for viewing ctrader accounts
+// for paymaster only
+Route::get('/ctrader/accounts')->name('ctrader.accounts.index')->uses('AccountsApiController@index')->middleware('auth');
+// for admin
+Route::get('/ctrader/accounts/{paymaster_id}')->name('ctrader.paymaster.accounts')->uses('AccountsApiController@view')->middleware('auth');
+
+Route::get('/ctrader/updateAllAccounts')->name('ctrader.updateAllAccounts')->uses('AccountsApiController@updateAllAccounts')->middleware('auth');
+Route::get('/ctrader/account/{trading_account_id}/trading-history')->name('ctrader.getAccount')->uses('AccountsApiController@getAccount')->middleware('auth');
+Route::get('/ctrader/account/{trading_account_id}/cashflow')->name('ctrader.getCashFlow')->uses('AccountsApiController@getCashFlow')->middleware('auth');
