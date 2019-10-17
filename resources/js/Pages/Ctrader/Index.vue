@@ -112,9 +112,7 @@
         <template v-slot:expanded-item="props">
           <td colspan="12" fluid pa-0 ma-0>
             <v-row no-gutters justify="center">
-              <span
-                class="title primary--text"
-              >Account ID : {{ props.item.id }}</span>
+              <span class="title primary--text">Account ID : {{ props.item.id }}</span>
               <v-col cols="12">
                 <p class="title accent--text">Additional Info</p>
               </v-col>
@@ -213,8 +211,7 @@ export default {
       status: "",
       page: 1,
       per_page: 10
-    },
-    statuses: ["ACTIVE", "INACTIVE"]
+    }
   }),
 
   created() {
@@ -241,7 +238,7 @@ export default {
     },
     viewHistory(account) {
       this.$inertia.replace(
-        route("ctrader.getAccount", { trading_account_id: account.id }).url()
+        route("ctrader.tradinghistory", { trading_account_id: account.id }).url()
       );
     },
     reset(key) {

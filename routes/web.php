@@ -86,5 +86,6 @@ Route::get('/ctrader/accounts')->name('ctrader.accounts.index')->uses('AccountsA
 Route::get('/ctrader/accounts/{paymaster_id}')->name('ctrader.paymaster.accounts')->uses('AccountsApiController@view')->middleware('auth');
 
 Route::get('/ctrader/updateAllAccounts')->name('ctrader.updateAllAccounts')->uses('AccountsApiController@updateAllAccounts')->middleware('auth');
-Route::get('/ctrader/account/{trading_account_id}/trading-history')->name('ctrader.getAccount')->uses('AccountsApiController@getAccount')->middleware('auth');
+Route::get('/ctrader/account/{trading_account_id}/getAccount')->name('ctrader.getAccount')->uses('AccountsApiController@getAccount')->middleware('auth');
+Route::get('/ctrader/account/{trading_account_id}/trading-history')->name('ctrader.tradinghistory')->uses('AccountsApiController@getDeals')->middleware('auth');
 Route::get('/ctrader/account/{trading_account_id}/cashflow')->name('ctrader.getCashFlow')->uses('AccountsApiController@getCashFlow')->middleware('auth');

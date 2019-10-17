@@ -9,6 +9,7 @@ use App\Ctrader\AccountsApi;
 use App\Models\CtraderAccount;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 
 class AccountsApiController extends Controller
 {
@@ -44,7 +45,7 @@ class AccountsApiController extends Controller
     }
 
     /**
-     * @param  $trading_account_1id
+     * @param  $trading_account_id
      * @return mixed
      */
     public function getAccount($trading_account_id)
@@ -77,8 +78,8 @@ class AccountsApiController extends Controller
         })->when(config('app.env') === true, function ($collection) {
             return $collection->where('live', true);
         })->map(function ($item) use ($user_id) {
-            $item['paymaster_id'] = $user_id;
-            $item['traderRegistrationTimestamp'] = intval($item['traderRegistrationTimestamp'])/1000;
+            $item['paymaster_id']                = $user_id;
+            $item['traderRegistrationTimestamp'] = intval($item['traderRegistrationTimestamp']) / 1000;
             return $item;
         })->toArray();
         // delete all Old Record
@@ -96,6 +97,81 @@ class AccountsApiController extends Controller
     public function getCashFlow($trading_account_id)
     {
         return $this->api->token($this->token)->getCashFlow($trading_account_id)->makeCall();
+    }
+
+    /**
+     * @param $trading_account_id
+     */
+    public function getDeals($trading_account_id)
+    {
+        $user = Auth::user();
+
+        $limit = request()->limit ? request()->limit : '25';
+
+        $cursor = request()->cursor ? request()->cursor : null;
+        if(!$cursor){
+            Session::forget('cursors');
+        }
+        $from   = request()->from ? request()->from : null;
+        $to     = request()->to ? request()->to : null;
+
+        $query = $this->api->token($this->token)->getAccount($trading_account_id);
+
+        if ($limit) {
+            $query->limit($limit);
+        }
+
+        if ($from) {
+            $from = intval(\Carbon\Carbon::parse($from)->timestamp) * 1000;
+            $query->from($from);
+            $cursor = null;
+            Session::forget('cursors');
+        }
+
+        if ($to) {
+            $to = intval(\Carbon\Carbon::parse($to)->timestamp) * 1000;
+            $query->to($to);
+            $cursor = null;
+            Session::forget('cursors');
+        }
+
+        if ($cursor) {
+            $query->cursor($cursor);
+        }
+
+        $deals = $query->makeCall();
+        $next  = null;
+
+        if (isset($deals['next'])) {
+            $next = $deals['next'];
+        }
+
+        $cursors = [null];
+
+        if (Session::has('cursors')) {
+            $cursors = Session::get('cursors');
+        }
+
+        array_push($cursors, $next);
+        $cursors = array_unique($cursors);
+
+        Session::put('cursors', $cursors);
+        $cursors = Session::get('cursors');
+        return Inertia::render('Ctrader/TradingHistory', [
+
+            'filters'            => [
+                'limit'  => $limit,
+                'from'   => $from,
+                'to'     => $to,
+                'cursor' => $cursor
+            ],
+            'trading_account_id' => $trading_account_id,
+            'paymaster'          => $user->paymaster,
+            'prev_cursor'        => $cursor,
+            'cursors'            => $cursors,
+            'next_cursor'        => $next,
+            'deals'              => $deals['data']
+        ]);
     }
 
     public function index()

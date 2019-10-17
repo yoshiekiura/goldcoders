@@ -31,7 +31,7 @@
       <v-link
         v-if="can('manage_users')"
         title="Manage Users"
-        :href="route('users.index').url()"
+        href="users.index"
         icon="fa-users"
         link-color="white"
         active-color="#BA9A5a"
@@ -40,7 +40,7 @@
       <v-link
         v-if="can('approve_payment')"
         title="Paymaster Portal"
-        :href="route('paymaster.index').url()"
+        href="paymaster.index"
         icon="fa-money"
         link-color="white"
         active-color="#BA9A5a"
@@ -48,14 +48,13 @@
       />
       <v-link
         title="Referrals"
-        :href="route('referrals.index').url()"
+        href="referrals.index"
         icon="fa-sitemap"
         link-color="white"
         active-color="#BA9A5a"
         icon-color="#fafafa"
       />
       <v-link
-
         v-if="can('add_access_token')"
         title="Ctrader Api"
         href="ctrader.view"
@@ -65,8 +64,16 @@
         icon-color="#fafafa"
       />
       <v-link
+        title="Ctrader Accounts"
+        href="ctrader.accounts.index"
+        icon="fa-bar-chart"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+      <v-link
         title="Gateway"
-        :href="route('gateway').url()"
+        href="gateway"
         icon="card_travel"
         link-color="white"
         active-color="#BA9A5a"
@@ -74,7 +81,7 @@
       />
       <v-link
         title="Payment"
-        :href="route('payment').url()"
+        href="payment"
         icon="fa-credit-card"
         link-color="white"
         active-color="#BA9A5a"
@@ -82,7 +89,7 @@
       />
       <v-link
         title="Payout"
-        :href="route('payout').url()"
+        href="payout"
         icon="fa-money"
         link-color="white"
         active-color="#BA9A5a"
@@ -90,7 +97,7 @@
       />
       <v-link
         title="Contract Manager"
-        :href="route('contract_manager').url()"
+        href="contract_manager"
         icon="fa-file-word"
         link-color="white"
         active-color="#BA9A5a"
