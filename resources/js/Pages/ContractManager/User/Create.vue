@@ -142,13 +142,11 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
 import objectToFormData from "object-to-formdata";
 
 export default {
   components: {
-    MainLayout,
-    AdminDashPanel
+    MainLayout
   },
   props: {
     users: Array
