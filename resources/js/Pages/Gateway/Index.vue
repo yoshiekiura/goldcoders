@@ -75,17 +75,12 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
-import ModalLayout from "@/Layouts/ModalLayout";
 import AppAlert from "@/partials/AppAlert";
 import swal from "sweetalert2";
-
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
-    ModalLayout,
     AppAlert
   },
   props: {
@@ -105,7 +100,12 @@ export default {
       { text: "Name", value: "name", align: "left", sortable: true },
       { text: "Type", value: "type", align: "left", sortable: true },
       { text: "Active", value: "active", align: "center", sortable: true },
-      { text: "For Payout", value: "for_payout", align: "center", sortable: true },
+      {
+        text: "For Payout",
+        value: "for_payout",
+        align: "center",
+        sortable: true
+      },
       { text: "Actions", value: "actions", align: "center", sortable: false }
     ],
     search: "",
