@@ -80,7 +80,7 @@ Route::get('/ctrader/connect/refresh_token')->name('ctrader.refresh_token')->use
 Route::get('/ctrader/getAccounts')->name('ctrader.getAccounts')->uses('AccountsApiController@getAccounts')->middleware('auth', 'role:admin|paymaster');
 // url for viewing ctrader accounts
 // for paymaster only
-Route::get('/ctrader/accounts')->name('ctrader.accounts.index')->uses('AccountsApiController@index')->middleware('auth', 'role:paymaster');
+Route::get('/ctrader/accounts')->name('ctrader.accounts.index')->uses('AccountsApiController@index')->middleware('auth', 'role:paymaster', 'remember');
 // for admin
 // this route is not yet existing
 Route::get('/ctrader/accounts/{paymaster_id}')->name('ctrader.paymaster.accounts')->uses('AccountsApiController@view')->middleware('auth', 'role:admin');

@@ -13,17 +13,26 @@
       >
         <!-- toolbar search -->
         <template v-slot:top>
-          <v-card-text>
-            <v-chip outline color="white">
-              Current Balance: {{ balance }}
-              <v-icon small right color="green">fa-usd</v-icon>
-            </v-chip>
-            <div class="flex-grow-1"></div>
-            <v-chip outline color="white">
-              Total Deposit: {{ total_deposit }}
-              <v-icon small right color="green">fa-usd</v-icon>
-            </v-chip>
-          </v-card-text>
+          <v-row no-gutters>
+            <v-col cols="12" md="6" lg="8" sm="12">
+              <v-btn text color="accent" class="compress--icon" @click="back()">
+                <v-icon>arrow_back</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="12" md="6" lg="4" sm="12">
+              <v-card-text>
+                <v-chip outline color="white">
+                  Current Balance: {{ balance }}
+                  <v-icon small right color="green">fa-usd</v-icon>
+                </v-chip>
+                <div class="flex-grow-1"></div>
+                <v-chip outline color="white">
+                  Total Deposit: {{ total_deposit }}
+                  <v-icon small right color="green">fa-usd</v-icon>
+                </v-chip>
+              </v-card-text>
+            </v-col>
+          </v-row>
 
           <v-row justify="center">
             <v-btn
@@ -66,9 +75,9 @@
 
         <template v-slot:item.tradeSide="{ item }">{{ item.tradeSide }}</template>
 
-        <template v-slot:item.volume="{ item }">{{ item.volume/10000 }}</template>
+        <!-- <template v-slot:item.volume="{ item }">{{ item.volume }}</template> -->
 
-        <template v-slot:item.positionCloseDetails.profitInPips="{ item }">{{ getPips(item) }}</template>
+        <!-- <template v-slot:item.positionCloseDetails.profitInPips="{ item }">{{ getPips(item) }}</template> -->
         <template v-slot:item.positionCloseDetails.profit="{ item }">{{ getPRL(item)}}</template>
       </v-data-table>
     </v-container>
@@ -127,12 +136,8 @@ export default {
       { text: "DID", value: "dealId", align: "left" },
       { text: "Symbol", value: "symbolName", align: "left" },
       { text: "Trade Side", value: "tradeSide", align: "left" },
-      { text: "Lot Size", value: "volume", align: "left" },
-      {
-        text: "Pips",
-        value: "positionCloseDetails.profitInPips",
-        align: "left"
-      },
+      // { text: "Volume", value: "volume", align: "left" },
+      // { text: "Pips", value: "positionCloseDetails.profitInPips",align: "left"},
       { text: "Net Pr/L", value: "positionCloseDetails.profit", align: "left" }
     ],
     form: {
@@ -159,6 +164,16 @@ export default {
     self.total_deposit = self.deposit / 100;
   },
   methods: {
+    back() {
+      this.$inertia.visit(route("ctrader.accounts.index").url());
+    },
+    getLotsize(item) {
+      // first we got the array of symbols
+      // we look for  minOrderVolume i.e. XAUUSD = 100
+      // divide by 100
+      // lotsize = (volume / 100)/100
+      // we get lotsize = 10
+    },
     getPips(item) {
       if (item.positionCloseDetails && item.positionCloseDetails.profitInPips) {
         return parseFloat(item.positionCloseDetails.profitInPips);

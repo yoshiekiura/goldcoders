@@ -7,16 +7,16 @@ current:
   minor: 0
   patch: 5
   git_absorb: git-local
-  prerelease: 70-gab7ecea
+  prerelease: 71-g455b52c
   buildmetadata: ''
-  commit: ab7ece
+  commit: 455b52
   timestamp:
     year: 2019
     month: 10
     day: 20
-    hour: 15
-    minute: 43
-    second: 10
+    hour: 20
+    minute: 35
+    second: 22
     timezone: Asia/Manila
 commit:
   length: 6
