@@ -56,7 +56,7 @@
       />
       <v-link
         v-if="can('add_access_token')"
-        title="Ctrader Api"
+        title="Ctrader Connect"
         href="ctrader.view"
         icon="fa-plug"
         link-color="white"

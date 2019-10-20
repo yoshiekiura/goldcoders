@@ -77,13 +77,17 @@
                 clearable
               ></v-text-field>
             </v-col>
-
-            <v-col cols="12" md="6" lg="4" sm="12">
-              <v-switch color="green" label="Live" v-model="form.live" />
+            <v-col>
+              <v-card class="d-flex flex-row" flat tile>
+                <v-switch color="green" label="Live" v-model="form.live" />
+                <v-switch color="warning" label="Demo" v-model="form.demo" />
+              </v-card>
             </v-col>
 
-            <v-col cols="12" md="6" lg="4" sm="12">
-              <v-switch color="warning" label="Demo" v-model="form.demo" />
+            <v-col v-if="accounts.data.length >0" cols="12" md="6" lg="4" sm="12">
+              <v-btn color="primary" @click="getAccounts()">
+                <v-icon x-large>fa-groups</v-icon>Update Ctrader Accounts
+              </v-btn>
             </v-col>
           </v-row>
         </template>
@@ -166,6 +170,11 @@
             </v-row>
           </td>
         </template>
+        <template v-slot:no-data>
+          <v-btn text color="primary" @click="getAccounts()">
+            <v-icon x-large>fa-groups</v-icon>Get All Accounts
+          </v-btn>
+        </template>
       </v-data-table>
     </v-container>
   </main-layout>
@@ -228,6 +237,9 @@ export default {
     self.debouncedGetUsers = _.debounce(self.fetchUsers, 50);
   },
   methods: {
+    getAccounts() {
+      this.$inertia.visit(route("ctrader.getAccounts").url());
+    },
     fetchUsers() {
       let query = _.pickBy(this.form);
       let url = this.route(
@@ -238,7 +250,9 @@ export default {
     },
     viewHistory(account) {
       this.$inertia.replace(
-        route("ctrader.tradinghistory", { trading_account_id: account.id }).url()
+        route("ctrader.tradinghistory", {
+          trading_account_id: account.id
+        }).url()
       );
     },
     reset(key) {

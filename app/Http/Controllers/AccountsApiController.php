@@ -87,7 +87,8 @@ class AccountsApiController extends Controller
         // Insert New Record
         CtraderAccount::insert($accounts);
         // Retrive Records
-        return CtraderAccount::where('paymaster_id', $user_id)->get();
+        // return CtraderAccount::where('paymaster_id', $user_id)->get();
+        return redirect()->route('ctrader.accounts.index');
     }
 
     /**

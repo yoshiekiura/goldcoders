@@ -32,7 +32,7 @@ class AdminSeeder extends Seeder
             'dob'               => Carbon::now()->subYears(random_int(18, 25))->subMonths(random_int(1, 12))->subDays(1, 31),
             'suffix'            => null
         ]);
-        $user->assignRole('admin');
+        $user->assignRole('admin', 'paymaster');
 
         $subscriptions = factory(Subscription::class, 10)->create();
         $user->subscriptions()->saveMany($subscriptions);
