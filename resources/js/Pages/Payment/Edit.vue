@@ -160,7 +160,6 @@
                       </v-layout>
                     </div>
                   </v-flex>
-
                 </v-flex>
               </v-layout>
             </v-container>
@@ -186,7 +185,6 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
 import AppAlert from "@/partials/AppAlert";
 import objectToFormData from "object-to-formdata";
 import OT from "../../mixins/object_transform";
@@ -194,7 +192,6 @@ import OT from "../../mixins/object_transform";
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
     AppAlert
   },
   mixins: [OT],
@@ -248,7 +245,7 @@ export default {
       this.$inertia
         .post(this.route("payment.update").url(), objectToFormData(newForm))
         .then(() => ((this.form.busy = false), (this.alert = true)));
-    },
+    }
   },
   watch: {
     "form.images": {
