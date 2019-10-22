@@ -36,7 +36,6 @@
                     :error-messages="$page.errors.member_id"
                   />
                   <v-autocomplete
-                    autofocus
                     :items="files_data"
                     v-model="form.file_id"
                     required

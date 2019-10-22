@@ -222,7 +222,7 @@ export default {
   computed: {
     getMe(){
       return this.$page.auth.user
-    }, 
+    },
     isSuperAdmin(){
         if(this.getMe.id === 1){
             return true;
