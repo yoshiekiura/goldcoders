@@ -86,7 +86,7 @@ class AccountsApiController extends Controller
         CtraderAccount::where('paymaster_id', $user_id)->delete();
         // Insert New Record
         CtraderAccount::insert($accounts);
-        // Retrive Records
+
         // return CtraderAccount::where('paymaster_id', $user_id)->get();
         return redirect()->route('ctrader.accounts.index');
     }
@@ -97,7 +97,29 @@ class AccountsApiController extends Controller
      */
     public function getCashFlow($trading_account_id)
     {
-        return $this->api->token($this->token)->getCashFlow($trading_account_id)->makeCall();
+        $data           = $this->api->token($this->token)->getCashFlow($trading_account_id)->makeCall();
+        $cash_flow      = $data['data'];
+        $total_deposit  = 0;
+        $total_withdraw = 0;
+        $total_balance  = 0;
+
+        foreach ($cash_flow as $flow) {
+            if ('DEPOSIT' === $flow['type']) {
+                $total_deposit += $flow['delta'];
+                $total_balance += $flow['delta'];
+            } else {
+                $total_withdraw += $flow['delta'];
+                $total_balance -= $flow['delta'];
+            }
+        }
+
+        return Inertia::render('Ctrader/CashFlow', [
+            'cash_flow'          => $cash_flow,
+            'total_deposit'      => $total_deposit,
+            'total_balance'      => $total_balance,
+            'total_withdraw'     => $total_withdraw,
+            'trading_account_id' => $trading_account_id
+        ]);
     }
 
     /**
@@ -155,16 +177,7 @@ class AccountsApiController extends Controller
             $cursors = Session::get('cursors');
         }
 
-        $deposit = request()->deposit;
-
-        if (!$deposit) {
-            $deposits = $this->getCashFlow($trading_account_id);
-            $deposits = $deposits['data'];
-
-            foreach ($deposits as $val) {
-                $deposit += $val['balance'];
-            }
-        }
+        $balance = CtraderAccount::where('accountId', $trading_account_id)->first()->balance;
 
         array_push($cursors, $next);
         $cursors = array_unique($cursors);
@@ -174,11 +187,10 @@ class AccountsApiController extends Controller
         return Inertia::render('Ctrader/TradingHistory', [
 
             'filters'            => [
-                'limit'   => $limit,
-                'from'    => $from,
-                'to'      => $to,
-                'cursor'  => $cursor,
-                'deposit' => $deposit
+                'limit'  => $limit,
+                'from'   => $from,
+                'to'     => $to,
+                'cursor' => $cursor
             ],
             'trading_account_id' => $trading_account_id,
             'paymaster'          => $user->paymaster,
@@ -186,8 +198,18 @@ class AccountsApiController extends Controller
             'cursors'            => $cursors,
             'next_cursor'        => $next,
             'deals'              => $deals['data'],
-            'deposit'            => $deposit
+            'balance'            => $balance
         ]);
+    }
+
+    /**
+     * @param  $trading_account_id
+     * @return mixed
+     */
+    public function getSymbols($trading_account_id)
+    {
+        $data = $this->api->token($this->token)->getSymbols($trading_account_id)->makeCall();
+        return $data['data'];
     }
 
     public function index()

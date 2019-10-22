@@ -102,6 +102,7 @@ export default {
         .route("download_files", { admin_file_manager: data.id })
         .url();
       window.open(url);
+
     }
   }
 };

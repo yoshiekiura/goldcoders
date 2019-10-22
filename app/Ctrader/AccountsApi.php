@@ -68,7 +68,7 @@ class AccountsApi
     public function from($time)
     {
         // we use milliseconds for timestamp
-        $param   = \Carbon\Carbon::parse($time*1000)->timestamp;
+        $param  = \Carbon\Carbon::parse($time * 1000)->timestamp;
         $params = [
             'setTimeStampFrom' => $param
         ];
@@ -112,6 +112,15 @@ class AccountsApi
     public function getEndpoint()
     {
         return static::PROTOCOL.$this->subdomain.'.'.static::DOMAIN.static::URL_SEGMENT;
+    }
+
+    /**
+     * @param $trading_account_id
+     */
+    public function getSymbols($trading_account_id)
+    {
+        $this->uri = $this->endpoint.'tradingaccounts/'.$trading_account_id.'/symbols';
+        return $this;
     }
 
     /**
@@ -178,7 +187,7 @@ class AccountsApi
     }
 
     /**
-     * @param $token
+     * @param  $token
      * @return mixed
      */
     public function token($token)
