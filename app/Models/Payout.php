@@ -27,4 +27,11 @@ class Payout extends Model implements HasMedia
         return $this->belongsTo(User::class, 'member_id');
     }
 
+    public function scopeVerifiedPayouts($query)
+    {
+        $query->whereApproved(true);
+
+        // $query->whereHas('payouts', function ($query) {
+        // });
+    }
 }
