@@ -21,15 +21,11 @@
             </v-col>
             <v-col cols="12" md="6" lg="4" sm="12">
               <v-card-text>
-                <v-chip outline color="white">
-                  Current Balance: {{ balance }}
+                <v-chip color="white">
+                  Current Balance: {{ $page.balance/100 }}
                   <v-icon small right color="green">fa-usd</v-icon>
                 </v-chip>
                 <div class="flex-grow-1"></div>
-                <v-chip outline color="white">
-                  Total Deposit: {{ total_deposit }}
-                  <v-icon small right color="green">fa-usd</v-icon>
-                </v-chip>
               </v-card-text>
             </v-col>
           </v-row>
@@ -125,7 +121,7 @@ export default {
       type: Array,
       default: null
     },
-    deposit: {
+    balance: {
       type: [String, Number],
       default: null
     }
@@ -147,9 +143,7 @@ export default {
       cursor: null, // always save this on session?
       prev_cursor: null,
       limit: 25
-    },
-    balance: 0,
-    total_deposit: 0
+    }
   }),
 
   created() {
@@ -160,8 +154,6 @@ export default {
     self.form.cursor = self.filters.cursor; // current
     self.form.limit = self.filters.limit;
     self.debouncedGetHistory = _.debounce(self.fetchDeals, 50);
-    self.balance = this.deals[0].positionCloseDetails.balance / 100;
-    self.total_deposit = self.deposit / 100;
   },
   methods: {
     back() {
@@ -174,6 +166,7 @@ export default {
       // lotsize = (volume / 100)/100
       // we get lotsize = 10
     },
+    getCashFlow() {},
     getPips(item) {
       if (item.positionCloseDetails && item.positionCloseDetails.profitInPips) {
         return parseFloat(item.positionCloseDetails.profitInPips);
