@@ -112,6 +112,9 @@
           <v-btn text icon color="blue" class="compress--icon" @click="viewHistory(item)">
             <v-icon>timeline</v-icon>
           </v-btn>
+          <v-btn text icon color="primary" @click="getCashFlow(item)">
+            <v-icon>fa-usd</v-icon>
+          </v-btn>
         </template>
         <template v-slot:expanded-item="props">
           <td colspan="12" fluid pa-0 ma-0>
@@ -237,6 +240,13 @@ export default {
     self.debouncedGetUsers = _.debounce(self.fetchUsers, 50);
   },
   methods: {
+    getCashFlow(item) {
+      this.$inertia.visit(
+        this.route("ctrader.getCashFlow", {
+          trading_account_id: item.id
+        }).url()
+      );
+    },
     getAccounts() {
       this.$inertia.visit(route("ctrader.getAccounts").url());
     },
