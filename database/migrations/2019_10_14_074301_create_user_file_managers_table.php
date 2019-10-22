@@ -19,7 +19,11 @@ class CreateUserFileManagersTable extends Migration
             $table->unsignedBigInteger('member_id')->nullable();
             $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->string('title');
+            $table->unsignedBigInteger('file_id')->nullable();
+            $table->foreign('file_id')->references('id')->on('admin_file_managers')->onDelete('cascade');
+
+            // $table->string('title');
+
             $table->date('date_submitted')->nullable();
             $table->boolean('approved')->nullable()->default(false);
             $table->date('date_approved')->nullable();

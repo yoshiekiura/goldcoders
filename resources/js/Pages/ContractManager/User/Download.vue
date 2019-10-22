@@ -98,7 +98,10 @@ export default {
   methods: {
     download(data) {
       let self = this;
-      self.$inertia.visit(this.route("download_files", data).url(), self.form);
+      let url = self
+        .route("download_files", { admin_file_manager: data.id })
+        .url();
+      window.open(url);
     }
   }
 };

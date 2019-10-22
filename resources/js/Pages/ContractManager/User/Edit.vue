@@ -35,14 +35,23 @@
                     prepend-icon="fa-user"
                     :error-messages="$page.errors.member_id"
                   />
-
-                  <v-text-field
-                    v-model="form.title"
-                    class="primary--text"
-                    label="Title"
-                    prepend-icon="assessment"
-                    :error-messages="$page.errors.title"
+                  <v-autocomplete
+                    autofocus
+                    :items="files_data"
+                    v-model="form.file_id"
+                    required
+                    color="blue-grey"
+                    label="File Title"
+                    item-text="name"
+                    item-value="value"
+                    light
+                    chips
+                    clearable
+                    deletable-chips
+                    prepend-icon="fa-user"
+                    :error-messages="$page.errors.file_id"
                   />
+
                   <v-dialog
                     ref="dialog1"
                     v-model="modal1"
@@ -87,7 +96,6 @@
                       prepend-icon="mdi-camera"
                       :show-size="1000"
                       counter
-                      accept="image/*"
                     >
                       <template v-slot:selection="{ text }">
                         <v-chip small label color="primary">{{ text }}</v-chip>
@@ -145,19 +153,24 @@
 import MainLayout from "@/Layouts/MainLayout";
 import objectToFormData from "object-to-formdata";
 import AppAlert from "@/partials/AppAlert";
+import fileManager from "@/mixins/file_manager";
 
 export default {
   components: {
     MainLayout,
     AppAlert
   },
+  mixins: [fileManager],
   props: {
     files: Object,
     documents: Array,
-    users: Array
+    files_data: Array,
+    users: Array,
+    url: String
   },
   created() {
-    this.images = this.documents;
+    let self = this;
+    self.images = self.formatManagerFileForCreated(self.documents);
   },
   data() {
     return {
@@ -168,7 +181,7 @@ export default {
       form: {
         id: this.files.id,
         member_id: this.files.member_id,
-        title: this.files.title,
+        file_id: this.files.file_id,
         date_submitted: this.files.date_submitted,
         busy: false,
         images: null
@@ -196,17 +209,7 @@ export default {
       handler: function(val, oldVal) {
         let self = this;
         self.images = [];
-        if (val) {
-          var filesAmount = val.length;
-          for (let i = 0; i < filesAmount; i++) {
-            var reader = new FileReader();
-
-            reader.onload = function(event) {
-              self.images.push(event.target.result);
-            };
-            reader.readAsDataURL(val[i]);
-          }
-        }
+        self.images = self.formatManagerFiles(val);
       },
       deep: true
     }
