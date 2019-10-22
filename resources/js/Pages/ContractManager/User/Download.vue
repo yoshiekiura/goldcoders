@@ -98,8 +98,11 @@ export default {
   methods: {
     download(data) {
       let self = this;
-      let url =  self.route("download_files", {admin_file_manager: data.id}).url()
-      window.open(url)
+      let url = self
+        .route("download_files", { admin_file_manager: data.id })
+        .url();
+      window.open(url);
+
     }
   }
 };

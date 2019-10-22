@@ -52,7 +52,13 @@
 
                   <v-layout align-center justify-space-between row>
                     <span class="v-label theme--light"></span>
-                    <v-btn @click="addField()">Add Field</v-btn>
+
+
+                    <v-btn v-show="form.for_payout" @click="addField('')">Add Field</v-btn>
+                    <div v-show="!form.for_payout">
+                      <v-btn @click="addField('receiver_')">Add Receiver</v-btn>
+                      <v-btn @click="addField('server_')">Add Server</v-btn>
+                    </div>
                   </v-layout>
 
                   <v-flex md11 offset-md1>
@@ -118,12 +124,7 @@ export default {
         type: null,
         active: false,
         for_payout: false,
-        details: [
-          {
-            name: null,
-            value: null
-          }
-        ]
+        details: []
       }
     };
   },
@@ -138,11 +139,20 @@ export default {
     deleteField(item) {
       this.form.details.splice(this.form.details.indexOf(item), 1);
     },
-    addField() {
+    addField(prefix) {
       this.form.details.push({
-        name: "",
+        name: prefix,
         value: ""
       });
+    }
+  },
+  watch: {
+    "form.for_payout": {
+      handler: function(val, oldVal) {
+        let self = this;
+        self.form.details = [];
+      },
+      deep: true
     }
   }
 };

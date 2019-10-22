@@ -34,14 +34,23 @@
                     prepend-icon="fa-user"
                     :error-messages="$page.errors.member_id"
                   />
-
-                  <v-text-field
-                    v-model="form.title"
-                    class="primary--text"
-                    label="Title"
-                    prepend-icon="assessment"
-                    :error-messages="$page.errors.title"
+                  <v-autocomplete
+                    autofocus
+                    :items="files"
+                    v-model="form.file_id"
+                    required
+                    color="blue-grey"
+                    label="File Title"
+                    item-text="name"
+                    item-value="value"
+                    light
+                    chips
+                    clearable
+                    deletable-chips
+                    prepend-icon="fa-user"
+                    :error-messages="$page.errors.file_id"
                   />
+
                   <v-dialog
                     ref="dialog1"
                     v-model="modal1"
@@ -86,7 +95,6 @@
                       prepend-icon="mdi-camera"
                       :show-size="1000"
                       counter
-                      accept="image/*"
                     >
                       <template v-slot:selection="{ text }">
                         <v-chip small label color="primary">{{ text }}</v-chip>
@@ -143,13 +151,17 @@
 <script>
 import MainLayout from "@/Layouts/MainLayout";
 import objectToFormData from "object-to-formdata";
+import fileManager from "@/mixins/file_manager";
 
 export default {
   components: {
     MainLayout
   },
+  mixins: [fileManager],
   props: {
-    users: Array
+    users: Array,
+    files: Array,
+    url: String
   },
   created() {},
   data() {
@@ -157,9 +169,11 @@ export default {
       dialog: false,
       modal1: false,
       name: "User File Manager",
+      dummy_image1: this.url + "/images/file_placeholder/doc.png",
       images: [],
       form: {
         member_id: null,
+        file_id: null,
         title: null,
         date_submitted: null,
         busy: false,
@@ -188,17 +202,7 @@ export default {
       handler: function(val, oldVal) {
         let self = this;
         self.images = [];
-        if (val) {
-          var filesAmount = val.length;
-          for (let i = 0; i < filesAmount; i++) {
-            var reader = new FileReader();
-
-            reader.onload = function(event) {
-              self.images.push(event.target.result);
-            };
-            reader.readAsDataURL(val[i]);
-          }
-        }
+        self.images = self.formatManagerFiles(val);
       },
       deep: true
     }

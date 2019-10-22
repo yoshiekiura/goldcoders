@@ -48,7 +48,6 @@
                       prepend-icon="mdi-camera"
                       :show-size="1000"
                       counter
-                      accept="image/*"
                     >
                       <template v-slot:selection="{ text }">
                         <v-chip small label color="primary">{{ text }}</v-chip>
@@ -106,11 +105,17 @@
 import MainLayout from "@/Layouts/MainLayout";
 import AdminDashPanel from "@/Shared/AdminDashPanel";
 import objectToFormData from "object-to-formdata";
+import fileManager from "@/mixins/file_manager";
 
 export default {
   components: {
     MainLayout,
     AdminDashPanel
+  },
+
+  mixins: [fileManager],
+  props: {
+    url: String
   },
   created() {},
   data() {
@@ -131,10 +136,14 @@ export default {
       let self = this;
       self.form.busy = true;
       self.$inertia
-        .post(self.route("admin_file_manager.store").url(), objectToFormData(self.form), {
-          replace: true,
-          preserveState: true
-        })
+        .post(
+          self.route("admin_file_manager.store").url(),
+          objectToFormData(self.form),
+          {
+            replace: true,
+            preserveState: true
+          }
+        )
         .then(() => (self.form.busy = false));
     }
   },
@@ -143,17 +152,7 @@ export default {
       handler: function(val, oldVal) {
         let self = this;
         self.images = [];
-        if (val) {
-          var filesAmount = val.length;
-          for (let i = 0; i < filesAmount; i++) {
-            var reader = new FileReader();
-
-            reader.onload = function(event) {
-              self.images.push(event.target.result);
-            };
-            reader.readAsDataURL(val[i]);
-          }
-        }
+        self.images = self.formatManagerFiles(val);
       },
       deep: true
     }

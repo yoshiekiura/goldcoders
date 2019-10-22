@@ -13,6 +13,7 @@ class AdminFileManagerController extends Controller
     public function index()
     {
         return Inertia::render('ContractManager/Admin/Index', [
+
             'files' => AdminFileManager::all()
                 ->transform(function ($field) {
                     return [
@@ -27,7 +28,9 @@ class AdminFileManagerController extends Controller
 
     public function create()
     {
-        return Inertia::render('ContractManager/Admin/Create');
+        return Inertia::render('ContractManager/Admin/Create', [
+            'url' => url('/'),
+        ]);
     }
 
     public function store()
@@ -65,6 +68,7 @@ class AdminFileManagerController extends Controller
         }
 
         return Inertia::render('ContractManager/Admin/Edit', [
+            'url' => url('/'),
             'documents' => $images,
             'files' => [
                 'id' => $admin_file_manager->id,

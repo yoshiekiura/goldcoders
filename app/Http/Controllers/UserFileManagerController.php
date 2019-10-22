@@ -15,7 +15,17 @@ class UserFileManagerController extends Controller
 {
     public function create()
     {
+
         return Inertia::render('ContractManager/User/Create', [
+            'url' => url('/'),
+            'files' => AdminFileManager::orderByTitle()
+                ->get()
+                ->transform(function ($field) {
+                    return [
+                        'value' => $field->id,
+                        'name'  => $field->title
+                    ];
+                }),
             'users' => User::orderByName()
                 ->get()
                 ->transform(function ($field) {
@@ -27,28 +37,20 @@ class UserFileManagerController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     */
     public function delete(Request $request)
     {
         $user_file_manager = UserFileManager::findorfail($request->id);
         $user_file_manager->delete();
-        return Redirect::route('user_file_manager')->with('success', 'User File Manager '.$user_file_manager->title.' was successfully delete.');
+        return Redirect::route('user_file_manager')->with('success', 'User File Manager ' . $user_file_manager->title . ' was successfully delete.');
     }
 
-    /**
-     * @param AdminFileManager $admin_file_manager
-     */
     public function download_files(AdminFileManager $admin_file_manager)
     {
-        $downloads = AdminFileManager::findOrFail($admin_file_manager->id)->getMedia('admin_file_managers');
-        return MediaStream::create('contacts.zip')->addMedia($downloads);
+        $admin = AdminFileManager::findOrFail($admin_file_manager->id);
+        $media  = $admin->getMedia('admin_file_managers');
+        return MediaStream::create($admin->title . '.zip')->addMedia($media);
     }
 
-    /**
-     * @param UserFileManager $user_file_manager
-     */
     public function edit(UserFileManager $user_file_manager)
     {
         $media  = $user_file_manager->getMedia('user_file_managers');
@@ -58,37 +60,48 @@ class UserFileManagerController extends Controller
             array_push($images, $item->getFullUrl());
         }
 
-        return Inertia::render('ContractManager/User/Edit', [
-            'documents' => $images,
-            'files'     => [
-                'id'             => $user_file_manager->id,
-                'title'          => $user_file_manager->title,
-                'member_id'      => $user_file_manager->member_id,
-                'date_submitted' => $user_file_manager->date_submitted
-            ],
-            'users'     => User::orderByName()
-                ->get()
-                ->transform(function ($field) {
-                    return [
-                        'value' => $field->id,
-                        'name'  => $field->name
-                    ];
-                })
-        ]);
+        return Inertia::render(
+            'ContractManager/User/Edit',
+            [
+                'url' => url('/'),
+                'documents' => $images,
+                'files'     => [
+                    'id'             => $user_file_manager->id,
+                    'file_id'          => $user_file_manager->file_id,
+                    'member_id'      => $user_file_manager->member_id,
+                    'date_submitted' => $user_file_manager->date_submitted
+                ],
+                'files_data' => AdminFileManager::orderByTitle()
+                    ->get()
+                    ->transform(function ($field) {
+                        return [
+                            'value' => $field->id,
+                            'name'  => $field->title
+                        ];
+                    }),
+                'users'     => User::orderByName()
+                    ->get()
+                    ->transform(function ($field) {
+                        return [
+                            'value' => $field->id,
+                            'name'  => $field->name
+                        ];
+                    })
+            ]
+        );
     }
 
-    // use ZipStreamResponse;
 
     public function index()
     {
         return Inertia::render('ContractManager/User/Index', [
-            'files' => UserFileManager::with('member')
+            'files' => UserFileManager::with('member','file')
                 ->get()
                 ->transform(function ($field) {
                     return [
                         'id'             => $field->id,
                         'member'         => $field->member->name,
-                        'title'          => $field->title,
+                        'title'          => $field->file->title,
                         'date_submitted' => $field->date_submitted,
                         'approved'       => $field->approved,
                         'date_approved'  => $field->date_approved
@@ -102,32 +115,32 @@ class UserFileManagerController extends Controller
         $user_file_manager = UserFileManager::create(
             ValidateRequest::validate([
                 'member_id'      => ['required', 'exists:users,id'],
-                'title'          => ['required', 'max:50'],
+                'file_id'      => ['required', 'exists:admin_file_managers,id'],
                 'date_submitted' => ['required', 'date']
             ])
         );
 
         $user_file_manager->clearMediaCollection('user_file_managers');
         $user_file_manager->addAllMediaFromRequest()
-                          ->each(function ($fileAdder) {
-                              $fileAdder->toMediaCollection('user_file_managers');
-                          });
+            ->each(function ($fileAdder) {
+                $fileAdder->toMediaCollection('user_file_managers');
+            });
 
-        return Redirect::route('user_file_manager')->with('success', 'User File Manager '.$user_file_manager->title.' was successfully created.');
+        return Redirect::route('user_file_manager')->with('success', 'User File Manager ' . $user_file_manager->title . ' was successfully created.');
     }
 
     public function update()
     {
         ValidateRequest::validate([
-            'title'          => ['required'],
             'member_id'      => ['required', 'exists:users,id'],
+            'file_id'      => ['required', 'exists:admin_file_managers,id'],
             'date_submitted' => ['required', 'date']
         ]);
         $data = ValidateRequest::all();
 
         $pay                 = UserFileManager::findorfail($data['id']);
-        $pay->title          = $data['title'];
         $pay->member_id      = $data['member_id'];
+        $pay->file_id      = $data['file_id'];
         $pay->date_submitted = $data['date_submitted'];
         $pay->save();
 
