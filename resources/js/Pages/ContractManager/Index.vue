@@ -16,7 +16,7 @@
 
             <v-flex md12 class="white py-12">
               <v-row align="center" justify="center" class="grey lighten-5" style="height: 300px;">
-                <v-flex md6 >
+                <v-flex md6>
                   <v-row align="center" justify="center" class="grey lighten-5">
                     <inertia-link class="btn" :href="route('admin_file_manager')">
                       <v-btn color="indigo" x-large dark class="btn ma-2 white--text">
@@ -54,21 +54,17 @@
 <script>
 import MainLayout from "@/Layouts/MainLayout";
 import AdminDashPanel from "@/Shared/AdminDashPanel";
-import ModalLayout from "@/Layouts/ModalLayout";
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
-    ModalLayout
+    AdminDashPanel
   },
 
   data: () => ({
     name: "Contract Manager"
   }),
-  methods: {
-
-  }
+  methods: {}
 };
 </script>
 

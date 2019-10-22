@@ -191,14 +191,12 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
 import objectToFormData from "object-to-formdata";
 import OT from "../../mixins/object_transform";
 
 export default {
   components: {
-    MainLayout,
-    AdminDashPanel
+    MainLayout
   },
   mixins: [OT],
   props: {
@@ -253,7 +251,7 @@ export default {
           preserveState: true
         })
         .then(() => (self.form.busy = false));
-    },
+    }
   },
   watch: {
     "form.images": {

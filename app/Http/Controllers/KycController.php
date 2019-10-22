@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\MediaLibrary\MediaStream;
 use Illuminate\Support\Facades\Redirect;
-use Spatie\MediaLibrary\ZipStreamResponse;
 
 class KycController extends Controller
 {
@@ -16,7 +16,7 @@ class KycController extends Controller
         $allMedia = Auth::user()->getMedia('kyc');
 
         // download them in a streamed way, so no prob if your files are very large
-        return ZipStreamResponse::create('kyc.zip')->addMedia($allMedia);
+        return MediaStream::create('kyc.zip')->addMedia($allMedia);
     }
 
     public function show()

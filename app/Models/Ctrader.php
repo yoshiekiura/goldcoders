@@ -10,7 +10,8 @@ class Ctrader extends Model
     /**
      * @var array
      */
-    protected $dates = ['expires_in'];
+
+// protected $dates = ['expires_in'];
 
     /**
      * @var array
@@ -30,12 +31,12 @@ class Ctrader extends Model
 
     public function isExpired()
     {
+        if (Carbon::parse($this->attributes['expires_in'])->timestamp <= 2628000) {
+            // non expiring timestamp
+            return false;
+        }
 
-        // if (Carbon::parse($this->attributes['expires_in'])->timestamp === 2628000) {
-        //     return false;
-        // }
-
-        if (Carbon::parse($this->attributes['expires_in']) < Carbon::now()) {
+        if (Carbon::parse($this->attributes['expires_in']) <= Carbon::now()) {
             return true;
         }
 

@@ -103,14 +103,10 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
-// import FlashMessages from "@/Shared/FlashMessages";
 
 export default {
   components: {
-    MainLayout,
-    AdminDashPanel
-    // FlashMessages
+    MainLayout
   },
   data() {
     return {
@@ -128,7 +124,7 @@ export default {
             value: null
           }
         ]
-      },
+      }
     };
   },
   methods: {

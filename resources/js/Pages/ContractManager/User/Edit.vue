@@ -20,7 +20,7 @@
 
                 <v-flex px-5>
                   <v-autocomplete
-                  autofocus
+                    autofocus
                     :items="users"
                     v-model="form.member_id"
                     required
@@ -143,14 +143,12 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
 import objectToFormData from "object-to-formdata";
 import AppAlert from "@/partials/AppAlert";
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
     AppAlert
   },
   props: {

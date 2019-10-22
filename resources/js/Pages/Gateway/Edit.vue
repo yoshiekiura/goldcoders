@@ -37,8 +37,6 @@
 
                   <v-switch v-model="form.active" label="Active ?"></v-switch>
                   <v-switch v-model="form.for_payout" label="For Payout ?"></v-switch>
-
-
                 </v-flex>
               </v-layout>
             </v-container>
@@ -106,16 +104,12 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
-import ModalLayout from "@/Layouts/ModalLayout";
 import validationError from "@/mixins/validation-error";
 import AppAlert from "@/partials/AppAlert";
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
-    ModalLayout,
     AppAlert
   },
   mixins: [validationError],
