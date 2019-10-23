@@ -24,14 +24,12 @@
                     v-model="form.paymaster_id"
                     @change="form.member_id = null"
                     required
+                    :disabled="ifMemberOnly"
                     color="blue-grey"
                     label="Pay Master"
                     item-text="name"
                     item-value="id"
                     light
-                    chips
-                    clearable
-                    deletable-chips
                     prepend-icon="fa-user"
                     :error-messages="$page.errors['paymaster_id']"
                   />
@@ -40,14 +38,12 @@
                     :items="getMembers"
                     v-model="form.member_id"
                     required
+                    :disabled="ifMemberOnly"
                     color="blue-grey"
                     label="Member"
                     item-text="name"
                     item-value="value"
                     light
-                    chips
-                    clearable
-                    deletable-chips
                     prepend-icon="fa-user"
                     :error-messages="$page.errors['member_id']"
                   />
@@ -188,13 +184,14 @@ import MainLayout from "@/Layouts/MainLayout";
 import AppAlert from "@/partials/AppAlert";
 import objectToFormData from "object-to-formdata";
 import OT from "../../mixins/object_transform";
+import RM from "@/mixins/role_helper";
 
 export default {
   components: {
     MainLayout,
     AppAlert
   },
-  mixins: [OT],
+  mixins: [OT, RM],
   props: {
     payment: Object,
     users: Array,
@@ -207,6 +204,8 @@ export default {
     this.payment.payment_details.details = this.toKeyValue(
       this.payment.payment_details.details
     );
+
+    this.ifMemberOnly = this.checkIfMemberOnly();
   },
   computed: {
     getMembers() {
@@ -222,6 +221,7 @@ export default {
       name: "Payment",
       modal1: false,
       images: [],
+      ifMemberOnly: false,
       form: {
         id: this.payment.id,
         paymaster_id: this.payment.paymaster_id,

@@ -58,6 +58,9 @@ trait Scopes
      */
     public function scopeWhereCan($query, $ability)
     {
+
+        // $query->getAllPermissions()
+
         $query->where(function ($query) use ($ability) {
             // direct
             $query->whereHas('abilities', function ($query) use ($ability) {

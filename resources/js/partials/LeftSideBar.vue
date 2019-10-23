@@ -1,24 +1,25 @@
 <template>
   <v-navigation-drawer v-model="drawer" app class="blue-grey darken-4">
     <v-list color="primary darken-1">
+      <v-row justify="center" class="mt-2">
+        <v-avatar color="grey" size="62">
+          <v-img class="elevation-6" :src="$page.auth.user.avatar"></v-img>
+        </v-avatar>
+      </v-row>
+
       <v-list-item>
-        <v-list-item-avatar>
-          <v-img :src="$page.auth.user.avatar"></v-img>
-        </v-list-item-avatar>
-      </v-list-item>
-
-      <v-list-item link>
         <v-list-item-content>
-          <v-list-item-title class="title white--text">{{ $page.auth.user.fname }}!</v-list-item-title>
-          <v-list-item-subtitle class="white--text">{{ $page.auth.user.email }}</v-list-item-subtitle>
+          <v-list-item-title
+            class="text-center white--text"
+          >{{ $page.auth.user.fname }} {{ $page.auth.user.lname }}</v-list-item-title>
+          <v-list-item-subtitle
+            class="caption font-weight-light text-center white--text"
+          >Email: {{ $page.auth.user.email }}</v-list-item-subtitle>
         </v-list-item-content>
-
-        <v-list-item-action>
-          <v-icon color="white">mdi-menu-down</v-icon>
-        </v-list-item-action>
       </v-list-item>
     </v-list>
     <v-divider></v-divider>
+
     <v-list>
       <v-link
         title="Dashboard"
@@ -47,6 +48,7 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('view_referrals')"
         title="Referrals"
         href="referrals.index"
         icon="fa-sitemap"
@@ -64,6 +66,7 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('view_ctrader_account')"
         title="Ctrader Accounts"
         href="ctrader.accounts.index"
         icon="fa-bar-chart"
@@ -72,6 +75,7 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('view_gateway')"
         title="Gateway"
         href="gateway"
         icon="card_travel"
@@ -80,6 +84,7 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('view_payments')"
         title="Payment"
         href="payment"
         icon="fa-credit-card"
@@ -88,6 +93,7 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('view_payouts')"
         title="Payout"
         href="payout"
         icon="fa-money"
@@ -96,6 +102,7 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('view_contract_manager')"
         title="Contract Manager"
         href="contract_manager"
         icon="fa-file-word"
@@ -104,6 +111,7 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('view_profile')"
         title="Profile"
         href="profile.show"
         icon="fa-user"
@@ -112,6 +120,7 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('view_kyc')"
         title="KYC"
         href="kyc.show"
         icon="assignment_turned_in"
@@ -129,7 +138,6 @@
       />
     </v-list>
   </v-navigation-drawer>
-  <!-- either use route name or full url link in href -->
 </template>
 
 <script>

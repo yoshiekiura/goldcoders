@@ -30,8 +30,5 @@ class Payout extends Model implements HasMedia
     public function scopeVerifiedPayouts($query)
     {
         $query->whereApproved(true);
-
-        // $query->whereHas('payouts', function ($query) {
-        // });
     }
 }

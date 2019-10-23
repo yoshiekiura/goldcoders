@@ -22,10 +22,10 @@ export default {
   props: {
     subscription_count: String,
     subscription_verified: String,
-    kyc_verified: String,
-    referrals_total: String,
-    payment_total: String,
-    payout_request_total: String
+    referrals_total: Number,
+    kyc_verified: Boolean,
+    payment_total: Number,
+    payout_request_total: Number
   },
   components: {
     MainLayout,

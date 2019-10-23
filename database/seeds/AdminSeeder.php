@@ -33,9 +33,33 @@ class AdminSeeder extends Seeder
             'suffix'            => null
         ]);
         $user->assignRole('admin', 'paymaster');
-
         $subscriptions = factory(Subscription::class, 10)->create();
         $user->subscriptions()->saveMany($subscriptions);
         $user->save();
+
+        $user = User::create([
+            'id'                => 2,
+            'email'             => 'a@yahoo.com',
+            'password'          => config('admin.password'),
+            'username'          => 'ayahoocom',
+            'active'            => true,
+            'remember_token'    => Str::random(10),
+            'mobile_no'         => $faker->isbn10,
+            'current_address'   => $faker->streetAddress,
+            'permanent_address' => $faker->secondaryAddress,
+            'fname'             => 'first',
+            'mname'             => null,
+            'lname'             => 'last',
+            'dob'               => Carbon::now()->subYears(random_int(18, 25))->subMonths(random_int(1, 12))->subDays(1, 31),
+            'suffix'            => null
+        ]);
+        $user->assignRole('member');
+        $subscriptions = factory(Subscription::class, 10)->create();
+        $user->subscriptions()->saveMany($subscriptions);
+        $user->save();
+
+
+
+
     }
 }

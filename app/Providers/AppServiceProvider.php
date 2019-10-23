@@ -66,6 +66,7 @@ class AppServiceProvider extends ServiceProvider
                         'email_verified_at' => $user->email_verified_at,
                         'roles'             => $user->role_list,
                         'can'               => $user->can
+                        // 'can'               => $user->getAllPermissions()
                     ] : null
                 ];
             },

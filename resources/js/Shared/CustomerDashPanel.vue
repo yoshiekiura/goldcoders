@@ -1,55 +1,33 @@
 <template>
   <div class="pa-5">
-    <v-row>
+    <v-row dense>
       <v-col cols="12" md="6" lg="4" sm="12" v-for="(item,index) in records" :key="index">
-        <v-card class>
-          <v-list-item align="center" justify="center">
-            <v-list-item-content>
-              <v-list-item-title class="headline">
-                <v-list-item-avatar color="grey">
-                  <v-icon class="white--text text--darken-2">{{ item.icon }}</v-icon>
-                </v-list-item-avatar>
-                {{ item.name }}
-              </v-list-item-title>
-              <v-list-item-subtitle></v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-list-item v-for="(detail,index) in item.details" :key="index">
-            <v-list-item-icon>
-              <v-icon>{{ detail.icon }}</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ detail.name }}</v-list-item-title>
-            <v-list-item-subtitle class="text-right">{{ detail.value }}</v-list-item-subtitle>
-          </v-list-item>
-
-          <v-divider></v-divider>
-          <v-card-actions v-if="item.actions.length">
-            <v-spacer></v-spacer>
-            <v-btn
-              text
-              v-for="(action,index) in item.actions"
-              :key="index"
-              @click="action.func()"
-            >{{ action.text }}</v-btn>
-          </v-card-actions>
-        </v-card>
+        <card-dashboard
+          :name="item.name"
+          :icon="item.icon"
+          :details="item.details"
+          :actions="item.actions"
+          :color="item.color"
+        ></card-dashboard>
       </v-col>
     </v-row>
   </div>
 </template>
 
-
-
 <script>
+import CardDashboard from "@/Shared/CardDashboard";
+
 export default {
+  components: {
+    CardDashboard
+  },
   props: {
     subscription_count: String,
     subscription_verified: String,
-    referrals_total: String,
-    kyc_verified: String,
-    payment_total: String,
-    payout_request_total: String
+    referrals_total: Number,
+    kyc_verified: Boolean,
+    payment_total: Number,
+    payout_request_total: Number
   },
   data() {
     return {
@@ -57,6 +35,7 @@ export default {
         {
           name: "Subscription",
           icon: "money",
+          color: "#00CAE3",
           details: [
             {
               icon: "format_list_numbered_rtl",
@@ -79,6 +58,7 @@ export default {
         {
           name: "Referrals",
           icon: "mdi-account-group",
+          color: "#E91E63",
           details: [
             {
               icon: "format_list_numbered_rtl",
@@ -97,11 +77,12 @@ export default {
         {
           name: "KYC",
           icon: "assignment_turned_in",
+          color: "#4CAF50",
           details: [
             {
               icon: "check_circle_outline",
               name: "Status",
-              value: this.kyc_verified ? 'Verified' : 'Not Yet Verified'
+              value: this.kyc_verified ? "Verified" : "Not Yet Verified"
             }
           ],
           actions: [
@@ -114,6 +95,7 @@ export default {
         {
           name: "Deposit",
           icon: "assignment_returned",
+          color: "#FF9800",
           details: [
             {
               icon: "format_list_numbered_rtl",
@@ -131,6 +113,7 @@ export default {
         {
           name: "Payout",
           icon: "work",
+          color: "#4557b7",
           details: [
             {
               icon: "format_list_numbered_rtl",

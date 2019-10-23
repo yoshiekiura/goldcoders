@@ -16,6 +16,8 @@ class PaymentController extends Controller
     public function index()
     {
 
+        $this->authorize('view_payments');
+
         return Inertia::render('Payment/Index', [
             'payments' => Payment::with('paymaster', 'member')->get()
                 ->transform(function ($field) {
@@ -37,6 +39,8 @@ class PaymentController extends Controller
 
     public function create()
     {
+        $this->authorize('create_payment');
+        
         $paymasters  = User::role('paymaster')->get();
         return Inertia::render('Payment/Create', [
             'paymasters'  => $paymasters,
@@ -101,6 +105,8 @@ class PaymentController extends Controller
 
     public function delete(Request $request)
     {
+        $this->authorize('delete_payment');
+
         $payment = Payment::findorfail($request->id);
         $payment->delete();
         return Redirect::route('payment')->with('success', 'Payment  was successfully delete.');
@@ -108,6 +114,8 @@ class PaymentController extends Controller
 
     public function edit(Payment $payment)
     {
+
+        $this->authorize('view_own_payment', $payment);
 
         $media  = $payment->getMedia('payments');
         $images = [];

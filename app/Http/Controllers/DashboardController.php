@@ -15,17 +15,12 @@ class DashboardController extends Controller
         $data = $roles->implode('name', ',');
         $contains = Str::contains($data, ['paymaster', 'admin']);
 
-
-
-        // return $user->verifiedpayouts()->get();
-        // return $user->payouts->get();
-
         if ($contains) {
             return Inertia::render('Dashboard');
         } else {
             return Inertia::render('Dashboard',  [
-                'subscription_count' => '1',
-                'subscription_verified' => '2',
+                'subscription_count' => '0',
+                'subscription_verified' => '0',
                 'referrals_total' => $user->referrals->count(),
                 'kyc_verified' => $user->active,
                 'payment_total' => $user->payments->sum('amount'),
