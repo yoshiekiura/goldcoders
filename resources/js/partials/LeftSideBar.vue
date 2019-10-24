@@ -110,6 +110,16 @@
         active-color="#BA9A5a"
         icon-color="#fafafa"
       />
+
+      <v-link
+        title="Approval"
+        href="approval"
+        icon="fa-shield"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+
       <v-link
         v-if="can('view_profile')"
         title="Profile"

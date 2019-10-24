@@ -40,7 +40,7 @@ class PaymentController extends Controller
     public function create()
     {
         $this->authorize('create_payment');
-        
+
         $paymasters  = User::role('paymaster')->get();
         return Inertia::render('Payment/Create', [
             'paymasters'  => $paymasters,

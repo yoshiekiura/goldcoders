@@ -30,5 +30,8 @@ class Payment extends Model implements HasMedia
         return $this->belongsTo(User::class, 'member_id');
     }
 
-
+    public function scopeUnverifiedPayment($query)
+    {
+        $query->whereApproved(false);
+    }
 }

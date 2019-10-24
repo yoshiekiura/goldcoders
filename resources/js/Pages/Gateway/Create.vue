@@ -101,7 +101,7 @@
             </v-layout>
           </v-card>
         </v-flex>
-        <pre>{{ $data }}</pre>
+        <!-- <pre>{{ $data }}</pre> -->
       </v-layout>
     </v-container>
   </main-layout>
