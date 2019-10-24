@@ -109,6 +109,7 @@
         <template v-slot:item.sponsor="{ item }">
           <span v-if="item.sponsor">{{ item.sponsor.toUpperCase() }}</span>
         </template>
+        
         <template v-slot:item.active="{ item }">
           <v-switch
             :disabled="!can('manage_users')"

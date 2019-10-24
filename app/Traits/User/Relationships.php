@@ -3,7 +3,9 @@
 namespace App\Traits\User;
 
 use App\Models\User;
+use App\Models\Payout;
 use App\Models\Ctrader;
+use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\CtraderAccount;
 
@@ -65,5 +67,13 @@ trait Relationships
     public function underlings()
     {
         return $this->hasMany(User::class, 'paymaster_id');
+    }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'member_id');
+    }
+    public function payouts()
+    {
+        return $this->hasMany(Payout::class, 'member_id');
     }
 }

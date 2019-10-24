@@ -7,10 +7,15 @@
           <v-card>
             <v-flex xs12 class="white">
               <v-layout align-center justify-space-between row>
-                <v-flex pl-4 md4>
-                  <span class="headline font-weight-thin">{{ name }} Listing</span>
+                <v-flex pl-4 md6>
+                  <inertia-link
+                    class="title font-weight-thin inertia-link"
+                    :href="route('contract_manager')"
+                  >Contract Manager</inertia-link>
+                  <span class="title font-weight-thin mx-1">/</span>
+                  <span class="title font-weight-thin">{{ name }}</span>
                 </v-flex>
-                <v-flex pr-4 xs12 md4 offset-md4>
+                <v-flex pr-4 xs12 md4>
                   <inertia-link class="btn" :href="route('user_file_manager.create')">
                     <v-btn block text color="primary" dark>
                       Add New {{ name }}
@@ -152,8 +157,7 @@ export default {
 .btn {
   text-decoration: none;
 }
+.inertia-link {
+  text-decoration: none;
+}
 </style>
-
-
-
-

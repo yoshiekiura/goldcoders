@@ -1,136 +1,153 @@
 <template>
-  <v-layout
-    row
-    wrap
-    pa-5
-    ma-5
-  >
-    <v-flex
-      xs12
-      md6
-      text-xs-center>
-      <v-card
-        color="blue-grey white--text"
-        class="ma-1"
-        height="150px">
-        <v-card-text
-          class="title"
-          style="margin-left:auto;margin-right:auto;width:150px;cursor:pointer;"
-          @click=""
-        >
-          <v-icon
-            x-large
-            color="teal lighten-3"
-          >
-            money
-          </v-icon>
-          <v-subheader class="white--text">Total Subscriptions</v-subheader>
-          {{ stats.subscriptions_count }}
-        </v-card-text>
-      </v-card>
-    </v-flex>
-    <v-flex
-      xs12
-      md6
-      text-xs-center>
-      <v-card
-        color="blue-grey white--text"
-        class="ma-1"
-        height="150px">
-        <v-card-text
-          class="title"
-          style="margin-left:auto;margin-right:auto;width:150px;cursor:pointer;"
-          @click=""
-        >
-          <v-icon
-            x-large
-            color="indigo lighten-5"
-          >
-            person_pin
-          </v-icon>
-          <v-subheader class="white--text">Direct Referrals</v-subheader>
-          {{ stats.referrals_count }}
-          <br>
-        </v-card-text>
-      </v-card>
-    </v-flex>
-    <v-flex
-      xs12
-      md6
-      text-xs-center>
-      <v-card
-        color="blue-grey white--text"
-        class="ma-1"
-        height="150px">
-        <v-card-text
-          class="title"
-          style="margin-left:auto;margin-right:auto;width:150px;"
-        >
-          <v-icon
-            x-large
-            color="blue-grey lighten-5"
-          >
-            attach_money
-          </v-icon>
-          <v-subheader class="white--text">Subscriptions Commission</v-subheader>
-          {{ stats.subscriptions_commission }}
-        </v-card-text>
-      </v-card>
-    </v-flex>
-    <v-flex
-      xs12
-      md6
-      text-xs-center>
-      <v-card
-        color="blue-grey white--text"
-        class="ma-1"
-        height="150px">
-        <v-card-text
-          class="title"
-          style="margin-left:auto;margin-right:auto;width:150px;"
-        >
-          <v-icon
-            x-large
-            color="amber lighten-2"
-          >
-            fa-money
-          </v-icon>
-          <v-subheader class="white--text">Referral Commission</v-subheader>
-          {{ stats.referral_commission }}
-        </v-card-text>
-      </v-card>
-    </v-flex>
-
-  </v-layout>
+  <div class="pa-5">
+    <v-row dense>
+      <v-col cols="12" md="6" lg="4" sm="12" v-for="(item,index) in records" :key="index">
+        <card-dashboard
+          :name="item.name"
+          :icon="item.icon"
+          :details="item.details"
+          :actions="item.actions"
+          :color="item.color"
+        ></card-dashboard>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
+import CardDashboard from "@/Shared/CardDashboard";
 
 export default {
-  data: () => ({
-    stats: {
-      subscriptions_count: 1,
-      referrals_count: 1,
-      subscriptions_commission: 1,
-      referral_commission: 1
-    }
-  }),
-  computed: {
-    getMe(){
-      return this.$page.auth.user
-    }
+  components: {
+    CardDashboard
   },
-  mounted() {
-    // this.getStats();
+  props: {
+    subscription_count: String,
+    subscription_verified: String,
+    referrals_total: Number,
+    kyc_verified: Boolean,
+    payment_total: Number,
+    payout_request_total: Number
+  },
+  data() {
+    return {
+      records: [
+        {
+          name: "Subscription",
+          icon: "money",
+          color: "#00CAE3",
+          details: [
+            {
+              icon: "format_list_numbered_rtl",
+              name: "Counts",
+              value: this.subscription_count
+            },
+            {
+              icon: "check_circle_outline",
+              name: "Verified",
+              value: this.subscription_verified
+            }
+          ],
+          actions: [
+            {
+              text: "Details",
+              func: () => this.subscription()
+            }
+          ]
+        },
+        {
+          name: "Referrals",
+          icon: "mdi-account-group",
+          color: "#E91E63",
+          details: [
+            {
+              icon: "format_list_numbered_rtl",
+              name: "Total Referrals",
+              value: this.referrals_total
+            }
+          ],
+          actions: [
+            {
+              text: "Details",
+              func: () => this.referral()
+            }
+          ]
+        },
+
+        {
+          name: "KYC",
+          icon: "assignment_turned_in",
+          color: "#4CAF50",
+          details: [
+            {
+              icon: "check_circle_outline",
+              name: "Status",
+              value: this.kyc_verified ? "Verified" : "Not Yet Verified"
+            }
+          ],
+          actions: [
+            {
+              text: "Details",
+              func: () => this.kyc()
+            }
+          ]
+        },
+        {
+          name: "Deposit",
+          icon: "assignment_returned",
+          color: "#FF9800",
+          details: [
+            {
+              icon: "format_list_numbered_rtl",
+              name: "Total Deposit",
+              value: this.payment_total
+            }
+          ],
+          actions: [
+            {
+              text: "Details",
+              func: () => this.deposit()
+            }
+          ]
+        },
+        {
+          name: "Payout",
+          icon: "work",
+          color: "#4557b7",
+          details: [
+            {
+              icon: "format_list_numbered_rtl",
+              name: "Total Payout",
+              value: this.payout_request_total
+            }
+          ],
+          actions: [
+            {
+              text: "Details",
+              func: () => this.income()
+            }
+          ]
+        }
+      ]
+    };
   },
   methods: {
-    // getStats() {
-    //   let self = this;
-      
-    // }
+    referral() {
+      console.log("referral");
+    },
+    subscription() {
+      console.log("subscription");
+    },
+    kyc() {
+      console.log("kyc");
+    },
+    deposit() {
+      console.log("deposit");
+    },
+    income() {
+      console.log("income");
+    }
   }
 };
 </script>
 
-<style>
-</style>

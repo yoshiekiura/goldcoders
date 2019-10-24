@@ -57,7 +57,7 @@
                     <v-btn v-show="form.for_payout" @click="addField('')">Add Field</v-btn>
                     <div v-show="!form.for_payout">
                       <v-btn @click="addField('receiver_')">Add Receiver</v-btn>
-                      <v-btn @click="addField('server_')">Add Server</v-btn>
+                      <v-btn @click="addField('sender_')">Add Server</v-btn>
                     </div>
                   </v-layout>
 
@@ -101,7 +101,7 @@
             </v-layout>
           </v-card>
         </v-flex>
-        <pre>{{ $data }}</pre>
+        <!-- <pre>{{ $data }}</pre> -->
       </v-layout>
     </v-container>
   </main-layout>

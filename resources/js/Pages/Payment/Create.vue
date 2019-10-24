@@ -22,15 +22,14 @@
                     :items="paymasters"
                     v-model="form.paymaster_id"
                     @change="form.member_id = null"
+                    :disabled="ifMemberOnly"
+                    cache-items
                     required
                     color="blue-grey"
                     label="Pay Master"
                     item-text="name"
                     item-value="id"
                     light
-                    chips
-                    clearable
-                    deletable-chips
                     prepend-icon="fa-user"
                     :error-messages="$page.errors.paymaster_id"
                   />
@@ -38,15 +37,13 @@
                   <v-autocomplete
                     :items="getMembers"
                     v-model="form.member_id"
+                    :disabled="ifMemberOnly"
                     required
                     color="blue-grey"
                     label="Member"
                     item-text="name"
                     item-value="value"
                     light
-                    chips
-                    clearable
-                    deletable-chips
                     prepend-icon="fa-user"
                     :error-messages="$page.errors.member_id"
                   />
@@ -181,7 +178,7 @@
             </v-layout>
           </v-card>
         </v-flex>
-        <pre>{{ $data }}</pre>
+        <!-- <pre>{{ $data }}</pre> -->
       </v-layout>
     </v-container>
   </main-layout>
@@ -191,18 +188,25 @@
 import MainLayout from "@/Layouts/MainLayout";
 import objectToFormData from "object-to-formdata";
 import OT from "../../mixins/object_transform";
+import RM from "@/mixins/role_helper";
 
 export default {
   components: {
     MainLayout
   },
-  mixins: [OT],
+  mixins: [OT, RM],
   props: {
     users: Array,
     paymasters: Array,
     gateways: Array
   },
-  created() {},
+  created() {
+    this.ifMemberOnly = this.checkIfMemberOnly();
+    if (this.ifMemberOnly) {
+      this.form.paymaster_id = this.$page.auth.user.sponsor.id;
+      this.form.member_id = this.$page.auth.user.id;
+    }
+  },
   computed: {
     getMembers() {
       if (this.form.paymaster_id != null) {
@@ -213,17 +217,11 @@ export default {
   },
   data() {
     return {
-      rules: [
-        value =>
-          !value.length ||
-          value.reduce((size, file) => size + file.size, 0) < 2000000 ||
-          "Documents size should be less than 2 MB!"
-      ],
       dialog: false,
       name: "Payment",
       modal1: false,
       images: [],
-
+      ifMemberOnly: false,
       form: {
         paymaster_id: null,
         member_id: null,

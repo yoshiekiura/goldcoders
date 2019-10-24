@@ -12,6 +12,7 @@ class GatewayController extends Controller
 {
     public function index()
     {
+
         return Inertia::render('Gateway/Index', [
             'gateways' => Gateway::all()
                 ->transform(function ($field) {

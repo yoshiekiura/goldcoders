@@ -10,19 +10,12 @@
                 <v-flex pl-4 md6>
                   <inertia-link
                     class="title font-weight-thin inertia-link"
-                    :href="route('contract_manager')"
-                  >Contract Manager</inertia-link>
+                    :href="route('approval')"
+                  >Approval Manager</inertia-link>
                   <span class="title font-weight-thin mx-1">/</span>
                   <span class="title font-weight-thin">{{ name }}</span>
                 </v-flex>
-                <v-flex pr-4 xs12 md4>
-                  <inertia-link class="btn" :href="route('admin_file_manager.create')">
-                    <v-btn block text color="primary" dark>
-                      Add New {{ name }}
-                      <v-icon right color="primary">fa-plus</v-icon>
-                    </v-btn>
-                  </inertia-link>
-                </v-flex>
+                <v-flex pr-4 xs12 md4></v-flex>
                 <v-flex>
                   <v-text-field
                     solo
@@ -44,13 +37,15 @@
                 :search="search"
                 item-key="name"
                 class="elevation-1"
-                :items="files"
+                :items="payouts"
               >
-                <template v-slot:item.active="{ item }">
-                  <v-chip :color="getColor(item.active)" dark>{{ getStatus(item.active) }}</v-chip>
+                <template v-slot:item.approved="{ item }">
+                  <!-- <v-chip :color="getColor(item.approved)" dark>{{ getStatus(item.approved) }}</v-chip> -->
+                  <v-switch disabled color="green darken-4" :label="getStatus(item.approved)" />
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
+                    v-show="item.approved == 0"
                     @click.native="editRecord(item)"
                     depressed
                     icon
@@ -60,10 +55,6 @@
                     small
                   >
                     <v-icon>edit</v-icon>
-                  </v-btn>
-
-                  <v-btn @click="deleteRecord(item)" depressed icon fab dark color="pink" small>
-                    <v-icon>delete</v-icon>
                   </v-btn>
                 </template>
               </v-data-table>
@@ -77,34 +68,43 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
-import ModalLayout from "@/Layouts/ModalLayout";
 import AppAlert from "@/partials/AppAlert";
 import swal from "sweetalert2";
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
-    ModalLayout,
     AppAlert
   },
   props: {
-    files: Array,
+    payouts: Array,
     link: String
   },
 
   computed: {},
 
   data: () => ({
-    name: "Admin File Manager",
+    name: "Payout Approval",
     form: {
       id: null,
       busy: false
     },
     headers: [
-      { text: "Title", value: "title", align: "left", sortable: true },
-      { text: "Active", value: "active", align: "center", sortable: true },
+      {
+        text: "Paymaster",
+        value: "paymaster_name",
+        align: "left",
+        sortable: true
+      },
+      { text: "Member", value: "member_name", align: "left", sortable: true },
+      { text: "Amount", value: "amount", align: "center", sortable: true },
+      {
+        text: "Date Payout",
+        value: "date_payout",
+        align: "center",
+        sortable: true
+      },
+      { text: "Approved", value: "approved", sortable: true },
       { text: "Actions", value: "actions", align: "center", sortable: false }
     ],
     search: "",
@@ -116,44 +116,41 @@ export default {
   }),
   watch: {},
   methods: {
-    deleteRecord(data) {
+    editRecord(data) {
+      this.form.busy = true;
+      this.form.id = data.id;
+      let self = this;
       swal
         .fire({
-          title: "Are you sure you?",
-          text: "You won't be able to revert this!",
-          type: "warning",
+          title: "Assign as approved?",
+          html: `
+            Paymaster: <b>${data.paymaster_name}</b><br>
+            Member: <b>${data.member_name}</b><br>
+            Amount: ${data.amount}<br>
+            Date: ${data.date_payout}<br>`,
+          type: "question",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
+          cancelButtonColor: "#6f6f6f",
+          confirmButtonText: "Confirm",
           reverseButtons: true
         })
         .then(result => {
           if (result.value) {
             this.form.busy = true;
+            // data.approved = 1;
             this.$inertia.post(
-              this.route("admin_file_manager.delete").url(),
-              data
+              this.route("approval.payout.approved", data).url()
             );
-            this.alert.model = true;
           }
         });
     },
-    editRecord(data) {
-      this.form.busy = true;
-      this.form.id = data.id;
-      let self = this;
-      self.$inertia.visit(
-        this.route("admin_file_manager.edit", data).url(),
-        self.form
-      );
-    },
-    getColor(active) {
-      if (active) return "green";
+    getColor(status) {
+      if (status) return "green";
       else return "red";
     },
     getStatus(val) {
-      return val ? "Active" : "Inactive";
+      return val ? "Yes" : "No";
     }
   }
 };

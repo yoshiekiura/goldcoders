@@ -7,10 +7,15 @@
           <v-card>
             <v-flex xs12 class="white">
               <v-layout align-center justify-space-between row>
-                <v-flex pl-4 md4>
-                  <span class="headline font-weight-thin">{{ name }}</span>
+                <v-flex pl-4 md6>
+                  <inertia-link
+                    class="title font-weight-thin inertia-link"
+                    :href="route('contract_manager')"
+                  >Contract Manager</inertia-link>
+                  <span class="title font-weight-thin mx-1">/</span>
+                  <span class="title font-weight-thin">{{ name }}</span>
                 </v-flex>
-                <v-flex pr-4 xs12 md4 offset-md4></v-flex>
+                <v-flex pr-4 xs12 md4></v-flex>
                 <v-flex>
                   <v-text-field
                     solo
@@ -102,7 +107,6 @@ export default {
         .route("download_files", { admin_file_manager: data.id })
         .url();
       window.open(url);
-
     }
   }
 };
@@ -110,6 +114,9 @@ export default {
 
 <style scoped>
 .btn {
+  text-decoration: none;
+}
+.inertia-link {
   text-decoration: none;
 }
 </style>

@@ -23,20 +23,17 @@
                     autofocus
                     :items="users"
                     v-model="form.member_id"
+                    :disabled="ifMemberOnly"
                     required
                     color="blue-grey"
                     label="Member"
                     item-text="name"
                     item-value="value"
                     light
-                    chips
-                    clearable
-                    deletable-chips
                     prepend-icon="fa-user"
                     :error-messages="$page.errors.member_id"
                   />
                   <v-autocomplete
-                    autofocus
                     :items="files_data"
                     v-model="form.file_id"
                     required
@@ -143,7 +140,7 @@
             </v-layout>
           </v-card>
         </v-flex>
-        <pre>{{ $data }}</pre>
+        <!-- <pre>{{ $data }}</pre> -->
       </v-layout>
     </v-container>
   </main-layout>
@@ -154,13 +151,13 @@ import MainLayout from "@/Layouts/MainLayout";
 import objectToFormData from "object-to-formdata";
 import AppAlert from "@/partials/AppAlert";
 import fileManager from "@/mixins/file_manager";
-
+import RM from "@/mixins/role_helper";
 export default {
   components: {
     MainLayout,
     AppAlert
   },
-  mixins: [fileManager],
+  mixins: [fileManager, RM],
   props: {
     files: Object,
     documents: Array,
@@ -171,6 +168,8 @@ export default {
   created() {
     let self = this;
     self.images = self.formatManagerFileForCreated(self.documents);
+
+    this.ifMemberOnly = this.checkIfMemberOnly();
   },
   data() {
     return {
