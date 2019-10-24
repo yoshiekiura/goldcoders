@@ -7,16 +7,16 @@ current:
   minor: 0
   patch: 5
   git_absorb: git-local
-  prerelease: 84-gfb4939b
+  prerelease: 86-g22d0c3e
   buildmetadata: ''
-  commit: fb4939
+  commit: 22d0c3
   timestamp:
     year: 2019
     month: 10
-    day: 22
-    hour: 16
-    minute: 23
-    second: 18
+    day: 24
+    hour: 14
+    minute: 20
+    second: 17
     timezone: Asia/Manila
 commit:
   length: 6
