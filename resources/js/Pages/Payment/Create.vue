@@ -239,14 +239,18 @@ export default {
     submit() {
       let self = this;
       self.form.busy = true;
-      let payment_details = this.form.payment_details.details;
-      this.form.payment_details.details = this.toPropertyValue(payment_details);
+
+    //   let payment_details = this.form.payment_details.details;
+    //   this.form.payment_details.details = this.toPropertyValue(payment_details);
+      let gateway = _.cloneDeep(this.form.payment_details.details);
+      let newForm = _.cloneDeep(this.form);
+      newForm.payment_details.details = this.toPropertyValue(gateway);
       self.$inertia
-        .post(self.route("payment.store").url(), objectToFormData(self.form), {
-          replace: true,
-          preserveState: true
-        })
+        .post(self.route("payment.store").url(), objectToFormData(newForm))
         .then(() => (self.form.busy = false));
+    //   self.$inertia
+    //     .post(self.route("payment.store").url(), objectToFormData(self.form))
+    //     .then(() => (self.form.busy = false));
     }
   },
   watch: {

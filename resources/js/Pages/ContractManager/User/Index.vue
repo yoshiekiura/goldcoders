@@ -46,6 +46,19 @@
                 class="elevation-1"
                 :items="files"
               >
+                <template v-slot:item.download="{ item }">
+                  <v-btn
+                    @click.native="download(item)"
+                    depressed
+                    icon
+                    fab
+                    dark
+                    color="primary"
+                    small
+                  >
+                    <v-icon>cloud_download</v-icon>
+                  </v-btn>
+                </template>
                 <template v-slot:item.approved="{ item }">
                   <v-chip :color="getColor(item.approved)" dark>{{ getStatus(item.approved) }}</v-chip>
                 </template>
@@ -96,6 +109,14 @@ export default {
       busy: false
     },
     headers: [
+      {
+        text: "Download",
+        value: "download",
+        width: 80,
+        align: "center",
+        sortable: false
+      },
+
       { text: "Member", value: "member", align: "left", sortable: true },
       { text: "Title", value: "title", align: "left", sortable: true },
       {
@@ -148,6 +169,13 @@ export default {
     },
     getStatus(val) {
       return val ? "Approved" : "Pending";
+    },
+    download(data) {
+      let self = this;
+      let url = self
+        .route("download_files", { admin_file_manager: data.id })
+        .url();
+      window.open(url);
     }
   }
 };

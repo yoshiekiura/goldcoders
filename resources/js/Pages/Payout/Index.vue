@@ -121,6 +121,10 @@ export default {
   watch: {},
   methods: {
     deleteRecord(data) {
+      if (data.approved) {
+        this.notAllowed();
+        return;
+      }
       swal
         .fire({
           title: "Are you sure you?",
@@ -141,10 +145,13 @@ export default {
         });
     },
     editRecord(data) {
+      if (data.approved) {
+        this.notAllowed();
+        return;
+      }
       this.form.busy = true;
       this.form.id = data.id;
-      let self = this;
-      self.$inertia.visit(this.route("payout.edit", data).url(), self.form);
+      this.$inertia.visit(this.route("payout.edit", data).url(), this.form);
     },
     getColor(status) {
       if (status) return "green";
@@ -152,6 +159,14 @@ export default {
     },
     getStatus(val) {
       return val ? "Yes" : "No";
+    },
+    notAllowed() {
+      swal.fire({
+        title: "Not Allowed",
+        text: "Record was already approved.",
+        type: "warning",
+        confirmButtonColor: "#3085d6"
+      });
     }
   }
 };
