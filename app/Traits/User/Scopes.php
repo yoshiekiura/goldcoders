@@ -16,10 +16,10 @@ trait Scopes
                 $names = explode(' ', $search);
 
                 foreach ($names as $name) {
-                    $query->where('fname', 'like', '%'.$name.'%')
-                          ->orWhere('mname', 'like', '%'.$name.'%')
-                          ->orWhere('lname', 'like', '%'.$name.'%')
-                          ->orWhere('username', 'like', '%'.$name.'%');
+                    $query->where('fname', 'like', '%' . $name . '%')
+                        ->orWhere('mname', 'like', '%' . $name . '%')
+                        ->orWhere('lname', 'like', '%' . $name . '%')
+                        ->orWhere('username', 'like', '%' . $name . '%');
                 }
             });
         })->when($filters['sponsor'] ?? null, function ($query, $sponsor) {
@@ -27,10 +27,10 @@ trait Scopes
                 $names = explode(' ', $sponsor);
 
                 foreach ($names as $name) {
-                    $query->where('fname', 'like', '%'.$name.'%')
-                          ->orWhere('mname', 'like', '%'.$name.'%')
-                          ->orWhere('lname', 'like', '%'.$name.'%')
-                          ->orWhere('username', 'like', '%'.$name.'%');
+                    $query->where('fname', 'like', '%' . $name . '%')
+                        ->orWhere('mname', 'like', '%' . $name . '%')
+                        ->orWhere('lname', 'like', '%' . $name . '%')
+                        ->orWhere('username', 'like', '%' . $name . '%');
                 }
             });
         })->when($filters['role'] ?? null, function ($query, $role) {
@@ -52,14 +52,15 @@ trait Scopes
         $query->orderBy('lname')->orderBy('fname');
     }
 
-
-
     /**
      * @param $query
      * @param $ability
      */
     public function scopeWhereCan($query, $ability)
     {
+
+        // $query->getAllPermissions()
+
         $query->where(function ($query) use ($ability) {
             // direct
             $query->whereHas('abilities', function ($query) use ($ability) {

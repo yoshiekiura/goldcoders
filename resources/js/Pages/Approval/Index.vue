@@ -11,7 +11,6 @@
               :name="item.name"
               :description="item.description"
               :func="item.func"
-              v-show="index == 0 ? !ifMemberOnly : true"
             ></button-card>
           </v-row>
         </v-col>
@@ -20,11 +19,9 @@
   </main-layout>
 </template>
 
-
 <script>
 import MainLayout from "@/Layouts/MainLayout";
 import AdminDashPanel from "@/Shared/AdminDashPanel";
-import RM from "@/mixins/role_helper";
 import ButtonCard from "@/Shared/ButtonCard";
 
 export default {
@@ -33,44 +30,33 @@ export default {
     AdminDashPanel,
     ButtonCard
   },
-  mixins: [RM],
-  created() {
-    this.ifMemberOnly = this.checkIfMemberOnly();
-  },
+
+  created() {},
   methods: {
-    userDownload() {
-      this.$inertia.visit(this.route("view_downloadable_files").url());
+    payout() {
+      this.$inertia.visit(this.route("approval.payout").url());
     },
-    userUpload() {
-      this.$inertia.visit(this.route("user_file_manager").url());
+    payment() {
+      this.$inertia.visit(this.route("approval.payment").url());
     },
-    adminManagement() {
-      this.$inertia.visit(this.route("admin_file_manager").url());
-    }
   },
 
   data() {
     return {
-      name: "Contract Manager",
+      name: "Approval Manager",
       ifMemberOnly: false,
       details: [
         {
-          icon: "all_inbox",
-          name: "file manager",
-          description: "admin",
-          func: () => this.adminManagement()
+          icon: "fa-money",
+          name: "payout",
+          description: "for approval",
+          func: () => this.payout()
         },
         {
-          icon: "assignment_returned",
-          name: "download files",
-          description: "user",
-          func: () => this.userDownload()
-        },
-        {
-          icon: "backup",
-          name: "upload files",
-          description: "user",
-          func: () => this.userUpload()
+          icon: "fa-credit-card",
+          name: "payment",
+          description: "for approval",
+          func: () => this.payment()
         }
       ]
     };

@@ -125,4 +125,162 @@ class UserPolicy
             return true;
         }
     }
+
+
+
+
+    public function view_payments()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_payments')) {
+            return true;
+        }
+    }
+    public function create_payment()
+    {
+        $auth = auth()->user();
+        if ($auth->can('create_payment')) {
+            return true;
+        }
+    }
+    public function edit_own_payment(Payment $payment)
+    {
+        $auth = auth()->user();
+        if ($auth->can('edit_payment')  &&  $payment->member_id === $auth->id) {
+            return true;
+        }
+    }
+    public function delete_payment()
+    {
+        $auth = auth()->user();
+        if ($auth->can('delete_payment')) {
+            return true;
+        }
+    }
+
+
+    public function view_payouts()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_payouts')) {
+            return true;
+        }
+    }
+    public function create_payout()
+    {
+        $auth = auth()->user();
+        if ($auth->can('create_payout')) {
+            return true;
+        }
+    }
+    public function edit_own_payout(Payout $payout)
+    {
+        $auth = auth()->user();
+        if ($auth->can('edit_payout')  &&  $payout->member_id === $auth->id) {
+            return true;
+        }
+    }
+    public function delete_payout()
+    {
+        $auth = auth()->user();
+        if ($auth->can('delete_payout')) {
+            return true;
+        }
+    }
+
+
+        public function view_gateway()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_gateway')) {
+            return true;
+        }
+    }
+    public function create_gateway()
+    {
+        $auth = auth()->user();
+        if ($auth->can('create_gateway')) {
+            return true;
+        }
+    }
+    public function edit_own_gateway(Gateway $gateway)
+    {
+        $auth = auth()->user();
+        if ($auth->can('edit_gateway')  &&  $gateway->member_id === $auth->id) {
+            return true;
+        }
+    }
+    public function delete_gateway()
+    {
+        $auth = auth()->user();
+        if ($auth->can('delete_gateway')) {
+            return true;
+        }
+    }
+
+
+
+    public function view_contract_manager_admin()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_contract_manager_admin')) {
+            return true;
+        }
+    }
+    public function create_contract_manager_admin()
+    {
+        $auth = auth()->user();
+        if ($auth->can('create_contract_manager_admin')) {
+            return true;
+        }
+    }
+    public function edit_own_contract_manager_admin(AdminFileManager $contract_manager_admin)
+    {
+        $auth = auth()->user();
+        if ($auth->can('edit_contract_manager_admin')  &&  $contract_manager_admin->member_id === $auth->id) {
+            return true;
+        }
+    }
+    public function delete_contract_manager_admin()
+    {
+        $auth = auth()->user();
+        if ($auth->can('delete_contract_manager_admin')) {
+            return true;
+        }
+    }
+
+
+    public function view_contract_manager_user()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_contract_manager_user')) {
+            return true;
+        }
+    }
+    public function create_contract_manager_user()
+    {
+        $auth = auth()->user();
+        if ($auth->can('create_contract_manager_user')) {
+            return true;
+        }
+    }
+    public function edit_own_contract_manager_user(UserFileManager $contract_manager_user)
+    {
+        $auth = auth()->user();
+        if ($auth->can('edit_contract_manager_user')  &&  $contract_manager_user->member_id === $auth->id) {
+            return true;
+        }
+    }
+    public function delete_contract_manager_user()
+    {
+        $auth = auth()->user();
+        if ($auth->can('delete_contract_manager_user')) {
+            return true;
+        }
+    }
+
+
+
+    
+
 }

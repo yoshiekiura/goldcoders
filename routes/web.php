@@ -53,6 +53,14 @@ Route::post('/payout/update')->name('payout.update')->uses('PayoutController@upd
 
 Route::get('/contract_manager')->name('contract_manager')->uses('ContractManagerController@index')->middleware('auth');
 
+Route::get('/approval')->name('approval')->uses('ApprovalController@index')->middleware('auth');
+
+Route::get('/approval_payout')->name('approval.payout')->uses('ApprovalController@payout')->middleware('auth');
+Route::post('/approval_payout/{payout}')->name('approval.payout.approved')->uses('ApprovalController@payout_approved')->middleware('auth');
+
+Route::get('/approval_payment')->name('approval.payment')->uses('ApprovalController@payment')->middleware('auth');
+Route::post('/approval_payment/{payment}')->name('approval.payment.approved')->uses('ApprovalController@payment_approved')->middleware('auth');
+
 Route::get('/admin_file_manager')->name('admin_file_manager')->uses('AdminFileManagerController@index')->middleware('auth', 'role:admin');
 Route::get('/admin_file_manager/create')->name('admin_file_manager.create')->uses('AdminFileManagerController@create')->middleware('auth', 'role:admin');
 Route::post('/admin_file_manager')->name('admin_file_manager.store')->uses('AdminFileManagerController@store')->middleware('auth', 'role:admin');
