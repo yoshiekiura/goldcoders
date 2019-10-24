@@ -42,6 +42,11 @@
                 <template v-slot:item.approved="{ item }">
                   <!-- <v-chip :color="getColor(item.approved)" dark>{{ getStatus(item.approved) }}</v-chip> -->
                   <v-switch disabled color="green darken-4" :label="getStatus(item.approved)" />
+                  <!-- <v-switch
+                    color="green darken-4"
+                    :label="getStatus(item.approved)"
+                    @change="editRecord(item)"
+                  />-->
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
