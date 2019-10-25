@@ -5,10 +5,8 @@
       <v-layout row my-4>
         <inertia-link
           class="headline font-weight-thin inertia-link"
-          :href="route('payment')"
+          :href="route('approval.payout')"
         >{{ name }}</inertia-link>
-        <span class="headline font-weight-thin mx-1">/</span>
-        <span class="headline font-weight-thin">Edit</span>
       </v-layout>
 
       <v-layout row>
@@ -23,8 +21,8 @@
                     :items="paymasters"
                     v-model="form.paymaster_id"
                     @change="form.member_id = null"
+                    readonly
                     required
-                    :disabled="ifMemberOnly"
                     color="blue-grey"
                     label="Pay Master"
                     item-text="name"
@@ -37,8 +35,8 @@
                   <v-autocomplete
                     :items="getMembers"
                     v-model="form.member_id"
+                    readonly
                     required
-                    :disabled="ifMemberOnly"
                     color="blue-grey"
                     label="Member"
                     item-text="name"
@@ -48,44 +46,20 @@
                     :error-messages="$page.errors['member_id']"
                   />
 
-                  <v-dialog
-                    ref="dialog1"
-                    v-model="modal1"
-                    :return-value.sync="form.date_paid"
-                    persistent
-                    width="290px"
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-text-field
-                        v-model="form.date_paid"
-                        :error-messages="$page.errors.date_paid"
-                        label="Date Enter"
-                        prepend-icon="event"
-                        readonly
-                        v-on="on"
-                      />
-                    </template>
-                    <v-date-picker v-model="form.date_paid" scrollable>
-                      <v-spacer />
-                      <v-btn color="primary" @click="modal1 = false">Cancel</v-btn>
-                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_paid)">OK</v-btn>
-                    </v-date-picker>
-                  </v-dialog>
-
-                  <v-file-input
-                    v-model="form.images"
-                    placeholder="Upload your documents"
-                    label="Documents"
-                    multiple
-                    prepend-icon="mdi-camera"
-                    :show-size="1000"
-                    counter
-                    accept="image/*"
-                  >
-                    <template v-slot:selection="{ text }">
-                      <v-chip small label color="primary">{{ text }}</v-chip>
-                    </template>
-                  </v-file-input>
+                  <v-text-field
+                    v-model="form.date_payout"
+                    :error-messages="$page.errors.date_payout"
+                    label="Date Payout"
+                    prepend-icon="event"
+                    readonly
+                  />
+                  <v-text-field
+                    v-model="form.date_approved"
+                    :error-messages="$page.errors.date_payout"
+                    label="Date Approved"
+                    prepend-icon="event"
+                    readonly
+                  />
 
                   <v-card v-if="images.length > 0">
                     <v-container fluid>
@@ -97,7 +71,7 @@
                           cols="4"
                         >
                           <v-card flat tile class="d-flex">
-                            <v-img :src="image" @click="windowOpen(image)" aspect-ratio="1" class="grey lighten-2">
+                            <v-img :src="image" aspect-ratio="1" class="grey lighten-2">
                               <template v-slot:placeholder>
                                 <v-row class="fill-height ma-0" align="center" justify="center">
                                   <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
@@ -123,6 +97,7 @@
                 <v-flex px-5>
                   <v-flex md11 offset-md1>
                     <v-text-field
+                    readonly
                       v-model="form.amount"
                       class="primary--text"
                       label="Amount"
@@ -138,20 +113,19 @@
                       item-text="name"
                       item-value="value"
                       light
-                      chips
-                      clearable
-                      deletable-chips
+                      readonly
                       prepend-icon="fa-user"
-                      :error-messages="$page.errors['payment_details.value']"
+                      :error-messages="$page.errors['payout_details.value']"
                     />
-                    <div v-for="(item, index) in form.payment_details.details" :key="index">
+                    <div v-for="(item, index) in form.payout_details.details" :key="index">
                       <v-layout align-center justify-center row>
                         <v-text-field
-                          v-model="form.payment_details.details[index].value"
+                          v-model="form.payout_details.details[index].value"
                           class="primary--text"
-                          :label="form.payment_details.details[index].name"
+                          :label="form.payout_details.details[index].name"
                           prepend-icon="assignment"
                           :error-messages="$page.errors.name"
+                          readonly
                         />
                       </v-layout>
                     </div>
@@ -159,18 +133,7 @@
                 </v-flex>
               </v-layout>
             </v-container>
-            <v-layout align-center justify-center row fill-height py-3>
-              <v-btn
-                class="ma-2"
-                depressed
-                color="indigo darken-4"
-                :loading="form.busy"
-                :disabled="errors.any() || form.busy"
-                @click="submit()"
-              >
-                <span class="white--text">Update {{ name }}</span>
-              </v-btn>
-            </v-layout>
+            
           </v-card>
         </v-flex>
         <!-- <pre>{{ $data }}</pre> -->
@@ -193,7 +156,7 @@ export default {
   },
   mixins: [OT, RM],
   props: {
-    payment: Object,
+    payout: Object,
     users: Array,
     paymasters: Array,
     gateways: Array,
@@ -201,10 +164,9 @@ export default {
   },
   created() {
     this.images = this.documents;
-    this.payment.payment_details.details = this.toKeyValue(
-      this.payment.payment_details.details
+    this.payout.payout_details.details = this.toKeyValue(
+      this.payout.payout_details.details
     );
-
     this.ifMemberOnly = this.checkIfMemberOnly();
   },
   computed: {
@@ -217,19 +179,20 @@ export default {
   },
   data() {
     return {
+      name: "Approval Payout View",
       dialog: false,
-      name: "Payment",
       modal1: false,
-      images: [],
       ifMemberOnly: false,
+      images: [],
       form: {
-        id: this.payment.id,
-        paymaster_id: this.payment.paymaster_id,
-        member_id: this.payment.member_id,
-        date_paid: this.payment.date_paid,
-        amount: this.payment.amount,
-        gateway_id: this.payment.gateway_id,
-        payment_details: this.payment.payment_details,
+        id: this.payout.id,
+        paymaster_id: this.payout.paymaster_id,
+        member_id: this.payout.member_id,
+        date_payout: this.payout.date_payout,
+        date_approved: this.payout.date_approved,
+        amount: this.payout.amount,
+        gateway_id: this.payout.gateway_id,
+        payout_details: this.payout.payout_details,
         file: null,
         busy: false,
         images: null
@@ -239,15 +202,12 @@ export default {
   methods: {
     submit() {
       this.form.busy = true;
-      let gateway = _.cloneDeep(this.form.payment_details.details);
+      let gateway = _.cloneDeep(this.form.payout_details.details);
       let newForm = _.cloneDeep(this.form);
-      newForm.payment_details.details = this.toPropertyValue(gateway);
+      newForm.payout_details.details = this.toPropertyValue(gateway);
       this.$inertia
-        .post(this.route("payment.update").url(), objectToFormData(newForm))
+        .post(this.route("payout.update").url(), objectToFormData(newForm))
         .then(() => ((this.form.busy = false), (this.alert = true)));
-    },
-    windowOpen(data){
-        window.open(data)
     }
   },
   watch: {
@@ -269,11 +229,9 @@ export default {
       deep: true
     },
     "form.gateway_id"(val, oldVal) {
-      console.log(`new value here ${val}`);
-      if (!val) return (this.form.payment_details = {});
-
+      if (!val) return (this.form.payout_details = {});
       let a = _.filter(this.gateways, ["value", val]);
-      this.form.payment_details = a[0];
+      this.form.payout_details = a[0];
     }
   }
 };

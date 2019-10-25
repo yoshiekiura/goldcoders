@@ -44,7 +44,7 @@ class PaymentController extends Controller
         $paymasters  = User::role('paymaster')->get();
         return Inertia::render('Payment/Create', [
             'paymasters'  => $paymasters,
-            'gateways'  => Gateway::orderByName()->whereActive(true)
+            'gateways'  => Gateway::orderByName()->whereActive(true)->notPayout()
                 ->get()
                 ->transform(function ($field) {
                     return [
@@ -115,7 +115,7 @@ class PaymentController extends Controller
     public function edit(Payment $payment)
     {
 
-        $this->authorize('view_own_payment', $payment);
+        // $this->authorize('view_own_payment', $payment);
 
         $media  = $payment->getMedia('payments');
         $images = [];
@@ -136,7 +136,7 @@ class PaymentController extends Controller
                 'payment_details' => $payment->payment_details,
             ],
             'paymasters'  => $paymasters,
-            'gateways'  => Gateway::orderByName()->whereActive(true)
+            'gateways'  => Gateway::orderByName()->whereActive(true)->notPayout()
                 ->get()
                 ->transform(function ($field) {
                     return [
@@ -190,4 +190,48 @@ class PaymentController extends Controller
 
         return Redirect::route('payment.edit', $pay)->with('success', 'Payment was successfully updated.');
     }
+
+    public function view(Payment $payment)
+    {
+        $media  = $payment->getMedia('payments');
+        $images = [];
+        foreach ($media as $item) {
+            array_push($images, $item->getFullUrl());
+        }
+
+        $paymasters  = User::role('paymaster')->get();
+        return Inertia::render('Payment/View', [
+            'documents' => $images,
+            'payment' => [
+                'id' => $payment->id,
+                'paymaster_id' => $payment->paymaster_id,
+                'member_id' => $payment->member_id,
+                'amount' => $payment->amount,
+                'date_paid' => $payment->date_paid,
+                'date_approved' => $payment->date_approved,
+                'gateway_id' => $payment->gateway_id,
+                'payment_details' => $payment->payment_details,
+            ],
+            'paymasters'  => $paymasters,
+            'gateways'  => Gateway::orderByName()->whereActive(true)->notPayout()
+                ->get()
+                ->transform(function ($field) {
+                    return [
+                        'value' => $field->id,
+                        'name' => $field->name,
+                        'details' => $field->details,
+                    ];
+                }),
+            'users' => User::orderByName()
+                ->get()
+                ->transform(function ($field) {
+                    return [
+                        'value' => $field->id,
+                        'name' => $field->name,
+                        'paymaster' => $field->paymaster_id,
+                    ];
+                }),
+        ]);
+    }
+
 }

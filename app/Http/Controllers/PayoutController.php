@@ -10,12 +10,10 @@ use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request as ValidateRequest;
-
 class PayoutController extends Controller
 {
     public function index()
     {
-
         return Inertia::render('Payout/Index', [
             'payouts' => Payout::with('paymaster', 'member')->get()
                 ->transform(function ($field) {
@@ -144,11 +142,7 @@ class PayoutController extends Controller
 
     public function update()
     {
-
-
-
         $data = ValidateRequest::all();
-
         ValidateRequest::validate([
             'paymaster_id' => ['required', 'exists:users,id'],
             'member_id' => ['required', 'exists:users,id'],
@@ -159,7 +153,6 @@ class PayoutController extends Controller
         ]);
 
         $data = ValidateRequest::all();
-
         $pay = Payout::findorfail($data['id']);
         $pay->paymaster_id = $data['paymaster_id'];
         $pay->member_id = $data['member_id'];
@@ -176,7 +169,50 @@ class PayoutController extends Controller
                     $fileAdder->toMediaCollection('payouts');
                 });
         }
-
         return Redirect::route('payout.edit', $pay)->with('success', 'Payout was successfully updated.');
     }
+
+    public function view(Payout $payout)
+    {
+        $media  = $payout->getMedia('payouts');
+        $images = [];
+        foreach ($media as $item) {
+            array_push($images, $item->getFullUrl());
+        }
+
+        $paymasters  = User::role('paymaster')->get();
+        return Inertia::render('Payout/View', [
+            'documents' => $images,
+            'payout' => [
+                'id' => $payout->id,
+                'paymaster_id' => $payout->paymaster_id,
+                'member_id' => $payout->member_id,
+                'amount' => $payout->amount,
+                'date_payout' => $payout->date_payout,
+                'date_approved' => $payout->date_approved,
+                'gateway_id' => $payout->gateway_id,
+                'payout_details' => $payout->payout_details,
+            ],
+            'paymasters'  => $paymasters,
+            'gateways'  => Gateway::orderByName()->whereActive(true)
+                ->get()
+                ->transform(function ($field) {
+                    return [
+                        'value' => $field->id,
+                        'name' => $field->name,
+                        'details' => $field->details,
+                    ];
+                }),
+            'users' => User::orderByName()
+                ->get()
+                ->transform(function ($field) {
+                    return [
+                        'value' => $field->id,
+                        'name' => $field->name,
+                        'paymaster' => $field->paymaster_id,
+                    ];
+                }),
+        ]);
+    }
+
 }

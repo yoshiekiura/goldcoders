@@ -41,25 +41,30 @@ Route::post('/payment')->name('payment.store')->uses('PaymentController@store');
 Route::post('/payment/delete')->name('payment.delete')->uses('PaymentController@delete');
 Route::get('/payment/{payment}/edit')->name('payment.edit')->uses('PaymentController@edit');
 Route::post('/payment/update')->name('payment.update')->uses('PaymentController@update');
+Route::get('/payment/{payment}/view')->name('payment.view')->uses('PaymentController@view');
 
 Route::get('/getPaymasterMembers/{user}')->name('getPaymasterMembers')->uses('PaymentController@getPaymasterMembers');
 
-Route::get('/payout')->name('payout')->uses('PayoutController@index');
-Route::get('/payout/create')->name('payout.create')->uses('PayoutController@create');
-Route::post('/payout')->name('payout.store')->uses('PayoutController@store');
-Route::post('/payout/delete')->name('payout.delete')->uses('PayoutController@delete');
-Route::get('/payout/{payout}/edit')->name('payout.edit')->uses('PayoutController@edit');
-Route::post('/payout/update')->name('payout.update')->uses('PayoutController@update');
-
-Route::get('/contract_manager')->name('contract_manager')->uses('ContractManagerController@index')->middleware('auth');
+Route::get('/payout')->name('payout')->uses('PayoutController@index')->middleware('auth');
+Route::get('/payout/create')->name('payout.create')->uses('PayoutController@create')->middleware('auth');
+Route::post('/payout')->name('payout.store')->uses('PayoutController@store')->middleware('auth');
+Route::post('/payout/delete')->name('payout.delete')->uses('PayoutController@delete')->middleware('auth');
+Route::get('/payout/{payout}/edit')->name('payout.edit')->uses('PayoutController@edit')->middleware('auth');
+Route::post('/payout/update')->name('payout.update')->uses('PayoutController@update')->middleware('auth');
+Route::get('/payout/{payout}/view')->name('payout.view')->uses('PayoutController@view')->middleware('auth');
 
 Route::get('/approval')->name('approval')->uses('ApprovalController@index')->middleware('auth');
-
 Route::get('/approval_payout')->name('approval.payout')->uses('ApprovalController@payout')->middleware('auth');
-Route::post('/approval_payout/{payout}')->name('approval.payout.approved')->uses('ApprovalController@payout_approved')->middleware('auth');
-
+Route::post('/approval_payout_approved/{payout}')->name('approval.payout.approved')->uses('ApprovalController@payout_approved')->middleware('auth');
+Route::post('/approval_payout_disapproved/{payout}')->name('approval.payout.disapproved')->uses('ApprovalController@payout_disapproved')->middleware('auth');
 Route::get('/approval_payment')->name('approval.payment')->uses('ApprovalController@payment')->middleware('auth');
-Route::post('/approval_payment/{payment}')->name('approval.payment.approved')->uses('ApprovalController@payment_approved')->middleware('auth');
+Route::post('/approval_payment_approved/{payment}')->name('approval.payment.approved')->uses('ApprovalController@payment_approved')->middleware('auth');
+Route::post('/approval_payment_disapproved/{payment}')->name('approval.payment.disapproved')->uses('ApprovalController@payment_disapproved')->middleware('auth');
+Route::get('/approval_user_file')->name('approval.user.file')->uses('ApprovalController@user_file')->middleware('auth');
+Route::post('/approval_user_file_approved/{file}')->name('approval.user.file.approved')->uses('ApprovalController@user_file_approved')->middleware('auth');
+Route::post('/approval_user_file_disapproved/{file}')->name('approval.user.file.disapproved')->uses('ApprovalController@user_file_disapproved')->middleware('auth');
+
+Route::get('/contract_manager')->name('contract_manager')->uses('ContractManagerController@index')->middleware('auth');
 
 Route::get('/admin_file_manager')->name('admin_file_manager')->uses('AdminFileManagerController@index')->middleware('auth', 'role:admin');
 Route::get('/admin_file_manager/create')->name('admin_file_manager.create')->uses('AdminFileManagerController@create')->middleware('auth', 'role:admin');
@@ -77,6 +82,8 @@ Route::post('/user_file_manager')->name('user_file_manager.store')->uses('UserFi
 Route::post('/user_file_manager/delete')->name('user_file_manager.delete')->uses('UserFileManagerController@delete')->middleware('auth');
 Route::get('/user_file_manager/{user_file_manager}/edit')->name('user_file_manager.edit')->uses('UserFileManagerController@edit')->middleware('auth');
 Route::post('/user_file_manager/update')->name('user_file_manager.update')->uses('UserFileManagerController@update')->middleware('auth');
+Route::get('/user_file_manager/{user_file_manager}/view')->name('user_file_manager.view')->uses('UserFileManagerController@view')->middleware('auth');
+
 
 // return a view that user can click to redirect to ctrader login and allow our app permission
 Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController@connect')->middleware('auth', 'role:admin|paymaster');

@@ -10,19 +10,12 @@
                 <v-flex pl-4 md6>
                   <inertia-link
                     class="title font-weight-thin inertia-link"
-                    :href="route('contract_manager')"
-                  >Contract Manager</inertia-link>
+                    :href="route('approval')"
+                  >Approval Manager</inertia-link>
                   <span class="title font-weight-thin mx-1">/</span>
                   <span class="title font-weight-thin">{{ name }}</span>
                 </v-flex>
-                <v-flex pr-4 xs12 md4>
-                  <inertia-link class="btn" :href="route('user_file_manager.create')">
-                    <v-btn block text color="primary" dark>
-                      Add New {{ name }}
-                      <v-icon right color="primary">fa-plus</v-icon>
-                    </v-btn>
-                  </inertia-link>
-                </v-flex>
+                <v-flex pr-4 xs12 md4></v-flex>
                 <v-flex>
                   <v-text-field
                     solo
@@ -59,24 +52,34 @@
                     <v-icon>cloud_download</v-icon>
                   </v-btn>
                 </template>
+
                 <template v-slot:item.approved="{ item }">
                   <v-chip :color="getColor(item.approved)" dark>{{ getStatus(item.approved) }}</v-chip>
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
-                    @click.native="editRecord(item)"
+                    @click.native="viewRecord(item)"
                     depressed
                     icon
                     fab
                     dark
-                    color="primary"
+                    color="blue"
                     small
                   >
-                    <v-icon>edit</v-icon>
+                    <v-icon>fa-list-ul</v-icon>
                   </v-btn>
 
-                  <v-btn @click="deleteRecord(item)" depressed icon fab dark color="pink" small>
-                    <v-icon>delete</v-icon>
+                  <v-btn
+                    @click=" item.approved ? disapprovedRecord(item) : approvedRecord(item)"
+                    depressed
+                    icon
+                    fab
+                    dark
+                    color="pink"
+                    small
+                  >
+                    <v-icon v-if="item.approved">fa-thumbs-o-down</v-icon>
+                    <v-icon v-else>fa-thumbs-o-up</v-icon>
                   </v-btn>
                 </template>
               </v-data-table>
@@ -132,44 +135,82 @@ export default {
   }),
   watch: {},
   methods: {
-    deleteRecord(data) {
-      if (data.approved) {
-        this.notAllowed();
-        return;
-      }
+    viewRecord(data) {
+      this.form.busy = true;
+      this.form.id = data.id;
+      let self = this;
+      self.$inertia.visit(
+        this.route("user_file_manager.view", data).url(),
+        self.form
+      );
+    },
+    approvedRecord(data) {
+      this.form.busy = true;
+      this.form.id = data.id;
+      let self = this;
       swal
         .fire({
-          title: "Are you sure you?",
-          text: "You won't be able to revert this!",
-          type: "warning",
+          title: "Assign as approved?",
+          html: `
+            Member: <b>${data.member}</b><br>
+            Title: <b>${data.title}</b><br>
+            Date Submitted: ${data.date_submitted}<br>`,
+          type: "question",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
+          cancelButtonColor: "#6f6f6f",
+          confirmButtonText: "Confirm",
           reverseButtons: true
         })
         .then(result => {
           if (result.value) {
             this.form.busy = true;
-            this.$inertia.post(
-              this.route("user_file_manager.delete").url(),
-              data
-            );
+            this.$inertia
+              .post(
+                this.route("approval.user.file.approved", { file: data }).url()
+              )
+              .then(res => {
+                if (res) {
+                  data.approved = 1;
+                }
+              });
           }
         });
     },
-    editRecord(data) {
-      if (data.approved) {
-        this.notAllowed();
-        return;
-      }
+    disapprovedRecord(data) {
       this.form.busy = true;
       this.form.id = data.id;
       let self = this;
-      self.$inertia.visit(
-        this.route("user_file_manager.edit", data).url(),
-        self.form
-      );
+      swal
+        .fire({
+          title: "Assign as disapproved?",
+          html: `
+            Member: <b>${data.member}</b><br>
+            Title: <b>${data.title}</b><br>
+            Date Submitted: ${data.date_submitted}<br>`,
+          type: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#6f6f6f",
+          confirmButtonText: "Confirm",
+          reverseButtons: true
+        })
+        .then(result => {
+          if (result.value) {
+            this.form.busy = true;
+            this.$inertia
+              .post(
+                this.route("approval.user.file.disapproved", {
+                  file: data
+                }).url()
+              )
+              .then(res => {
+                if (res) {
+                  data.approved = 0;
+                }
+              });
+          }
+        });
     },
     getColor(active) {
       if (active) return "green";
@@ -184,14 +225,6 @@ export default {
         .route("download_files", { admin_file_manager: data.id })
         .url();
       window.open(url);
-    },
-    notAllowed() {
-      swal.fire({
-        title: "Not Allowed",
-        text: "Record was already approved.",
-        type: "warning",
-        confirmButtonColor: "#3085d6"
-      });
     }
   }
 };

@@ -91,6 +91,47 @@ class UserFileManagerController extends Controller
         );
     }
 
+    public function view(UserFileManager $user_file_manager)
+    {
+        $media  = $user_file_manager->getMedia('user_file_managers');
+        $images = [];
+
+        foreach ($media as $item) {
+            array_push($images, $item->getFullUrl());
+        }
+
+        return Inertia::render(
+            'ContractManager/User/View',
+            [
+                'url' => url('/'),
+                'documents' => $images,
+                'files'     => [
+                    'id'             => $user_file_manager->id,
+                    'file_id'          => $user_file_manager->file_id,
+                    'member_id'      => $user_file_manager->member_id,
+                    'date_submitted' => $user_file_manager->date_submitted,
+                    'date_approved' => $user_file_manager->date_approved
+                ],
+                'files_data' => AdminFileManager::orderByTitle()
+                    ->get()
+                    ->transform(function ($field) {
+                        return [
+                            'value' => $field->id,
+                            'name'  => $field->title
+                        ];
+                    }),
+                'users'     => User::orderByName()
+                    ->get()
+                    ->transform(function ($field) {
+                        return [
+                            'value' => $field->id,
+                            'name'  => $field->name
+                        ];
+                    })
+            ]
+        );
+    }
+
 
     public function index()
     {

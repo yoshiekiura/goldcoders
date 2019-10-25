@@ -25,4 +25,9 @@ class Gateway extends Model
         $query->where('for_payout', true);
     }
 
+    public function scopeNotPayout($query)
+    {
+        $query->where('for_payout', false);
+    }
+
 }
