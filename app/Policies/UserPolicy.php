@@ -281,6 +281,50 @@ class UserPolicy
 
 
 
+
+
+    public function approval_payout_approved()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_approval_payout_approved')) {
+            return true;
+        }
+    }
+    public function approval_payout_disapproved()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_approval_payout_disapproved')) {
+            return true;
+        }
+    }
+    public function approval_payment_approved()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_approval_payment_approved')) {
+            return true;
+        }
+    }
+    public function approval_payment_disapproved()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_approval_payment_disapproved')) {
+            return true;
+        }
+    }
     
+    public function approval_userfile_approved()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_approval_userfile_approved')) {
+            return true;
+        }
+    }
+    public function approval_userfile_disapproved()
+    {
+        $auth = auth()->user();
+        if ($auth->can('view_approval_userfile_disapproved')) {
+            return true;
+        }
+    }
 
 }

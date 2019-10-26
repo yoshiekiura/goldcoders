@@ -63,6 +63,20 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'view_ctrader_account']);
         Permission::create(['name' => 'view_profile']);
         Permission::create(['name' => 'view_kyc']);
+        Permission::create(['name' => 'view_approval']);
+
+        Permission::create(['name' => 'view_approval_payout']);
+        Permission::create(['name' => 'view_approval_payout_approved']);
+        Permission::create(['name' => 'view_approval_payout_disapproved']);
+
+        Permission::create(['name' => 'view_approval_payment']);
+        Permission::create(['name' => 'view_approval_payment_approved']);
+        Permission::create(['name' => 'view_approval_payment_disapproved']);
+
+        Permission::create(['name' => 'view_approval_userfile']);
+        Permission::create(['name' => 'view_approval_userfile_approved']);
+        Permission::create(['name' => 'view_approval_userfile_disapproved']);
+
 
         $role = Role::create(['name' => 'admin']);
         $role->givePermissionTo('edit_profile');
@@ -114,9 +128,17 @@ class RolesAndPermissionsSeeder extends Seeder
         $role->givePermissionTo('view_ctrader_account');
         $role->givePermissionTo('view_profile');
         $role->givePermissionTo('view_kyc');
-        
+        $role->givePermissionTo('view_approval');
 
-
+        $role->givePermissionTo('view_approval_payout');
+        $role->givePermissionTo('view_approval_payment');
+        $role->givePermissionTo('view_approval_userfile');
+        $role->givePermissionTo('view_approval_payout_approved');
+        $role->givePermissionTo('view_approval_payout_disapproved');
+        $role->givePermissionTo('view_approval_payment_approved');
+        $role->givePermissionTo('view_approval_payment_disapproved');
+        $role->givePermissionTo('view_approval_userfile_approved');
+        $role->givePermissionTo('view_approval_userfile_disapproved');
 
 
 
@@ -165,8 +187,16 @@ class RolesAndPermissionsSeeder extends Seeder
         $role->givePermissionTo('view_ctrader_account');
         $role->givePermissionTo('view_profile');
         $role->givePermissionTo('view_kyc');
+        $role->givePermissionTo('view_approval');
 
+        $role->givePermissionTo('view_approval_payout');
+        $role->givePermissionTo('view_approval_payment');
+        $role->givePermissionTo('view_approval_userfile');
+        $role->givePermissionTo('view_approval_payout_approved');
+        $role->givePermissionTo('view_approval_payment_approved');
+        $role->givePermissionTo('view_approval_userfile_approved');
 
+        
         $role = Role::create(['name' => 'member']);
         $role->givePermissionTo('edit_profile');
         $role->givePermissionTo('edit_link');
@@ -190,9 +220,9 @@ class RolesAndPermissionsSeeder extends Seeder
         $role->givePermissionTo('edit_contract_manager_user');
         $role->givePermissionTo('delete_contract_manager_user');
 
+        $role->givePermissionTo('view_referrals');
         $role->givePermissionTo('view_profile');
         $role->givePermissionTo('view_kyc');
-
 
     }
 }

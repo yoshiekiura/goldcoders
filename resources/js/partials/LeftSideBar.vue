@@ -112,6 +112,7 @@
       />
 
       <v-link
+        v-if="can('view_approval')"
         title="Approval"
         href="approval"
         icon="fa-shield"

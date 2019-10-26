@@ -39,6 +39,9 @@ export default {
     payment() {
       this.$inertia.visit(this.route("approval.payment").url());
     },
+    user_file_manager() {
+      this.$inertia.visit(this.route("approval.user.file").url());
+    },
   },
 
   data() {
@@ -57,7 +60,13 @@ export default {
           name: "payment",
           description: "for approval",
           func: () => this.payment()
-        }
+        },
+        {
+          icon: "backup",
+          name: "user file",
+          description: "for approval",
+          func: () => this.user_file_manager()
+        },
       ]
     };
   }

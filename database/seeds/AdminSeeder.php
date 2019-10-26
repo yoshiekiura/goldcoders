@@ -39,6 +39,7 @@ class AdminSeeder extends Seeder
 
         $user = User::create([
             'id'                => 2,
+            'paymaster_id'      => 1,
             'email'             => 'a@yahoo.com',
             'password'          => config('admin.password'),
             'username'          => 'ayahoocom',

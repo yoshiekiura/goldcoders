@@ -5,10 +5,8 @@
       <v-layout row my-4>
         <inertia-link
           class="headline font-weight-thin inertia-link"
-          :href="route('payment')"
+          :href="route('approval.payment')"
         >{{ name }}</inertia-link>
-        <span class="headline font-weight-thin mx-1">/</span>
-        <span class="headline font-weight-thin">Edit</span>
       </v-layout>
 
       <v-layout row>
@@ -24,7 +22,7 @@
                     v-model="form.paymaster_id"
                     @change="form.member_id = null"
                     required
-                    :disabled="ifMemberOnly"
+                    readonly
                     color="blue-grey"
                     label="Pay Master"
                     item-text="name"
@@ -38,7 +36,7 @@
                     :items="getMembers"
                     v-model="form.member_id"
                     required
-                    :disabled="ifMemberOnly"
+                    readonly
                     color="blue-grey"
                     label="Member"
                     item-text="name"
@@ -48,44 +46,20 @@
                     :error-messages="$page.errors['member_id']"
                   />
 
-                  <v-dialog
-                    ref="dialog1"
-                    v-model="modal1"
-                    :return-value.sync="form.date_paid"
-                    persistent
-                    width="290px"
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-text-field
-                        v-model="form.date_paid"
-                        :error-messages="$page.errors.date_paid"
-                        label="Date Enter"
-                        prepend-icon="event"
-                        readonly
-                        v-on="on"
-                      />
-                    </template>
-                    <v-date-picker v-model="form.date_paid" scrollable>
-                      <v-spacer />
-                      <v-btn color="primary" @click="modal1 = false">Cancel</v-btn>
-                      <v-btn color="primary" @click="$refs.dialog1.save(form.date_paid)">OK</v-btn>
-                    </v-date-picker>
-                  </v-dialog>
-
-                  <v-file-input
-                    v-model="form.images"
-                    placeholder="Upload your documents"
-                    label="Documents"
-                    multiple
-                    prepend-icon="mdi-camera"
-                    :show-size="1000"
-                    counter
-                    accept="image/*"
-                  >
-                    <template v-slot:selection="{ text }">
-                      <v-chip small label color="primary">{{ text }}</v-chip>
-                    </template>
-                  </v-file-input>
+                  <v-text-field
+                    v-model="form.date_paid"
+                    :error-messages="$page.errors.date_paid"
+                    label="Date Enter"
+                    prepend-icon="event"
+                    readonly
+                  />
+                  <v-text-field
+                    v-model="form.date_approved"
+                    :error-messages="$page.errors.date_paid"
+                    label="Date Approved"
+                    prepend-icon="event"
+                    readonly
+                  />
 
                   <v-card v-if="images.length > 0">
                     <v-container fluid>
@@ -127,26 +101,26 @@
                       class="primary--text"
                       label="Amount"
                       :error-messages="$page.errors.amount"
+                      readonly
                     />
 
                     <v-autocomplete
                       :items="gateways"
                       v-model="form.gateway_id"
-                      required
+                      readonly
                       color="blue-grey"
                       label="Gateway"
                       item-text="name"
                       item-value="value"
                       light
-                      chips
-                      clearable
-                      deletable-chips
+                      
                       prepend-icon="fa-user"
                       :error-messages="$page.errors['payment_details.value']"
                     />
                     <div v-for="(item, index) in form.payment_details.details" :key="index">
                       <v-layout align-center justify-center row>
                         <v-text-field
+                        readonly
                           v-model="form.payment_details.details[index].value"
                           class="primary--text"
                           :label="form.payment_details.details[index].name"
@@ -159,18 +133,7 @@
                 </v-flex>
               </v-layout>
             </v-container>
-            <v-layout align-center justify-center row fill-height py-3>
-              <v-btn
-                class="ma-2"
-                depressed
-                color="indigo darken-4"
-                :loading="form.busy"
-                :disabled="errors.any() || form.busy"
-                @click="submit()"
-              >
-                <span class="white--text">Update {{ name }}</span>
-              </v-btn>
-            </v-layout>
+            
           </v-card>
         </v-flex>
         <!-- <pre>{{ $data }}</pre> -->
@@ -218,7 +181,7 @@ export default {
   data() {
     return {
       dialog: false,
-      name: "Payment",
+      name: "Approval Payment View",
       modal1: false,
       images: [],
       ifMemberOnly: false,
@@ -227,6 +190,7 @@ export default {
         paymaster_id: this.payment.paymaster_id,
         member_id: this.payment.member_id,
         date_paid: this.payment.date_paid,
+        date_approved: this.payment.date_approved,
         amount: this.payment.amount,
         gateway_id: this.payment.gateway_id,
         payment_details: this.payment.payment_details,

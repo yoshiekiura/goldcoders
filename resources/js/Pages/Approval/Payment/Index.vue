@@ -40,26 +40,31 @@
                 :items="items"
               >
                 <template v-slot:item.approved="{ item }">
-                  <!-- <v-chip :color="getColor(item.approved)" dark>{{ getStatus(item.approved) }}</v-chip> -->
-                  <v-switch disabled color="green darken-4" :label="getStatus(item.approved)" />
-                  <!-- <v-switch
-                    color="green darken-4"
-                    :label="getStatus(item.approved)"
-                    @change="editRecord(item)"
-                  />-->
+                  <v-chip :color="getColor(item.approved)" dark>{{ getStatus(item.approved) }}</v-chip>
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
-                    v-show="item.approved == 0"
-                    @click.native="editRecord(item)"
+                    @click.native="viewRecord(item)"
                     depressed
                     icon
                     fab
                     dark
-                    color="primary"
+                    color="blue"
                     small
                   >
-                    <v-icon>edit</v-icon>
+                    <v-icon>fa-list-ul</v-icon>
+                  </v-btn>
+                  <v-btn
+                    @click=" item.approved ? disapprovedRecord(item) : approvedRecord(item)"
+                    depressed
+                    icon
+                    fab
+                    dark
+                    color="pink"
+                    small
+                  >
+                    <v-icon v-if="item.approved">fa-thumbs-o-down</v-icon>
+                    <v-icon v-else>fa-thumbs-o-up</v-icon>
                   </v-btn>
                 </template>
               </v-data-table>
@@ -121,7 +126,13 @@ export default {
   }),
   watch: {},
   methods: {
-    editRecord(data) {
+    viewRecord(data) {
+      this.form.busy = true;
+      this.form.id = data.id;
+      let self = this;
+      self.$inertia.visit(this.route("payment.view", data).url(), self.form);
+    },
+    approvedRecord(data) {
       this.form.busy = true;
       this.form.id = data.id;
       let self = this;
@@ -131,8 +142,8 @@ export default {
           html: `
             Paymaster: <b>${data.paymaster_name}</b><br>
             Member: <b>${data.member_name}</b><br>
-            Amount: ${data.amount}<br>
-            Date: ${data.date_paid}<br>`,
+            Amount: <b>${data.amount}</b><br>
+            Date Submitted: ${data.date_paid}<br>`,
           type: "question",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
@@ -143,9 +154,51 @@ export default {
         .then(result => {
           if (result.value) {
             this.form.busy = true;
-            this.$inertia.post(
-              this.route("approval.payment.approved", data).url()
-            );
+            this.$inertia
+              .post(
+                this.route("approval.payment.approved", { payment: data }).url()
+              )
+              .then(res => {
+                if (res) {
+                  data.approved = 1;
+                }
+              });
+          }
+        });
+    },
+    disapprovedRecord(data) {
+      this.form.busy = true;
+      this.form.id = data.id;
+      let self = this;
+      swal
+        .fire({
+          title: "Assign as disapproved?",
+          html: `
+            Paymaster: <b>${data.paymaster_name}</b><br>
+            Member: <b>${data.member_name}</b><br>
+            Amount: <b>${data.amount}</b><br>
+            Date Submitted: ${data.date_paid}<br>`,
+          type: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#6f6f6f",
+          confirmButtonText: "Confirm",
+          reverseButtons: true
+        })
+        .then(result => {
+          if (result.value) {
+            this.form.busy = true;
+            this.$inertia
+              .post(
+                this.route("approval.payment.disapproved", {
+                  payment: data
+                }).url()
+              )
+              .then(res => {
+                if (res) {
+                  data.approved = 0;
+                }
+              });
           }
         });
     },
