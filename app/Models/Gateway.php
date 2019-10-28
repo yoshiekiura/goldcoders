@@ -6,28 +6,44 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gateway extends Model
 {
-    protected $table = 'gateways';
+    /**
+     * @var array
+     */
     protected $casts = [
         'details' => 'array'
     ];
 
+    /**
+     * @var array
+     */
+    protected $fillable = ['name', 'type', 'active', 'for_payout', 'details'];
 
-    protected $fillable = ['name', 'type', 'active','for_payout','details'];
+    /**
+     * @var string
+     */
+    protected $table = 'gateways';
 
-    public function scopeOrderByName($query)
-    {
-        $query->orderBy('name');
-    }
-
-
+    /**
+     * @param $query
+     */
     public function scopeForPayout($query)
     {
         $query->where('for_payout', true);
     }
 
+    /**
+     * @param $query
+     */
     public function scopeNotPayout($query)
     {
         $query->where('for_payout', false);
     }
 
+    /**
+     * @param $query
+     */
+    public function scopeOrderByName($query)
+    {
+        $query->orderBy('name');
+    }
 }
