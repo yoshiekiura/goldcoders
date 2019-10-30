@@ -43,13 +43,18 @@ class AppServiceProvider extends ServiceProvider
             ],
             // Lazily
             'auth'   => function () {
-                $user    = Auth::user();
-                $manager = app('impersonate');
-                $manager->findUserById(optional($user)->id);
+                $user          = Auth::user();
+                $manager       = app('impersonate');
+                $impersonating = false;
+
+                if ($user) {
+                    $manager->findUserById($user->id);
+                    $impersonating = $manager->isImpersonating();
+                }
 
                 return [
                     'isLoggedIn'      => $user ? true : false,
-                    'isImpersonating' => $manager->isImpersonating(),
+                    'isImpersonating' => $impersonating,
                     'user'            => $user ? [
                         'id'                => $user->id,
                         'sponsor'           => $user->sponsor,
