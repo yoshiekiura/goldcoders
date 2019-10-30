@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
             'auth'   => function () {
                 $user    = Auth::user();
                 $manager = app('impersonate');
-                $manager->findUserById($user->id);
+                $manager->findUserById(optional($user)->id);
 
                 return [
                     'isLoggedIn'      => $user ? true : false,
