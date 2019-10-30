@@ -7,16 +7,16 @@ current:
   minor: 0
   patch: 5
   git_absorb: git-local
-  prerelease: 79-g9d9053a
+  prerelease: 102-gcc8bb9d
   buildmetadata: ''
-  commit: 9d9053
+  commit: cc8bb9
   timestamp:
     year: 2019
     month: 10
-    day: 22
-    hour: 16
-    minute: 16
-    second: 22
+    day: 28
+    hour: 13
+    minute: 49
+    second: 7
     timezone: Asia/Manila
 commit:
   length: 6

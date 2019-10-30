@@ -36,6 +36,22 @@ trait Relationships
     }
 
     /**
+     * @return mixed
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'member_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function payouts()
+    {
+        return $this->hasMany(Payout::class, 'member_id');
+    }
+
+    /**
      * Referrals Relationship
      *
      */
@@ -58,7 +74,7 @@ trait Relationships
      */
     public function subscriptions()
     {
-        return $this->hasMany(Subscription::class);
+        return $this->hasMany(Subscription::class, 'user_id');
     }
 
     /**
@@ -67,13 +83,5 @@ trait Relationships
     public function underlings()
     {
         return $this->hasMany(User::class, 'paymaster_id');
-    }
-    public function payments()
-    {
-        return $this->hasMany(Payment::class, 'member_id');
-    }
-    public function payouts()
-    {
-        return $this->hasMany(Payout::class, 'member_id');
     }
 }

@@ -109,7 +109,7 @@
         <template v-slot:item.sponsor="{ item }">
           <span v-if="item.sponsor">{{ item.sponsor.toUpperCase() }}</span>
         </template>
-        
+
         <template v-slot:item.active="{ item }">
           <v-switch
             :disabled="!can('manage_users')"
@@ -141,6 +141,9 @@
           </v-chip>
         </template>
         <template v-if="can('manage_users')" v-slot:item.action="{item}">
+          <v-btn v-if="$page.auth.user.id === 1" text icon color="primary" class="compress--icon" @click="impersonate(item)">
+            <v-icon>fa-sign-in</v-icon>
+          </v-btn>
           <v-btn text icon color="blue" class="compress--icon" @click="editUser(item)">
             <v-icon>edit</v-icon>
           </v-btn>
@@ -337,8 +340,8 @@ export default {
     self.roles = self.$page.roles;
     self.debouncedGetUsers = _.debounce(self.fetchUsers, 50);
   },
-  remember:{
-    data: ['form'],
+  remember: {
+    data: ["form"]
   },
   mounted() {
     let self = this;
@@ -348,6 +351,9 @@ export default {
     });
   },
   methods: {
+    impersonate(item) {
+      this.$inertia.visit(route("impersonate", { id: item.id }).url());
+    },
     fetchUsers() {
       let query = _.pickBy(this.form);
       let url = this.route(

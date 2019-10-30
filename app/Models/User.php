@@ -65,8 +65,6 @@ class User extends Authenticatable implements HasMedia
 
     public static function boot()
     {
-
-
         parent::boot();
 
         static::creating(function ($user) {
@@ -110,6 +108,4 @@ class User extends Authenticatable implements HasMedia
             ]
         ];
     }
-
-
 }

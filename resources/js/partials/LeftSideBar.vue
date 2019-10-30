@@ -15,6 +15,15 @@
           <v-list-item-subtitle
             class="caption font-weight-light text-center white--text"
           >Email: {{ $page.auth.user.email }}</v-list-item-subtitle>
+          <v-btn
+            v-if="$page.auth.isImpersonating"
+            text
+            color="white"
+            class="compress--icon"
+            @click="leave(item)"
+          >
+            <v-icon>power_settings_new</v-icon>
+          </v-btn>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -184,6 +193,11 @@ export default {
     Bus.$on("toggleDrawer", function() {
       self.drawer = !self.drawer;
     });
+  },
+  methods: {
+    leave() {
+      this.$inertia.visit(route("impersonate.leave").url());
+    }
   }
 };
 </script>
