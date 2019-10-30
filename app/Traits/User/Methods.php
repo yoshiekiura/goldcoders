@@ -4,11 +4,49 @@ namespace App\Traits\User;
 
 trait Methods
 {
-
-    public function isSuperAdmin()
+    /**
+     * @return mixed
+     */
+    public function canBeImpersonated()
     {
-        return $this->hasRole('admin') && $this->id === 1;
+        return 1 !== $this->can_be_impersonated;
     }
+
+    /**
+     * @return mixed
+     */
+    public function canImpersonate()
+    {
+        return $this->isSuperAdmin();
+    }
+
+    /**
+     * Add findByEmail Method
+     *
+     */
+    public static function findByEmail($email)
+    {
+        return self::whereEmail($email)->first();
+    }
+
+    /**
+     * Add findByUsername Method
+     *
+     */
+    public static function findByUsername($username)
+    {
+        return self::whereUsername($username)->first();
+    }
+
+    /**
+     * Add findForPassport Method
+     *
+     */
+    public function findForPassport($identifier)
+    {
+        return $this->orWhere('email', $identifier)->orWhere('username', $identifier)->first();
+    }
+
     /**
      * @return mixed
      */
@@ -42,30 +80,11 @@ trait Methods
     }
 
     /**
-     * Add findByEmail Method
-     *
+     * @return mixed
      */
-    public static function findByEmail($email)
+    public function isSuperAdmin()
     {
-        return self::whereEmail($email)->first();
-    }
-
-    /**
-     * Add findByUsername Method
-     *
-     */
-    public static function findByUsername($username)
-    {
-        return self::whereUsername($username)->first();
-    }
-
-    /**
-     * Add findForPassport Method
-     *
-     */
-    public function findForPassport($identifier)
-    {
-        return $this->orWhere('email', $identifier)->orWhere('username', $identifier)->first();
+        return $this->hasRole('admin') && 1 === $this->id;
     }
 
     /**
