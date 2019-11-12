@@ -33,8 +33,8 @@ class DummyUserSeeder extends Seeder
             'suffix'            => null
         ]);
         $paymaster->assignRole('admin', 'paymaster');
-        $subscriptions = factory(Subscription::class, 10)->create();
-        $paymaster->subscriptions()->saveMany($subscriptions);
+        // $subscriptions = factory(Subscription::class, 10)->create();
+        // $paymaster->subscriptions()->saveMany($subscriptions);
         $paymaster->save();
         // test member
         $member = User::create([
@@ -54,8 +54,8 @@ class DummyUserSeeder extends Seeder
             'suffix'            => null
         ]);
         $member->assignRole('member');
-        $subscriptions = factory(Subscription::class, 10)->create();
-        $member->subscriptions()->saveMany($subscriptions);
+        // $subscriptions = factory(Subscription::class, 10)->create();
+        // $member->subscriptions()->saveMany($subscriptions);
         $member->save();
 
         /* test referrals */
@@ -64,8 +64,8 @@ class DummyUserSeeder extends Seeder
             $user->sp_id        = $member->id;
             $user->active       = false;
             $user->assignRole('member');
-            $subscriptions = factory(Subscription::class, 10)->create();
-            $user->subscriptions()->saveMany($subscriptions);
+            // $subscriptions = factory(Subscription::class, 10)->create();
+            // $user->subscriptions()->saveMany($subscriptions);
             $user->save();
         });
     }

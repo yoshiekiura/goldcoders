@@ -32,8 +32,8 @@ class AdminSeeder extends Seeder
             'suffix'            => null
         ]);
         $user->assignRole('admin', 'paymaster');
-        $subscriptions = factory(Subscription::class, 10)->create();
-        $user->subscriptions()->saveMany($subscriptions);
+        // $subscriptions = factory(Subscription::class, 10)->create();
+        // $user->subscriptions()->saveMany($subscriptions);
         $user->save();
 
     }
