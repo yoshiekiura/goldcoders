@@ -27,14 +27,14 @@ class CreateSubscriptionsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->string('plan');    // plan[1-6] rank[executive, bronze, silver, gold ,diamond , elite]
-            $table->string('rank');    // executive, bronze, silver, gold ,diamond , elite
-            $table->integer('amount'); //10500,21000 etc
-            $table->text('payment_gateway')->nullable();
-            $table->text('image_url')->nullable();
-            $table->date('date_activated')->nullable(); // dd/mm/yyyy
-            $table->date('date_paid')->nullable();      // same as date_deposited
-            $table->boolean('locked_in')->default(0);
+            $table->unsignedBigInteger('paymaster_id')->nullable();
+            $table->foreign('paymaster_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('name')->unique();
+            $table->unsignedInteger('amount');
+            $table->unsignedInteger('interval')->comment('interval is in unit of hr');
+            $table->unsignedInteger('interval_count');
+            $table->unsignedBigInteger('plan_id');
+            $table->string('plan_type');
             $table->timestamps();
         });
     }
