@@ -10,12 +10,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
-use App\Models\SubscriptionType\Ranking;
-use App\Models\SubscriptionType\FixValue;
-use App\Models\SubscriptionType\Percentage;
-use App\Models\SubscriptionType\Compounding;
 use Illuminate\Http\Resources\Json\Resource;
-use App\Models\SubscriptionType\ProfitSharing;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -30,14 +25,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Date::use (CarbonImmutable::class);
         Resource::withoutWrapping();
-        // Map Polymophic Classname to custom name
-        Relation::morphMap([
-            'fix_value'      => FixValue::class,
-            'percentage'     => Percentage::class,
-            'compounding'    => Compounding::class,
-            'ranking'        => Ranking::class,
-            'profit_sharing' => ProfitSharing::class
-        ]);
+        config('plans');
+
+        if (count(config('subtype'))) {
+            // Map Polymophic Classname to custom name
+            Relation::morphMap(config('subtype'));
+        }
     }
 
     /**
