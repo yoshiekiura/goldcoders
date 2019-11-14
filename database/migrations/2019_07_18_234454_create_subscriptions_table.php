@@ -31,10 +31,15 @@ class CreateSubscriptionsTable extends Migration
             $table->foreign('paymaster_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('name')->unique();
             $table->unsignedInteger('amount');
+            // create an accessor to get cycle every
+            // like we implemented on the UI
             $table->unsignedInteger('interval')->comment('interval is in unit of hr');
             $table->unsignedInteger('interval_count');
             $table->unsignedBigInteger('plan_id');
             $table->string('plan_type');
+            $table->unsignedInteger('commission_id');
+            $table->string('commission_type');
+            $table->boolean('lifetime');
             $table->timestamps();
         });
     }
