@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolesAndPermissionsSeeder::class);
         $this->call(AdminSeeder::class);
+        $this->call(RankSeeder::class);
 
         if (App::environment(['local', 'staging'])) {
             // This Seeder Would Not Be Run on Production
@@ -21,5 +22,4 @@ class DatabaseSeeder extends Seeder
             Storage::deleteDirectory('receipts');
         }
     }
-
 }

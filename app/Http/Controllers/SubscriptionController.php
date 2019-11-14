@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Rank;
 use Inertia\Inertia;
 use App\Models\Subscription;
+use Illuminate\Support\Facades\Auth;
 use App\Models\SubscriptionType\FixValue;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\SubscriptionType\Percentage;
@@ -13,11 +15,14 @@ class SubscriptionController extends Controller
 {
     public function create()
     {
+        $user      = Auth::user();
         $intervals = config('intervals');
+        $ranks     = Rank::where('paymaster_id', $user->id)->orWhereNull('paymaster_id')->pluck('name');
         $plans     = array_keys(config('subtype'));
         return Inertia::render('Subscription/Create', [
             'intervals' => $intervals,
-            'plans'     => $plans
+            'plans'     => $plans,
+            'ranks'     => $ranks
         ]);
     }
 
@@ -43,7 +48,8 @@ class SubscriptionController extends Controller
                 FixValue::class,
                 Percentage::class,
                 Compounding::class
-                 // Ranking::class,
+
+// Ranking::class,
                 // ProfitSharing::class
             ],
             function (Builder $query, $type) {

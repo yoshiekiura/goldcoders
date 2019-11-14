@@ -18,6 +18,31 @@
           prepend-icon="fa-at"
         />
       </v-flex>
+      <v-flex xs12 offset-md2 md8>
+        <v-combobox
+          v-model="ranks"
+          :items="$page.ranks"
+          :search-input.sync="searchRank"
+          hide-selected
+          hint="Ranks"
+          label="Add Ranks"
+          multiple
+          persistent-hint
+          small-chips
+        >
+          <template v-slot:no-data>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>
+                  No Results matching "
+                  <strong>{{ searchRank }}</strong>". Press
+                  <kbd>enter</kbd> to create a new Rank
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-combobox>
+      </v-flex>
       <v-flex class="xs12 offset-md2 md8 pt-5 pb-5">
         <v-autocomplete
           v-validate="'required'"
@@ -159,7 +184,7 @@ export default {
     FixValue,
     Percentage,
     Ranking,
-    ProfitSharing
+    ProfitSharing,
   },
   mixins: [validationError],
   data: () => ({
@@ -181,6 +206,8 @@ export default {
     }),
     selected_all: false,
     periods: [1],
+    ranks: [],
+    searchRank: null,
     billing_cycle: [
       // we need a implement here a way to cash range to loop and add it to array
       // we always show the remaining cycle
