@@ -13,7 +13,12 @@ class SubscriptionController extends Controller
 {
     public function create()
     {
-        return Inertia::render('Subscription/Create');
+        $intervals = config('intervals');
+        $plans     = array_keys(config('subtype'));
+        return Inertia::render('Subscription/Create', [
+            'intervals' => $intervals,
+            'plans'     => $plans
+        ]);
     }
 
     public function destroy()
@@ -38,8 +43,7 @@ class SubscriptionController extends Controller
                 FixValue::class,
                 Percentage::class,
                 Compounding::class
-
-// Ranking::class,
+                 // Ranking::class,
                 // ProfitSharing::class
             ],
             function (Builder $query, $type) {
@@ -78,6 +82,7 @@ class SubscriptionController extends Controller
                     Compounding::class => ['author']
                 ]);
             }
+
             ])->get();
     }
 
