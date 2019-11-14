@@ -119,15 +119,24 @@
         />
       </v-flex>
 
-      <v-flex xs12 offset-md2 md8>
+      <v-flex xs12 offset-md2 md8 v-if="!form.lifetime">
         <span class="subheading">Cycle Period For Commission</span>
-        <v-chip-group multiple active-class="accent">
-          <v-chip
-            filter
-            @change="addOrRemove(n)"
-            v-for="n in form.cycle_repeat"
-            :key="n"
-          >Cycle {{ n }}</v-chip>
+        <v-checkbox
+          :indeterminate="indeterminate"
+          @change="toggleSelect()"
+          v-model="selected_all"
+          label="Select All"
+        ></v-checkbox>
+
+        <!-- add v-model in group and add value on chip-->
+        <v-chip-group
+          v-model="form.cycle_period"
+          multiple
+          column
+          active-class="accent white--text"
+          class="white--text"
+        >
+          <v-chip v-for="(n) in form.cycle_repeat" filter :key="n" :value="n">Cycle {{ n }}</v-chip>
         </v-chip-group>
       </v-flex>
 
@@ -176,6 +185,8 @@ export default {
       cycle_period: [],
       lifetime: false
     }),
+    selected_all: false,
+    periods: [1],
     billing_cycle: [
       // we need a implement here a way to cash range to loop and add it to array
       // we always show the remaining cycle
@@ -198,6 +209,14 @@ export default {
     }
   }),
   computed: {
+    indeterminate() {
+      if (
+        this.form.cycle_period.length !== this.periods.length &&
+        this.selected_all
+      ) {
+        return true;
+      }
+    },
     getLifetimeStatus() {
       return this.form.lifetime ? "Lifetime" : "Expiring";
     },
@@ -226,16 +245,13 @@ export default {
     }
   },
   methods: {
-    addOrRemove(value) {
-      let array = this.form.cycle_period;
-      var index = array.indexOf(value);
-
-      if (index === -1) {
-        array.push(value);
-      } else {
-        array.splice(index, 1);
+    toggleSelect() {
+      if (this.selected_all === true) {
+        this.form.cycle_period = this.periods;
       }
-      this.form.cycle_period.sort((a, b) => a - b);
+      if (this.selected_all === false) {
+        this.form.cycle_period = [];
+      }
     },
 
     toCamelCase(str) {
@@ -249,6 +265,13 @@ export default {
     submit() {
       // before submit check if the not life time
       // we set duration to -1 meaning this is a non expiring cycle
+    },
+    rangeCycle(start, end) {
+      var ans = [];
+      for (let i = start; i <= end; i++) {
+        ans.push(i);
+      }
+      return ans;
     }
   },
   watch: {
@@ -258,8 +281,15 @@ export default {
       // evaluate the newVal text to object
       this.form.details = eval(`this.${newVal}`);
     },
-    "form.cycle_repeat"() {
+    "form.cycle_repeat"(newVal) {
       this.form.cycle_period = [];
+      this.periods = this.rangeCycle(1, newVal);
+    },
+    "form.lifetime"(newVal) {
+      if (newVal) {
+        this.form.cycle_period = [];
+        this.selected_all = false;
+      }
     }
   }
 };
