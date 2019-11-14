@@ -41,7 +41,11 @@
         <v-switch color="green darken-4" :label="getLifetimeStatus" v-model="form.lifetime" />
       </v-flex>
       <v-flex xs12 offset-md2 md8>
-        <v-subheader>Cycle Every (Unit Of Time) for (X) Amount Of Times</v-subheader>
+        <v-subheader>Fill Up Fields For Setting Cycle and Cycle Commission</v-subheader>
+        <v-chip class="ma-2" color="accent" text-color="white">
+          1 Cycle Every {{ cycle_every }} for {{ duration }}
+          <v-icon color="primary" right>wb_sunny</v-icon>
+        </v-chip>
         <v-divider></v-divider>
       </v-flex>
       <v-flex class="xs12 offset-md2 md8 pt-5 pb-5">
@@ -53,7 +57,7 @@
           :class="{ 'error--text': hasErrors('cycle_unit') }"
           required
           color="blue-grey"
-          label="Cycle Unit Of Time"
+          label="Cycle Unit"
           light
           chips
           clearable
@@ -81,16 +85,7 @@
           prepend-icon="toys"
         />
       </v-flex>
-      <v-flex xs12 offset-md2 md8 v-if="cycle_every">
-        <v-text-field
-          readonly
-          v-model="cycle_every"
-          class="primary--text"
-          name="duration"
-          label="1 Cycle Every"
-          prepend-icon="wb_sunny"
-        />
-      </v-flex>
+
       <v-flex v-if="!form.lifetime" xs12 offset-md2 md8>
         <v-text-field
           v-validate="'required|min_value:1|max_value:1000'"
@@ -102,7 +97,7 @@
           :class="{ 'error--text': hasErrors('cycle_repeat') }"
           class="primary--text"
           name="cycle_repeat"
-          label="Repeat(s)"
+          label="Cycle Repeat"
           data-vv-name="cycle_repeat"
           counter="255"
           prepend-icon="repeat"
@@ -224,7 +219,11 @@ export default {
         let day = Math.floor(
           (this.form.cycle_unit * this.form.cycle_interval) / 24
         );
-        return `${day} day(s)`;
+        let dw = "days";
+        if (day < 2) {
+          dw = "day";
+        }
+        return `${day} ${dw}`;
       }
     },
 
@@ -239,7 +238,11 @@ export default {
             this.form.cycle_repeat) /
             24
         );
-        return `${day} day(s)`;
+        let dw = "days";
+        if (day < 2) {
+          dw = "day";
+        }
+        return `${day} ${dw}`;
       }
     }
   },
