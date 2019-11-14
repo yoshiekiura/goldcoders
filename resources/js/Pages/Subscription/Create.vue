@@ -120,7 +120,7 @@
       </v-flex>
 
       <v-flex xs12 offset-md2 md8 v-if="!form.lifetime">
-        <span class="subheading">Cycle Period For Commission</span>
+        <span class="subheading">Select Cycle To Give Commission</span>
         <v-checkbox
           :indeterminate="indeterminate"
           @change="toggleSelect()"
