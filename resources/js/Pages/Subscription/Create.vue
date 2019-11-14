@@ -128,7 +128,6 @@
           label="Select All"
         ></v-checkbox>
 
-        <!-- add v-model in group and add value on chip-->
         <v-chip-group
           v-model="form.cycle_period"
           multiple
@@ -283,6 +282,7 @@ export default {
     },
     "form.cycle_repeat"(newVal) {
       this.form.cycle_period = [];
+      this.selected_all = false;
       this.periods = this.rangeCycle(1, newVal);
     },
     "form.lifetime"(newVal) {
