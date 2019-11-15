@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af6233430faddf8d476e4dbaa0af1d96",
+    "content-hash": "e005167e2d76caaaac30dffce4474161",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -639,6 +639,67 @@
                 "validator"
             ],
             "time": "2019-08-13T17:33:27+00:00"
+        },
+        {
+            "name": "envant/fireable",
+            "version": "v1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/envant/fireable.git",
+                "reference": "6cbf106496e250de28f9686332a6a9bd55b6fb09"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/envant/fireable/zipball/6cbf106496e250de28f9686332a6a9bd55b6fb09",
+                "reference": "6cbf106496e250de28f9686332a6a9bd55b6fb09",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^5.8|^6",
+                "illuminate/support": "^5.8|^6",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.2",
+                "orchestra/testbench": "^3.8 || ^4.0",
+                "phpunit/phpunit": "^7.5 || ^8.0",
+                "sempro/phpunit-pretty-print": "^1.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Envant\\Fireable\\FireableServiceProvider"
+                    ],
+                    "aliases": {
+                        "Fireable": "Envant\\Fireable\\Facades\\Fireable"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Envant\\Fireable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Boris Lepikhin",
+                    "email": "info@envant.me",
+                    "homepage": "https://envant.me"
+                }
+            ],
+            "description": "An elegant way to trigger events based on attributes changes",
+            "homepage": "https://github.com/envant/fireable",
+            "keywords": [
+                "Fireable",
+                "event",
+                "laravel"
+            ],
+            "time": "2019-10-07T23:24:29+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -3007,6 +3068,55 @@
                 "spatie"
             ],
             "time": "2019-10-16T19:25:56+00:00"
+        },
+        {
+            "name": "spatie/laravel-rate-limited-job-middleware",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-rate-limited-job-middleware.git",
+                "reference": "c1c544397dfd1db8dd9fe77c1c928f3b70727121"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-rate-limited-job-middleware/zipball/c1c544397dfd1db8dd9fe77c1c928f3b70727121",
+                "reference": "c1c544397dfd1db8dd9fe77c1c928f3b70727121",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/redis": "^6.0",
+                "php": "^7.3"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^4.0",
+                "phpunit/phpunit": "^8.2",
+                "symfony/var-dumper": "^4.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\RateLimitedMiddleware\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A middleware that can rate limit jobs",
+            "homepage": "https://github.com/spatie/laravel-rate-limited-job-middleware",
+            "keywords": [
+                "laravel-rate-limited-job-middleware",
+                "spatie"
+            ],
+            "time": "2019-10-17T21:49:10+00:00"
         },
         {
             "name": "spatie/pdf-to-image",
