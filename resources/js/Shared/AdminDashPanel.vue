@@ -1,23 +1,23 @@
 <template>
   <div class="pa-5">
     <v-row dense>
-      <v-col cols="12" md="6" lg="6" sm="12" v-for="(item,index) in overall_records" :key="index">
+      <v-col v-for="(item,index) in overall_records" :key="index" cols="12" md="6" lg="6" sm="12">
         <card-dashboard-admin
           :name="item.name"
           :icon="item.icon"
           :details="item.details"
           :actions="item.actions"
           :color="item.color"
-        ></card-dashboard-admin>
+        />
       </v-col>
-      <v-col cols="12" md="6" lg="4" sm="12" v-for="(item,index) in total_accounts" :key="index">
+      <v-col v-for="(item,index) in total_accounts" :key="index" cols="12" md="6" lg="4" sm="12">
         <card-dashboard-admin
           :name="item.name"
           :icon="item.icon"
           :details="item.details"
           :actions="item.actions"
           :color="item.color"
-        ></card-dashboard-admin>
+        />
       </v-col>
     </v-row>
   </div>
@@ -28,7 +28,7 @@ import CardDashboardAdmin from "@/Shared/CardDashboardAdmin";
 
 export default {
   components: {
-    CardDashboardAdmin
+    CardDashboardAdmin,
   },
   data() {
     return {
@@ -40,7 +40,7 @@ export default {
         total_subscription_commissions: 0,
         account_subscription_commission: 0,
         direct_referral_commission: 0,
-        overriding_commission: 0
+        overriding_commission: 0,
       },
       overall_records: [
         {
@@ -51,15 +51,15 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total",
-              value: 0
-            }
+              value: 0,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.test()
-            }
-          ]
+              func: () => this.test(),
+            },
+          ],
         },
         {
           name: "Overall Overriding Commission",
@@ -69,16 +69,16 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total",
-              value: 0
-            }
+              value: 0,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.test()
-            }
-          ]
-        }
+              func: () => this.test(),
+            },
+          ],
+        },
       ],
       total_accounts: [
         {
@@ -89,15 +89,15 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total",
-              value: 0
-            }
+              value: 0,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.test()
-            }
-          ]
+              func: () => this.test(),
+            },
+          ],
         },
         {
           name: "Total Subscriptions",
@@ -107,15 +107,15 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total",
-              value: 0
-            }
+              value: 0,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.test()
-            }
-          ]
+              func: () => this.test(),
+            },
+          ],
         },
         {
           name: "Account Subscriptions Count",
@@ -125,15 +125,15 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Count",
-              value: 0
-            }
+              value: 0,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.test()
-            }
-          ]
+              func: () => this.test(),
+            },
+          ],
         },
         {
           name: "Direct Referrals",
@@ -143,15 +143,15 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total",
-              value: 0
-            }
+              value: 0,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.test()
-            }
-          ]
+              func: () => this.test(),
+            },
+          ],
         },
         {
           name: "Direct Referral Commission",
@@ -161,15 +161,15 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total",
-              value: 0
-            }
+              value: 0,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.test()
-            }
-          ]
+              func: () => this.test(),
+            },
+          ],
         },
         {
           name: "Account Subscription Commission",
@@ -179,17 +179,17 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total",
-              value: 0
-            }
+              value: 0,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.test()
-            }
-          ]
-        }
-      ]
+              func: () => this.test(),
+            },
+          ],
+        },
+      ],
     };
   },
 
@@ -215,10 +215,10 @@ export default {
       } else {
         return Math.round(percent);
       }
-    }
+    },
   },
   mounted() {},
-  methods: {}
+  methods: {},
 };
 </script>
 

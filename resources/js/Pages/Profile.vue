@@ -3,13 +3,13 @@
   <main-layout title="My Profile">
     <v-card flat class="grey lighten-5">
       <v-flex xs12 md8 offset-md2 text-xs-center>
-        <app-alert></app-alert>
+        <app-alert />
       </v-flex>
 
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          v-validate="'required|alpha_dash|min:6'"
           v-model="form.username"
+          v-validate="'required|alpha_dash|min:6'"
           :error-messages="errorMessages('username')"
           :class="{ 'error--text': hasErrors('username') }"
           label="Username"
@@ -19,8 +19,8 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          v-validate="{ email: true }"
           v-model="form.email"
+          v-validate="{ email: true }"
           :error-messages="errorMessages('email')"
           :class="{ 'error--text': hasErrors('email') }"
           label="Email"
@@ -30,9 +30,9 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :readonly="$page.auth.user.active"
-          v-validate="{ required: true, regex: /^[a-zA-Z0-9 ]+$/ }"
           v-model="form.fname"
+          v-validate="{ required: true, regex: /^[a-zA-Z0-9 ]+$/ }"
+          :readonly="$page.auth.user.active"
           :error-messages="errorMessages('fname')"
           :class="{ 'error--text': hasErrors('fname') }"
           label="First Name"
@@ -42,8 +42,8 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :readonly="$page.auth.user.active"
           v-model="form.mname"
+          :readonly="$page.auth.user.active"
           :error-messages="errorMessages('mname')"
           :class="{ 'error--text': hasErrors('mname') }"
           label="Middle Name"
@@ -53,9 +53,9 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :readonly="$page.auth.user.active"
-          v-validate="{ required: true, regex: /^[a-zA-Z0-9 ]+$/ }"
           v-model="form.lname"
+          v-validate="{ required: true, regex: /^[a-zA-Z0-9 ]+$/ }"
+          :readonly="$page.auth.user.active"
           :error-messages="errorMessages('lname')"
           :class="{ 'error--text': hasErrors('lname') }"
           label="Last Name"
@@ -65,8 +65,8 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :readonly="$page.auth.user.active"
           v-model="form.suffix"
+          :readonly="$page.auth.user.active"
           :error-messages="errorMessages('suffix')"
           :class="{ 'error--text': hasErrors('suffix') }"
           label="Suffix"
@@ -76,9 +76,9 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-menu
-          :disabled="$page.auth.user.active"
           ref="menu"
           v-model="menu"
+          :disabled="$page.auth.user.active"
           :close-on-content-click="false"
           :nudge-right="40"
           transition="scale-transition"
@@ -87,8 +87,8 @@
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              v-validate="'required'"
               v-model="form.dob"
+              v-validate="'required'"
               :error-messages="errorMessages('dob')"
               :class="{ 'error--text': hasErrors('dob') }"
               label="Birthday date"
@@ -109,8 +109,8 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          v-validate="{ required: false }"
           v-model="form.mobile_no"
+          v-validate="{ required: false }"
           :error-messages="errorMessages('mobile_no')"
           :class="{ 'error--text': hasErrors('mobile_no') }"
           label="Mobile No."
@@ -120,8 +120,8 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          v-validate="{ required: false }"
           v-model="form.current_address"
+          v-validate="{ required: false }"
           :error-messages="errorMessages('current_address')"
           :class="{ 'error--text': hasErrors('current_address') }"
           label="Current Address"
@@ -131,9 +131,9 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          :readonly="$page.auth.user.active"
-          v-validate="{ required: false }"
           v-model="form.permanent_address"
+          v-validate="{ required: false }"
+          :readonly="$page.auth.user.active"
           :error-messages="errorMessages('permanent_address')"
           :class="{ 'error--text': hasErrors('permanent_address') }"
           label="Permanent Address"
@@ -143,8 +143,8 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          v-validate="{ min: 6,regex: /^([a-zA-Z0-9@*#]{6,15})$/ }"
           v-model="form.old_password"
+          v-validate="{ min: 6,regex: /^([a-zA-Z0-9@*#]{6,15})$/ }"
           :append-icon="icon"
           :type="!password_visible ? 'password' : 'text'"
           :error-messages="errorMessages('old_password')"
@@ -157,9 +157,9 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
-          v-validate="'min:6'"
           ref="password"
           v-model="form.password"
+          v-validate="'min:6'"
           :append-icon="icon"
           :type="!password_visible ? 'password' : 'text'"
           :error-messages="errorMessages('password')"
@@ -173,10 +173,10 @@
       </v-flex>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
+          v-model="form.password_confirmation"
           v-validate="'min:6|confirmed:password'"
           :append-icon="icon"
           :type="!password_visible ? 'password' : 'text'"
-          v-model="form.password_confirmation"
           :error-messages="errorMessages('password_confirmation')"
           :class="{ 'error--text': hasErrors('password_confirmation') }"
           label="Confirm New Password"
@@ -211,12 +211,12 @@ import AppAlert from "../partials/AppAlert";
 export default {
   components: {
     MainLayout,
-    AppAlert
-  },
-  props: {
-    account: Object
+    AppAlert,
   },
   mixins: [validationError, Acl],
+  props: {
+    account: Object,
+  },
   data: () => ({
     form: new Form({
       fname: "",
@@ -231,15 +231,15 @@ export default {
       mobile_no: "",
       old_password: "",
       password: "",
-      password_confirmation: ""
+      password_confirmation: "",
     }),
     password_visible: false,
-    menu: false
+    menu: false,
   }),
   computed: {
     icon() {
       return this.password_visible ? "visibility" : "visibility_off";
-    }
+    },
   },
   watch: {
     menu(val) {
@@ -247,7 +247,7 @@ export default {
     },
     "$page.flash.success"() {
       this.resetPass();
-    }
+    },
   },
   mounted() {
     let self = this;
@@ -288,7 +288,7 @@ export default {
           }
           self.$inertia.post(self.route("profile.update").url(), self.form, {
             replace: true,
-            preserveState: true
+            preserveState: true,
           });
         }
         self.form.busy = false;
@@ -299,8 +299,8 @@ export default {
       return newStr.replace(/\w\S*/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -1,12 +1,14 @@
 <template>
   <main-layout :title="name">
     <v-container grid-list-md>
-      <app-alert></app-alert>
+      <app-alert />
       <v-layout row my-4>
         <inertia-link
           class="headline font-weight-thin inertia-link"
           :href="route('user_file_manager')"
-        >{{ name }}</inertia-link>
+        >
+          {{ name }}
+        </inertia-link>
         <span class="headline font-weight-thin mx-1">/</span>
         <span class="headline font-weight-thin">Edit</span>
       </v-layout>
@@ -20,9 +22,9 @@
 
                 <v-flex px-5>
                   <v-autocomplete
+                    v-model="form.member_id"
                     autofocus
                     :items="users"
-                    v-model="form.member_id"
                     :disabled="ifMemberOnly"
                     required
                     color="blue-grey"
@@ -34,8 +36,8 @@
                     :error-messages="$page.errors.member_id"
                   />
                   <v-autocomplete
-                    :items="files_data"
                     v-model="form.file_id"
+                    :items="files_data"
                     required
                     color="blue-grey"
                     label="File Title"
@@ -112,7 +114,7 @@
                               <v-img :src="image" aspect-ratio="1" class="grey lighten-2">
                                 <template v-slot:placeholder>
                                   <v-row class="fill-height ma-0" align="center" justify="center">
-                                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                    <v-progress-circular indeterminate color="grey lighten-5" />
                                   </v-row>
                                 </template>
                               </v-img>
@@ -155,21 +157,15 @@ import RM from "@/mixins/role_helper";
 export default {
   components: {
     MainLayout,
-    AppAlert
+    AppAlert,
   },
   mixins: [fileManager, RM],
   props: {
     files: Object,
     documents: Array,
-    files_data: Array,
+    filesData: Array,
     users: Array,
-    url: String
-  },
-  created() {
-    let self = this;
-    self.images = self.formatManagerFileForCreated(self.documents);
-
-    this.ifMemberOnly = this.checkIfMemberOnly();
+    url: String,
   },
   data() {
     return {
@@ -183,9 +179,25 @@ export default {
         file_id: this.files.file_id,
         date_submitted: this.files.date_submitted,
         busy: false,
-        images: null
-      }
+        images: null,
+      },
     };
+  },
+  watch: {
+    "form.images": {
+      handler: function(val) {
+        let self = this;
+        self.images = [];
+        self.images = self.formatManagerFiles(val);
+      },
+      deep: true,
+    },
+  },
+  created() {
+    let self = this;
+    self.images = self.formatManagerFileForCreated(self.documents);
+
+    this.ifMemberOnly = this.checkIfMemberOnly();
   },
   methods: {
     submit() {
@@ -197,22 +209,12 @@ export default {
           objectToFormData(self.form),
           {
             replace: true,
-            preserveState: true
+            preserveState: true,
           }
         )
         .then(() => (self.form.busy = false));
-    }
+    },
   },
-  watch: {
-    "form.images": {
-      handler: function(val, oldVal) {
-        let self = this;
-        self.images = [];
-        self.images = self.formatManagerFiles(val);
-      },
-      deep: true
-    }
-  }
 };
 </script>
 

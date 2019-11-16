@@ -12,7 +12,7 @@
     </v-list-item>
 
     <v-list class="transparent">
-      <v-list-item dense v-for="(detail,index) in details" :key="index">
+      <v-list-item v-for="(detail,index) in details" :key="index" dense>
         <v-list-item-icon>
           <v-icon>{{ detail.icon }}</v-icon>
         </v-list-item-icon>
@@ -40,14 +40,14 @@ export default {
     icon: String,
     color: {
       type: String,
-      default: "#00CAE3"
+      default: "#00CAE3",
     },
     details: Array,
-    actions: Array
+    actions: Array,
   },
   data() {
     return {};
-  }
+  },
 };
 </script>
 

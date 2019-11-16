@@ -31,14 +31,18 @@
                           fill-height
                           fluid
                         >
-                          <img :src="$page.auth.user.avatar" :alt="$page.auth.user.name" />
+                          <img :src="$page.auth.user.avatar" :alt="$page.auth.user.name" >
                         </v-avatar>
                       </v-flex>
                     </v-layout>
                   </v-container>
                   <v-layout>
                     <v-flex xs12 text-center flexbox>
-                      <h5 class="primary--text title">{{ $page.auth.user.fname }} {{$page.auth.user.lname }}</h5>
+                      <h5
+                        class="primary--text title"
+                      >
+{{ $page.auth.user.fname }} {{ $page.auth.user.lname }}
+</h5>
                     </v-flex>
                   </v-layout>
                 </v-card>
@@ -46,22 +50,26 @@
             </v-layout>
             <v-layout row>
               <v-flex xs12 sm12 md4 offset-md4 lg4 offset-lg4 xl4 offset-xl4>
-                  <v-btn
-                    block
-                    text
-                    class="white--text"
-                    color="info"
-                    @click.native="redirectBack()"
-                  >No, I Want To Stay</v-btn>
-                  <v-btn
-                    :loading="form.busy"
-                    :disabled="form.busy"
-                    block
-                    text
-                    color="red lighten-2"
-                    class="white--text"
-                    type="submit"
-                  >Yes, Log Me Out</v-btn>
+                <v-btn
+                  block
+                  text
+                  class="white--text"
+                  color="info"
+                  @click.native="redirectBack()"
+                >
+No, I Want To Stay
+</v-btn>
+                <v-btn
+                  :loading="form.busy"
+                  :disabled="form.busy"
+                  block
+                  text
+                  color="red lighten-2"
+                  class="white--text"
+                  type="submit"
+                >
+Yes, Log Me Out
+</v-btn>
               </v-flex>
             </v-layout>
           </form>
@@ -78,32 +86,31 @@ import Form from "vform";
 
 export default {
   components: {
-    ModalLayout
+    ModalLayout,
   },
   mixins: [validationError],
   data: () => ({
     tile: false,
     avatarSize: "200px",
     form: new Form({
-      submit: true
+      submit: true,
     }),
   }),
   methods: {
     redirectBack() {
-      let self = this;
       this.$inertia.visit(this.route("dashboard"), {
         method: "get",
         data: {},
         replace: false,
         preserveScroll: false,
-        preserveState: false
+        preserveState: false,
       });
     },
     logout() {
       let self = this;
       self.form.busy = true;
       self.$inertia.post(this.route("logout.attempt").url(), self.form);
-    }
-  }
+    },
+  },
 };
 </script>

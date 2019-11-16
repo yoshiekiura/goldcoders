@@ -1,12 +1,14 @@
 <template>
   <main-layout :title="name">
     <v-container grid-list-md>
-      <app-alert></app-alert>
+      <app-alert />
       <v-layout row my-4>
         <inertia-link
           class="headline font-weight-thin inertia-link"
           :href="route('approval.payout')"
-        >{{ name }}</inertia-link>
+        >
+          {{ name }}
+        </inertia-link>
       </v-layout>
 
       <v-layout row>
@@ -18,9 +20,8 @@
 
                 <v-flex px-5>
                   <v-autocomplete
-                    :items="paymasters"
                     v-model="form.paymaster_id"
-                    @change="form.member_id = null"
+                    :items="paymasters"
                     readonly
                     required
                     color="blue-grey"
@@ -30,11 +31,12 @@
                     light
                     prepend-icon="fa-user"
                     :error-messages="$page.errors['paymaster_id']"
+                    @change="form.member_id = null"
                   />
 
                   <v-autocomplete
-                    :items="getMembers"
                     v-model="form.member_id"
+                    :items="getMembers"
                     readonly
                     required
                     color="blue-grey"
@@ -74,7 +76,7 @@
                             <v-img :src="image" aspect-ratio="1" class="grey lighten-2">
                               <template v-slot:placeholder>
                                 <v-row class="fill-height ma-0" align="center" justify="center">
-                                  <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                  <v-progress-circular indeterminate color="grey lighten-5" />
                                 </v-row>
                               </template>
                             </v-img>
@@ -97,16 +99,16 @@
                 <v-flex px-5>
                   <v-flex md11 offset-md1>
                     <v-text-field
-                    readonly
                       v-model="form.amount"
+                      readonly
                       class="primary--text"
                       label="Amount"
                       :error-messages="$page.errors.amount"
                     />
 
                     <v-autocomplete
-                      :items="gateways"
                       v-model="form.gateway_id"
+                      :items="gateways"
                       required
                       color="blue-grey"
                       label="Gateway"
@@ -133,7 +135,6 @@
                 </v-flex>
               </v-layout>
             </v-container>
-            
           </v-card>
         </v-flex>
         <!-- <pre>{{ $data }}</pre> -->
@@ -152,7 +153,7 @@ import RM from "@/mixins/role_helper";
 export default {
   components: {
     MainLayout,
-    AppAlert
+    AppAlert,
   },
   mixins: [OT, RM],
   props: {
@@ -160,22 +161,7 @@ export default {
     users: Array,
     paymasters: Array,
     gateways: Array,
-    documents: Array
-  },
-  created() {
-    this.images = this.documents;
-    this.payout.payout_details.details = this.toKeyValue(
-      this.payout.payout_details.details
-    );
-    this.ifMemberOnly = this.checkIfMemberOnly();
-  },
-  computed: {
-    getMembers() {
-      if (this.form.paymaster_id != null) {
-        return _.filter(this.users, ["paymaster", this.form.paymaster_id]);
-      }
-      return [];
-    }
+    documents: Array,
   },
   data() {
     return {
@@ -195,24 +181,22 @@ export default {
         payout_details: this.payout.payout_details,
         file: null,
         busy: false,
-        images: null
-      }
+        images: null,
+      },
     };
   },
-  methods: {
-    submit() {
-      this.form.busy = true;
-      let gateway = _.cloneDeep(this.form.payout_details.details);
-      let newForm = _.cloneDeep(this.form);
-      newForm.payout_details.details = this.toPropertyValue(gateway);
-      this.$inertia
-        .post(this.route("payout.update").url(), objectToFormData(newForm))
-        .then(() => ((this.form.busy = false), (this.alert = true)));
-    }
+  computed: {
+    getMembers() {
+      if (this.form.paymaster_id != null) {
+        // eslint-disable-next-line no-undef
+        return _.filter(this.users, ["paymaster", this.form.paymaster_id]);
+      }
+      return [];
+    },
   },
   watch: {
     "form.images": {
-      handler: function(val, oldVal) {
+      handler: function(val) {
         let self = this;
         self.images = [];
         if (val) {
@@ -226,14 +210,37 @@ export default {
           }
         }
       },
-      deep: true
+      deep: true,
     },
-    "form.gateway_id"(val, oldVal) {
+    "form.gateway_id"(val) {
       if (!val) return (this.form.payout_details = {});
+      // eslint-disable-next-line no-undef
       let a = _.filter(this.gateways, ["value", val]);
       this.form.payout_details = a[0];
-    }
-  }
+    },
+  },
+  created() {
+    this.images = this.documents;
+    this.payout.payout_details.details = this.toKeyValue(
+      this.payout.payout_details.details
+    );
+    this.ifMemberOnly = this.checkIfMemberOnly();
+  },
+  methods: {
+    submit() {
+      this.form.busy = true;
+
+      // eslint-disable-next-line no-undef
+      let gateway = _.cloneDeep(this.form.payout_details.details);
+
+      // eslint-disable-next-line no-undef
+      let newForm = _.cloneDeep(this.form);
+      newForm.payout_details.details = this.toPropertyValue(gateway);
+      this.$inertia
+        .post(this.route("payout.update").url(), objectToFormData(newForm))
+        .then(() => ((this.form.busy = false), (this.alert = true)));
+    },
+  },
 };
 </script>
 

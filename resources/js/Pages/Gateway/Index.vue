@@ -3,7 +3,7 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <v-flex centered lg12 md12>
-          <app-alert></app-alert>
+          <app-alert />
           <v-card>
             <v-flex xs12 class="white">
               <v-layout align-center justify-space-between row>
@@ -20,13 +20,13 @@
                 </v-flex>
                 <v-flex>
                   <v-text-field
+                    v-model="search"
                     solo
                     prepend-icon="search"
                     :placeholder="`Search ${name} Here`"
-                    v-model="search"
                     hide-details
                     class="hidden-sm-and-down"
-                  ></v-text-field>
+                  />
                 </v-flex>
               </v-layout>
             </v-flex>
@@ -49,18 +49,18 @@
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
-                    @click.native="editRecord(item)"
                     depressed
                     icon
                     fab
                     dark
                     color="primary"
                     small
+                    @click.native="editRecord(item)"
                   >
                     <v-icon>edit</v-icon>
                   </v-btn>
 
-                  <v-btn @click="deleteRecord(item)" depressed icon fab dark color="pink" small>
+                  <v-btn depressed icon fab dark color="pink" small @click="deleteRecord(item)">
                     <v-icon>delete</v-icon>
                   </v-btn>
                 </template>
@@ -81,20 +81,18 @@ import swal from "sweetalert2";
 export default {
   components: {
     MainLayout,
-    AppAlert
+    AppAlert,
   },
   props: {
     gateways: Array,
-    link: String
+    link: String,
   },
-
-  computed: {},
 
   data: () => ({
     name: "Gateway",
     form: {
       id: null,
-      busy: false
+      busy: false,
     },
     headers: [
       { text: "Name", value: "name", align: "left", sortable: true },
@@ -104,17 +102,19 @@ export default {
         text: "For Payout",
         value: "for_payout",
         align: "center",
-        sortable: true
+        sortable: true,
       },
-      { text: "Actions", value: "actions", align: "center", sortable: false }
+      { text: "Actions", value: "actions", align: "center", sortable: false },
     ],
     search: "",
     alert: {
       model: true,
       message: "message here",
-      type: "info" //info success warning error
-    }
+      type: "info", //info success warning error
+    },
   }),
+
+  computed: {},
   watch: {},
   methods: {
     deleteRecord(data) {
@@ -127,7 +127,7 @@ export default {
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
           confirmButtonText: "Yes, delete it!",
-          reverseButtons: true
+          reverseButtons: true,
         })
         .then(result => {
           if (result.value) {
@@ -149,8 +149,8 @@ export default {
     },
     getStatus(val) {
       return val ? "Active" : "Inactive";
-    }
-  }
+    },
+  },
 };
 </script>
 

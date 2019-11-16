@@ -6,13 +6,13 @@
           <v-row align="center" justify="center" class="grey lighten-5 py-12 my-12">
             <button-card
               v-for="(item,index) in details"
+              v-show="index == 0 ? !ifMemberOnly : true"
               :key="index"
               :icon="item.icon"
               :name="item.name"
               :description="item.description"
               :func="item.func"
-              v-show="index == 0 ? !ifMemberOnly : true"
-            ></button-card>
+            />
           </v-row>
         </v-col>
       </v-row>
@@ -23,17 +23,42 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
 import RM from "@/mixins/role_helper";
 import ButtonCard from "@/Shared/ButtonCard";
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
-    ButtonCard
+    ButtonCard,
   },
   mixins: [RM],
+
+  data() {
+    return {
+      name: "Contract Manager",
+      ifMemberOnly: false,
+      details: [
+        {
+          icon: "all_inbox",
+          name: "file manager",
+          description: "admin",
+          func: () => this.adminManagement(),
+        },
+        {
+          icon: "assignment_returned",
+          name: "download files",
+          description: "user",
+          func: () => this.userDownload(),
+        },
+        {
+          icon: "backup",
+          name: "upload files",
+          description: "user",
+          func: () => this.userUpload(),
+        },
+      ],
+    };
+  },
   created() {
     this.ifMemberOnly = this.checkIfMemberOnly();
   },
@@ -46,35 +71,8 @@ export default {
     },
     adminManagement() {
       this.$inertia.visit(this.route("admin_file_manager").url());
-    }
+    },
   },
-
-  data() {
-    return {
-      name: "Contract Manager",
-      ifMemberOnly: false,
-      details: [
-        {
-          icon: "all_inbox",
-          name: "file manager",
-          description: "admin",
-          func: () => this.adminManagement()
-        },
-        {
-          icon: "assignment_returned",
-          name: "download files",
-          description: "user",
-          func: () => this.userDownload()
-        },
-        {
-          icon: "backup",
-          name: "upload files",
-          description: "user",
-          func: () => this.userUpload()
-        }
-      ]
-    };
-  }
 };
 </script>
 

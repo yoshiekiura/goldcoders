@@ -5,7 +5,9 @@
         <inertia-link
           class="headline font-weight-thin inertia-link"
           :href="route('user_file_manager')"
-        >{{ name }}</inertia-link>
+        >
+          {{ name }}
+        </inertia-link>
         <span class="headline font-weight-thin mx-1">/</span>
         <span class="headline font-weight-thin">Create</span>
       </v-layout>
@@ -19,9 +21,9 @@
 
                 <v-flex px-5>
                   <v-autocomplete
+                    v-model="form.member_id"
                     autofocus
                     :items="users"
-                    v-model="form.member_id"
                     :disabled="ifMemberOnly"
                     required
                     color="blue-grey"
@@ -33,8 +35,8 @@
                     :error-messages="$page.errors.member_id"
                   />
                   <v-autocomplete
-                    :items="files"
                     v-model="form.file_id"
+                    :items="files"
                     required
                     color="blue-grey"
                     label="File Title"
@@ -111,7 +113,7 @@
                               <v-img :src="image" aspect-ratio="1" class="grey lighten-2">
                                 <template v-slot:placeholder>
                                   <v-row class="fill-height ma-0" align="center" justify="center">
-                                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                    <v-progress-circular indeterminate color="grey lighten-5" />
                                   </v-row>
                                 </template>
                               </v-img>
@@ -152,19 +154,13 @@ import fileManager from "@/mixins/file_manager";
 import RM from "@/mixins/role_helper";
 export default {
   components: {
-    MainLayout
+    MainLayout,
   },
   mixins: [fileManager, RM],
   props: {
     users: Array,
     files: Array,
-    url: String
-  },
-  created() {
-    this.ifMemberOnly = this.checkIfMemberOnly();
-    if (this.ifMemberOnly) {
-      this.form.member_id = this.$page.auth.user.id;
-    }
+    url: String,
   },
   data() {
     return {
@@ -179,9 +175,25 @@ export default {
         title: null,
         date_submitted: null,
         busy: false,
-        images: null
-      }
+        images: null,
+      },
     };
+  },
+  watch: {
+    "form.images": {
+      handler: function(val) {
+        let self = this;
+        self.images = [];
+        self.images = self.formatManagerFiles(val);
+      },
+      deep: true,
+    },
+  },
+  created() {
+    this.ifMemberOnly = this.checkIfMemberOnly();
+    if (this.ifMemberOnly) {
+      this.form.member_id = this.$page.auth.user.id;
+    }
   },
   methods: {
     submit() {
@@ -193,22 +205,12 @@ export default {
           objectToFormData(self.form),
           {
             replace: true,
-            preserveState: true
+            preserveState: true,
           }
         )
         .then(() => (self.form.busy = false));
-    }
+    },
   },
-  watch: {
-    "form.images": {
-      handler: function(val, oldVal) {
-        let self = this;
-        self.images = [];
-        self.images = self.formatManagerFiles(val);
-      },
-      deep: true
-    }
-  }
 };
 </script>
 

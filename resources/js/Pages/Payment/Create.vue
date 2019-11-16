@@ -5,7 +5,9 @@
         <inertia-link
           class="headline font-weight-thin inertia-link"
           :href="route('payment')"
-        >{{ name }}</inertia-link>
+        >
+{{ name }}
+</inertia-link>
         <span class="headline font-weight-thin mx-1">/</span>
         <span class="headline font-weight-thin">Create</span>
       </v-layout>
@@ -19,9 +21,8 @@
 
                 <v-flex px-5>
                   <v-autocomplete
-                    :items="paymasters"
                     v-model="form.paymaster_id"
-                    @change="form.member_id = null"
+                    :items="paymasters"
                     :disabled="ifMemberOnly"
                     cache-items
                     required
@@ -32,11 +33,12 @@
                     light
                     prepend-icon="fa-user"
                     :error-messages="$page.errors.paymaster_id"
+                    @change="form.member_id = null"
                   />
 
                   <v-autocomplete
-                    :items="getMembers"
                     v-model="form.member_id"
+                    :items="getMembers"
                     :disabled="ifMemberOnly"
                     required
                     color="blue-grey"
@@ -100,7 +102,7 @@
                             <v-img :src="image" aspect-ratio="1" class="grey lighten-2">
                               <template v-slot:placeholder>
                                 <v-row class="fill-height ma-0" align="center" justify="center">
-                                  <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                  <v-progress-circular indeterminate color="grey lighten-5" />
                                 </v-row>
                               </template>
                             </v-img>
@@ -132,8 +134,8 @@
                     />
 
                     <v-autocomplete
-                      :items="gateways"
                       v-model="form.payment_details"
+                      :items="gateways"
                       required
                       color="blue-grey"
                       label="Gateway"
@@ -192,28 +194,13 @@ import RM from "@/mixins/role_helper";
 
 export default {
   components: {
-    MainLayout
+    MainLayout,
   },
   mixins: [OT, RM],
   props: {
     users: Array,
     paymasters: Array,
-    gateways: Array
-  },
-  created() {
-    this.ifMemberOnly = this.checkIfMemberOnly();
-    if (this.ifMemberOnly) {
-      this.form.paymaster_id = this.$page.auth.user.sponsor.id;
-      this.form.member_id = this.$page.auth.user.id;
-    }
-  },
-  computed: {
-    getMembers() {
-      if (this.form.paymaster_id != null) {
-        return _.filter(this.users, ["paymaster", this.form.paymaster_id]);
-      }
-      return [];
-    }
+    gateways: Array,
   },
   data() {
     return {
@@ -231,31 +218,22 @@ export default {
         amount: 0,
         files: [],
         busy: false,
-        images: null
-      }
+        images: null,
+      },
     };
   },
-  methods: {
-    submit() {
-      let self = this;
-      self.form.busy = true;
-
-    //   let payment_details = this.form.payment_details.details;
-    //   this.form.payment_details.details = this.toPropertyValue(payment_details);
-      let gateway = _.cloneDeep(this.form.payment_details.details);
-      let newForm = _.cloneDeep(this.form);
-      newForm.payment_details.details = this.toPropertyValue(gateway);
-      self.$inertia
-        .post(self.route("payment.store").url(), objectToFormData(newForm))
-        .then(() => (self.form.busy = false));
-    //   self.$inertia
-    //     .post(self.route("payment.store").url(), objectToFormData(self.form))
-    //     .then(() => (self.form.busy = false));
-    }
+  computed: {
+    getMembers() {
+      if (this.form.paymaster_id != null) {
+        // eslint-disable-next-line no-undef
+        return _.filter(this.users, ["paymaster", this.form.paymaster_id]);
+      }
+      return [];
+    },
   },
   watch: {
     "form.images": {
-      handler: function(val, oldVal) {
+      handler: function(val) {
         let self = this;
         self.images = [];
         if (val) {
@@ -270,9 +248,38 @@ export default {
           }
         }
       },
-      deep: true
+      deep: true,
+    },
+  },
+  created() {
+    this.ifMemberOnly = this.checkIfMemberOnly();
+    if (this.ifMemberOnly) {
+      this.form.paymaster_id = this.$page.auth.user.sponsor.id;
+      this.form.member_id = this.$page.auth.user.id;
     }
-  }
+  },
+  methods: {
+    submit() {
+      let self = this;
+      self.form.busy = true;
+
+      //   let payment_details = this.form.payment_details.details;
+      //   this.form.payment_details.details = this.toPropertyValue(payment_details);
+
+      // eslint-disable-next-line no-undef
+      let gateway = _.cloneDeep(this.form.payment_details.details);
+
+      // eslint-disable-next-line no-undef
+      let newForm = _.cloneDeep(this.form);
+      newForm.payment_details.details = this.toPropertyValue(gateway);
+      self.$inertia
+        .post(self.route("payment.store").url(), objectToFormData(newForm))
+        .then(() => (self.form.busy = false));
+      //   self.$inertia
+      //     .post(self.route("payment.store").url(), objectToFormData(self.form))
+      //     .then(() => (self.form.busy = false));
+    },
+  },
 };
 </script>
 

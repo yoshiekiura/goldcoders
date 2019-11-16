@@ -14,7 +14,7 @@
         type="number"
         min="-1"
         max="15"
-      ></v-text-field>
+      />
       <v-data-table
         :headers="headers"
         :items="accounts.data"
@@ -38,7 +38,7 @@
                 prepend-inner-icon="search"
                 label="Filter By ID"
                 clearable
-              ></v-text-field>
+              />
             </v-col>
             <v-col cols="12" md="6" lg="4" sm="12">
               <v-text-field
@@ -48,7 +48,7 @@
                 prepend-inner-icon="fa-building"
                 label="Filter By Broker"
                 clearable
-              ></v-text-field>
+              />
             </v-col>
 
             <v-col cols="12" md="6" lg="4" sm="12">
@@ -62,7 +62,7 @@
                 min="1"
                 max="3000"
                 clearable
-              ></v-text-field>
+              />
             </v-col>
           </v-row>
 
@@ -75,12 +75,12 @@
                 prepend-inner-icon="fa-usd"
                 label="Filter By Currency"
                 clearable
-              ></v-text-field>
+              />
             </v-col>
             <v-col>
               <v-card class="d-flex flex-row" flat tile>
-                <v-switch color="green" label="Live" v-model="form.live" />
-                <v-switch color="warning" label="Demo" v-model="form.demo" />
+                <v-switch v-model="form.live" color="green" label="Live" />
+                <v-switch v-model="form.demo" color="warning" label="Demo" />
               </v-card>
             </v-col>
 
@@ -155,7 +155,7 @@
               <v-col align="left" justify="end" cols="12" md="6" lg="6" sm="6" xs="12">
                 <v-chip>
                   <v-icon left color="primary">local_atm</v-icon>
-                  {{ props.item.type}}
+                  {{ props.item.type }}
                 </v-chip>
                 <v-chip v-if="props.item.status === 'ACTIVE'">
                   <v-icon left color="green">how_to_reg</v-icon>ACTIVE
@@ -186,12 +186,12 @@
 <script>
 import MainLayout from "../../Layouts/MainLayout";
 import Acl from "../../mixins/acl";
-import swal from "sweetalert2";
 
 export default {
   components: {
     MainLayout
   },
+  mixins: [Acl],
   // from backend
   props: {
     accounts: Object,
@@ -201,7 +201,6 @@ export default {
     },
     filters: Object
   },
-  mixins: [Acl],
   data: () => ({
     expanded: [],
     headers: [
@@ -225,72 +224,28 @@ export default {
       per_page: 10
     }
   }),
-
-  created() {
-    let self = this;
-    self.form.search = self.filters.search;
-    self.form.broker = self.filters.broker;
-    self.form.leverage = self.filters.leverage;
-    self.form.currency = self.filters.currency;
-    self.form.live = self.filters.live;
-    self.form.demo = self.filters.demo;
-    self.form.status = self.filters.status;
-    self.form.page = parseInt(self.accounts.meta.page);
-    self.form.per_page = parseInt(self.accounts.meta.per_page);
-    self.debouncedGetUsers = _.debounce(self.fetchUsers, 50);
-  },
-  methods: {
-    getCashFlow(item) {
-      this.$inertia.visit(
-        this.route("ctrader.getCashFlow", {
-          trading_account_id: item.id
-        }).url()
-      );
-    },
-    getAccounts() {
-      this.$inertia.visit(route("ctrader.getAccounts").url());
-    },
-    fetchUsers() {
-      let query = _.pickBy(this.form);
-      let url = this.route(
-        "ctrader.accounts.index",
-        Object.keys(query).length ? query : { remember: "forget" }
-      ).url();
-      this.$inertia.replace(url);
-    },
-    viewHistory(account) {
-      this.$inertia.replace(
-        route("ctrader.tradinghistory", {
-          trading_account_id: account.id
-        }).url()
-      );
-    },
-    reset(key) {
-      this.form[key] = undefined;
-    }
-  },
   watch: {
     "form.search"() {
       this.form.page = 1;
       this.debouncedGetUsers();
     },
-    "form.broker"(newVal) {
+    "form.broker"() {
       this.form.page = 1;
       this.debouncedGetUsers();
     },
-    "form.leverage"(newVal) {
+    "form.leverage"() {
       this.form.page = 1;
       this.debouncedGetUsers();
     },
-    "form.currency"(newVal) {
+    "form.currency"() {
       this.form.page = 1;
       this.debouncedGetUsers();
     },
-    "form.live"(newVal) {
+    "form.live"() {
       this.form.page = 1;
       this.debouncedGetUsers();
     },
-    "form.demo"(newVal) {
+    "form.demo"() {
       this.form.page = 1;
       this.debouncedGetUsers();
     },
@@ -303,8 +258,55 @@ export default {
       this.debouncedGetUsers();
     },
 
-    "form.page"(newVal) {
+    "form.page"() {
       this.debouncedGetUsers();
+    }
+  },
+
+  created() {
+    let self = this;
+    self.form.search = self.filters.search;
+    self.form.broker = self.filters.broker;
+    self.form.leverage = self.filters.leverage;
+    self.form.currency = self.filters.currency;
+    self.form.live = self.filters.live;
+    self.form.demo = self.filters.demo;
+    self.form.status = self.filters.status;
+    self.form.page = parseInt(self.accounts.meta.page);
+    self.form.per_page = parseInt(self.accounts.meta.per_page);
+
+    // eslint-disable-next-line no-undef
+    self.debouncedGetUsers = _.debounce(self.fetchUsers, 50);
+  },
+  methods: {
+    getCashFlow(item) {
+      this.$inertia.visit(
+        this.route("ctrader.getCashFlow", {
+          trading_account_id: item.id
+        }).url()
+      );
+    },
+    getAccounts() {
+      this.$inertia.visit(this.route("ctrader.getAccounts").url());
+    },
+    fetchUsers() {
+      // eslint-disable-next-line no-undef
+      let query = _.pickBy(this.form);
+      let url = this.route(
+        "ctrader.accounts.index",
+        Object.keys(query).length ? query : { remember: "forget" }
+      ).url();
+      this.$inertia.replace(url);
+    },
+    viewHistory(account) {
+      this.$inertia.replace(
+        this.route("ctrader.tradinghistory", {
+          trading_account_id: account.id
+        }).url()
+      );
+    },
+    reset(key) {
+      this.form[key] = undefined;
     }
   }
 };

@@ -3,7 +3,7 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <v-flex centered lg12 md12>
-          <app-alert></app-alert>
+          <app-alert />
           <v-card>
             <v-flex xs12 class="white">
               <v-layout align-center justify-space-between row>
@@ -11,20 +11,22 @@
                   <inertia-link
                     class="title font-weight-thin inertia-link"
                     :href="route('approval')"
-                  >Approval Manager</inertia-link>
+                  >
+Approval Manager
+</inertia-link>
                   <span class="title font-weight-thin mx-1">/</span>
                   <span class="title font-weight-thin">{{ name }}</span>
                 </v-flex>
-                <v-flex pr-4 xs12 md4></v-flex>
+                <v-flex pr-4 xs12 md4 />
                 <v-flex>
                   <v-text-field
+                    v-model="search"
                     solo
                     prepend-icon="search"
                     :placeholder="`Search ${name} Here`"
-                    v-model="search"
                     hide-details
                     class="hidden-sm-and-down"
-                  ></v-text-field>
+                  />
                 </v-flex>
               </v-layout>
             </v-flex>
@@ -44,24 +46,24 @@
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
-                    @click.native="viewRecord(item)"
                     depressed
                     icon
                     fab
                     dark
                     color="blue"
                     small
+                    @click.native="viewRecord(item)"
                   >
                     <v-icon>fa-list-ul</v-icon>
                   </v-btn>
                   <v-btn
-                    @click=" item.approved ? disapprovedRecord(item) : approvedRecord(item)"
                     depressed
                     icon
                     fab
                     dark
                     color="pink"
                     small
+                    @click=" item.approved ? disapprovedRecord(item) : approvedRecord(item)"
                   >
                     <v-icon v-if="item.approved">fa-thumbs-o-down</v-icon>
                     <v-icon v-else>fa-thumbs-o-up</v-icon>
@@ -84,27 +86,25 @@ import swal from "sweetalert2";
 export default {
   components: {
     MainLayout,
-    AppAlert
+    AppAlert,
   },
   props: {
     items: Array,
-    link: String
+    link: String,
   },
-
-  computed: {},
 
   data: () => ({
     name: "Payment Approval",
     form: {
       id: null,
-      busy: false
+      busy: false,
     },
     headers: [
       {
         text: "Paymaster",
         value: "paymaster_name",
         align: "left",
-        sortable: true
+        sortable: true,
       },
       { text: "Member", value: "member_name", align: "left", sortable: true },
       { text: "Amount", value: "amount", align: "center", sortable: true },
@@ -112,18 +112,20 @@ export default {
         text: "Date Payment",
         value: "date_paid",
         align: "center",
-        sortable: true
+        sortable: true,
       },
       { text: "Approved", value: "approved", sortable: true },
-      { text: "Actions", value: "actions", align: "center", sortable: false }
+      { text: "Actions", value: "actions", align: "center", sortable: false },
     ],
     search: "",
     alert: {
       model: true,
       message: "message here",
-      type: "info" //info success warning error
-    }
+      type: "info", //info success warning error
+    },
   }),
+
+  computed: {},
   watch: {},
   methods: {
     viewRecord(data) {
@@ -135,7 +137,6 @@ export default {
     approvedRecord(data) {
       this.form.busy = true;
       this.form.id = data.id;
-      let self = this;
       swal
         .fire({
           title: "Assign as approved?",
@@ -149,7 +150,7 @@ export default {
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#6f6f6f",
           confirmButtonText: "Confirm",
-          reverseButtons: true
+          reverseButtons: true,
         })
         .then(result => {
           if (result.value) {
@@ -169,7 +170,6 @@ export default {
     disapprovedRecord(data) {
       this.form.busy = true;
       this.form.id = data.id;
-      let self = this;
       swal
         .fire({
           title: "Assign as disapproved?",
@@ -183,7 +183,7 @@ export default {
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#6f6f6f",
           confirmButtonText: "Confirm",
-          reverseButtons: true
+          reverseButtons: true,
         })
         .then(result => {
           if (result.value) {
@@ -191,7 +191,7 @@ export default {
             this.$inertia
               .post(
                 this.route("approval.payment.disapproved", {
-                  payment: data
+                  payment: data,
                 }).url()
               )
               .then(res => {
@@ -208,8 +208,8 @@ export default {
     },
     getStatus(val) {
       return val ? "Yes" : "No";
-    }
-  }
+    },
+  },
 };
 </script>
 

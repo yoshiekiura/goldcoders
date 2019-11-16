@@ -2,8 +2,8 @@
   <div>
     <v-flex xs12 offset-md2 md8>
       <v-text-field
-        v-validate="'required|min_value:1|max_value:1000'"
         v-model.number="form.compounding_percent"
+        v-validate="'required|min_value:1|max_value:1000'"
         type="number"
         min="1"
         max="1000"
@@ -19,8 +19,8 @@
     </v-flex>
     <v-flex xs12 offset-md2 md8>
       <v-text-field
-        v-validate="'required|min_value:1|max_value:1000'"
         v-model.number="form.compounding_min"
+        v-validate="'required|min_value:1|max_value:1000'"
         type="number"
         min="1"
         max="1000"
@@ -36,8 +36,8 @@
     </v-flex>
     <v-flex xs12 offset-md2 md8>
       <v-text-field
-        v-validate="'required|min_value:1|max_value:1000'"
         v-model.number="form.compounding_max"
+        v-validate="'required|min_value:1|max_value:1000'"
         type="number"
         min="1"
         max="1000"
@@ -64,15 +64,15 @@ export default {
   props: {
     details: {
       type: [Object, Array],
-      default: null
-    }
+      default: null,
+    },
   },
   data: () => ({
     form: new Form({
       compounding_min: 1,
       compounding_max: 1000,
-      compounding_percent: 5
-    })
-  })
+      compounding_percent: 5,
+    }),
+  }),
 };
 </script>

@@ -18,8 +18,8 @@
       <v-layout row wrap>
         <v-flex xs12 md8 offset-md2>
           <v-text-field
-            v-validate="{ required: true}"
             v-model="form.subject"
+            v-validate="{ required: true}"
             :error-messages="errorMessages('subject')"
             :class="{ 'error--text': hasErrors('subject') }"
             label="Subject"
@@ -32,8 +32,8 @@
         </v-flex>
         <v-flex v-if="form.with_panel" xs12 md8 offset-md2>
           <v-textarea
-            v-validate="{ required: form.with_panel}"
             v-model="form.panel_message"
+            v-validate="{ required: form.with_panel}"
             :error-messages="errorMessages('panel_message')"
             :class="{ 'error--text': hasErrors('panel_message') }"
             outline
@@ -47,8 +47,8 @@
         </v-flex>
         <v-flex xs12 md8 offset-md2>
           <v-textarea
-            v-validate="{ required: true}"
             v-model="form.message"
+            v-validate="{ required: true}"
             :error-messages="errorMessages('message')"
             :class="{ 'error--text': hasErrors('message') }"
             outline
@@ -63,8 +63,8 @@
         </v-flex>
         <v-flex v-if="form.with_button" xs12 md8 offset-md2>
           <v-text-field
-            v-validate="{ required: form.with_button}"
             v-model="form.button_url"
+            v-validate="{ required: form.with_button}"
             :error-messages="errorMessages('button_url')"
             :class="{ 'error--text': hasErrors('button_url') }"
             label="Button URL"
@@ -74,8 +74,8 @@
         </v-flex>
         <v-flex v-if="form.with_button" xs12 md8 offset-md2>
           <v-select
-            v-validate="{ required: form.with_button}"
             v-model="form.button_color"
+            v-validate="{ required: form.with_button}"
             :items="colors"
             :error-messages="errorMessages('button_color')"
             :class="{ 'error--text': hasErrors('button_color') }"
@@ -86,8 +86,8 @@
         </v-flex>
         <v-flex v-if="form.with_button" xs12 md8 offset-md2>
           <v-text-field
-            v-validate="{ required: form.with_button}"
             v-model="form.button_message"
+            v-validate="{ required: form.with_button}"
             :error-messages="errorMessages('button_message')"
             :class="{ 'error--text': hasErrors('button_message') }"
             label="Button Text"
@@ -97,8 +97,8 @@
         </v-flex>
         <v-flex xs12 md8 offset-md2>
           <v-text-field
-            v-validate="{ required: true}"
             v-model="form.signature"
+            v-validate="{ required: true}"
             :error-messages="errorMessages('signature')"
             :class="{ 'error--text': hasErrors('signature') }"
             label="Signature"
@@ -149,16 +149,19 @@ export default {
         button_url: "/",
         button_color: "blue",
         button_message: "CLICK HERE",
-        signature: ""
+        signature: "",
       }),
-      colors: ["red", "blue", "green"]
+      colors: ["red", "blue", "green"],
     };
   },
   mounted() {
+    // eslint-disable-next-line no-undef
     Bus.$on("open-modal-mass-mail", selected => {
       this.dialog = true;
+      // eslint-disable-next-line no-undef
       this.form.user_ids = _.map(selected, "id");
     });
+    // eslint-disable-next-line no-undef
     Bus.$on("close-modal-mass-mail", () => {
       this.dialog = false;
     });
@@ -167,6 +170,7 @@ export default {
     submit() {
       this.$validator.validate().then(result => {
         if (result) {
+          // eslint-disable-next-line no-undef
           Bus.$emit("send-mass-mail", this.form);
         } else {
           swal.fire({
@@ -174,13 +178,13 @@ export default {
             type: "error",
             html: " <b>Please Complete Form to Send Email!</b>",
             focusConfirm: true,
-            confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
-            confirmButtonAriaLabel: "Back!"
+            confirmButtonText: "<i class=\"fa fa-arrow-left\"></i> Back!",
+            confirmButtonAriaLabel: "Back!",
           });
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

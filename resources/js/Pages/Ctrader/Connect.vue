@@ -2,22 +2,22 @@
 <template>
   <main-layout title="Ctrader Api Manager">
     <v-flex xs12>
-      <app-alert></app-alert>
+      <app-alert />
     </v-flex>
     <v-container fill-height>
       <v-row justify="center">
-          <v-btn color="accent" @click="connectApi">
-            {{ btnTxt }}
-            <v-icon right>fa-plug</v-icon>
-          </v-btn>
-          <v-btn v-if="hasAccessToken && !hasExpiredAccessToken" color="success"  text>
-            Ctrader Token Active
-            <v-icon>check</v-icon>
-          </v-btn>
-          <v-btn v-if="hasExpiredAccessToken" color="warning" @click="refreshToken">
-            Refresh Access Token
-            <v-icon right>fa-refresh</v-icon>
-          </v-btn>
+        <v-btn color="accent" @click="connectApi">
+          {{ btnTxt }}
+          <v-icon right>fa-plug</v-icon>
+        </v-btn>
+        <v-btn v-if="hasAccessToken && !hasExpiredAccessToken" color="success" text>
+          Ctrader Token Active
+          <v-icon>check</v-icon>
+        </v-btn>
+        <v-btn v-if="hasExpiredAccessToken" color="warning" @click="refreshToken">
+          Refresh Access Token
+          <v-icon right>fa-refresh</v-icon>
+        </v-btn>
       </v-row>
     </v-container>
   </main-layout>
@@ -31,13 +31,13 @@ import AppAlert from "../../partials/AppAlert";
 export default {
   components: {
     MainLayout,
-    AppAlert
-  },
-  props: {
-    account: Object,
-    expired: Boolean
+    AppAlert,
   },
   mixins: [Acl],
+  props: {
+    account: Object,
+    expired: Boolean,
+  },
   computed: {
     hasAccessToken() {
       if (this.account.ctrader_token) {
@@ -54,16 +54,16 @@ export default {
       } else {
         return "Modify Api Permission";
       }
-    }
+    },
   },
   methods: {
     connectApi() {
-      window.location.replace(route("ctrader.connect").url());
+      window.location.replace(this.route("ctrader.connect").url());
     },
     refreshToken() {
-      window.location.replace(route("ctrader.refresh_token").url());
-    }
-  }
+      window.location.replace(this.route("ctrader.refresh_token").url());
+    },
+  },
 };
 </script>
 

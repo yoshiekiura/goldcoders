@@ -7,16 +7,16 @@ current:
   minor: 0
   patch: 5
   git_absorb: git-local
-  prerelease: 138-gacf3f23
+  prerelease: 139-g09840a1
   buildmetadata: ''
-  commit: acf3f2
+  commit: 09840a
   timestamp:
     year: 2019
     month: 11
     day: 16
     hour: 14
-    minute: 35
-    second: 42
+    minute: 36
+    second: 19
     timezone: Asia/Manila
 commit:
   length: 6

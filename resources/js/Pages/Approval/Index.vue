@@ -11,7 +11,7 @@
               :name="item.name"
               :description="item.description"
               :func="item.func"
-            ></button-card>
+            />
           </v-row>
         </v-col>
       </v-row>
@@ -21,14 +21,39 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
 import ButtonCard from "@/Shared/ButtonCard";
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
-    ButtonCard
+    ButtonCard,
+  },
+
+  data() {
+    return {
+      name: "Approval Manager",
+      ifMemberOnly: false,
+      details: [
+        {
+          icon: "fa-money",
+          name: "payout",
+          description: "for approval",
+          func: () => this.payout(),
+        },
+        {
+          icon: "fa-credit-card",
+          name: "payment",
+          description: "for approval",
+          func: () => this.payment(),
+        },
+        {
+          icon: "backup",
+          name: "user file",
+          description: "for approval",
+          func: () => this.user_file_manager(),
+        },
+      ],
+    };
   },
 
   created() {},
@@ -43,33 +68,6 @@ export default {
       this.$inertia.visit(this.route("approval.user.file").url());
     },
   },
-
-  data() {
-    return {
-      name: "Approval Manager",
-      ifMemberOnly: false,
-      details: [
-        {
-          icon: "fa-money",
-          name: "payout",
-          description: "for approval",
-          func: () => this.payout()
-        },
-        {
-          icon: "fa-credit-card",
-          name: "payment",
-          description: "for approval",
-          func: () => this.payment()
-        },
-        {
-          icon: "backup",
-          name: "user file",
-          description: "for approval",
-          func: () => this.user_file_manager()
-        },
-      ]
-    };
-  }
 };
 </script>
 

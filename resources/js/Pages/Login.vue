@@ -61,7 +61,7 @@
         </v-container>
       </v-card-text>
     </v-card>
-    <app-footer></app-footer>
+    <app-footer />
   </modal-layout>
 </template>
 
@@ -72,9 +72,8 @@ import validationError from "../mixins/validation-error";
 import AppFooter from "../partials/ModalFooter";
 export default {
   components: {
-    Form,
     ModalLayout,
-    AppFooter
+    AppFooter,
   },
   mixins: [validationError],
   data: () => ({
@@ -82,15 +81,15 @@ export default {
       username: "",
       email: "admin@fx20.test",
       password: "secret1234",
-      remember: null
+      remember: null,
     }),
     password_visible: false,
-    drawer: null
+    drawer: null,
   }),
   computed: {
     icon() {
       return this.password_visible ? "visibility" : "visibility_off";
-    }
+    },
   },
   methods: {
     login() {
@@ -100,7 +99,7 @@ export default {
         self.$inertia.post(self.route("login.attempt").url(), self.form);
       }
     },
-  }
+  },
 };
 </script>
 

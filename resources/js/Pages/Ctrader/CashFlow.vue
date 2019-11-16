@@ -25,7 +25,7 @@
                   Total Withdraw: {{ $page.total_withdraw/100 }}
                   <v-icon small right color="green">fa-usd</v-icon>
                 </v-chip>
-                <div class="flex-grow-1"></div>
+                <div class="flex-grow-1" />
                 <v-chip color="white">
                   Total Deposit: {{ $page.total_deposit/100 }}
                   <v-icon small right color="green">fa-usd</v-icon>
@@ -83,50 +83,44 @@
 <script>
 import MainLayout from "../../Layouts/MainLayout";
 import Acl from "../../mixins/acl";
-import swal from "sweetalert2";
 
 export default {
   components: {
-    MainLayout
-  },
-  // from backend
-  props: {
-    cash_flow: Array,
-    trading_account_id: {
-      type: [String, Number],
-      default: null
-    },
-
-    trading_account_id: {
-      type: [String, Number],
-      default: null
-    },
-    total_balance: {
-      type: [String, Number],
-      default: null
-    },
-    total_withdraw: {
-      type: [String, Number],
-      default: null
-    },
-    total_deposit: {
-      type: [String, Number],
-      default: 0
-    }
+    MainLayout,
   },
   mixins: [Acl],
+  // from backend
+  props: {
+    cashFlow: Array,
+    tradingAccountId: {
+      type: [String, Number],
+      default: null,
+    },
+    totalBalance: {
+      type: [String, Number],
+      default: null,
+    },
+    totalWithdraw: {
+      type: [String, Number],
+      default: null,
+    },
+    totalDeposit: {
+      type: [String, Number],
+      default: 0,
+    },
+  },
   data: () => ({
     headers: [
       { text: "ID", value: "cashflowId", align: "left" },
       { text: "Type", value: "type", align: "left" },
-      { text: "Change", value: "delta", align: "left" }
-    ]
+      { text: "Change", value: "delta", align: "left" },
+    ],
   }),
 
   methods: {
     back() {
-      this.$inertia.visit(route("ctrader.accounts.index").url());
-    }
-  }
+      this.$inertia.visit(this.route("ctrader.accounts.index").url());
+    },
+  },
 };
 </script>
