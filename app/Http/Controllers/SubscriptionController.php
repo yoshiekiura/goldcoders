@@ -49,7 +49,7 @@ class SubscriptionController extends Controller
                 Percentage::class,
                 Compounding::class
 
-// Ranking::class,
+                // Ranking::class,
                 // ProfitSharing::class
             ],
             function (Builder $query, $type) {

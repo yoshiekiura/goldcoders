@@ -61,7 +61,7 @@
           data-vv-name="type"
         />
       </v-flex>
-      <component v-if="form.type" :is="form.type" />
+      <component v-if="form.type" :is="form.type" :details="form.details"/>
       <v-flex xs12 offset-md2 md8>
         <v-switch color="green darken-4" :label="getLifetimeStatus" v-model="form.lifetime" />
       </v-flex>
