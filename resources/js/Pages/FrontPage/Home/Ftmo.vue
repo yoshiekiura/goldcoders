@@ -1,20 +1,25 @@
 <template>
-  <v-container fluid color="#F8F8F9" height="auto" class="py-12 my-12">
+  <!-- <v-container fluid color="#F8F8F9" height="auto" class="py-12 my-12"> -->
+  <v-container  color="#F8F8F9" height="auto" class="py-12 my-12">
     <p
       class="text-center headline font-weight-medium pd-12"
     >FTMO Is the Best Proprietary Firm You Can Find. Here’s Why.</p>
 
-    <v-row justify="center" align="center">
+
+
+    <v-row justify="center" align="center" >
       <v-col cols="4" v-for="(item , index) in items" :key="index" justify="center" align="center">
         <v-row justify="start" align="center" >
           <v-icon large>{{ item.icon }}</v-icon>
-          <v-col justify="start" align="start">
+          <v-col justify="start" align="start" class="pa-5">
             <p class="subtitle-1 font-weight-medium">{{ item.title }}</p>
             <p class="subtitle-1 font-weight-light">{{ item.description }}</p>
           </v-col>
         </v-row>
       </v-col>
     </v-row>
+
+
   </v-container>
 </template>
 
