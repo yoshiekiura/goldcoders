@@ -1,12 +1,17 @@
 <?php
 
+Route::get('/')->name('home')->uses('HomeController@home');
+Route::get('faq')->name('faq')->uses('HomeController@faq');
+
+Route::get('dashboard')->name('dashboard')->uses('DashboardController')->middleware('auth');
+
+
 Route::get('login')->name('login')->uses('Auth\LoginController@showLoginForm');
 Route::post('login')->name('login.attempt')->uses('Auth\LoginController@login');
 Route::get('logout')->name('logout')->uses('Auth\LoginController@showLogoutForm')->middleware('auth');
 Route::post('logout')->name('logout.attempt')->uses('Auth\LoginController@logout')->middleware('auth');
 Route::impersonate();
 
-Route::get('/')->name('dashboard')->uses('DashboardController')->middleware('auth');
 Route::get('/members')->name('users.index')->uses('UsersController@index')->middleware('remember', 'auth', 'role:admin');
 Route::get('/members/create')->name('users.create')->uses('UsersController@create')->middleware('auth', 'role:admin');
 Route::post('/members/store')->name('users.store')->uses('UsersController@store')->middleware('auth', 'role:admin');
