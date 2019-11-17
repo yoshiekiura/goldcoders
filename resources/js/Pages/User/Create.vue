@@ -25,9 +25,9 @@
       <v-layout row wrap>
         <v-flex v-if="form.id != 1" class="xs12 offset-md2 md8">
           <v-autocomplete
+            v-model="form.sp_id"
             v-validate="'required'"
             :items="sponsors"
-            v-model="form.sp_id"
             :error-messages="errorMessages('sponsor')"
             :class="{ 'error--text': hasErrors('sponsor') }"
             required
@@ -46,8 +46,8 @@
 
         <v-flex xs12 md4 offset-md2 px-2>
           <v-text-field
-            v-validate="'required'"
             v-model="form.fname"
+            v-validate="'required'"
             :error-messages="errorMessages('fname')"
             :class="{ 'error--text': hasErrors('fname') }"
             class="primary--text"
@@ -73,8 +73,8 @@
         </v-flex>
         <v-flex xs12 md4 offset-md2 px-2>
           <v-text-field
-            v-validate="'required'"
             v-model="form.lname"
+            v-validate="'required'"
             :error-messages="errorMessages('lname')"
             :class="{ 'error--text': hasErrors('lname') }"
             class="primary--text"
@@ -100,8 +100,8 @@
         </v-flex>
         <v-flex xs12 md4 offset-md2 px-2>
           <v-text-field
-            v-validate="{ email: true }"
             v-model="form.email"
+            v-validate="{ email: true }"
             :error-messages="errorMessages('email')"
             :class="{ 'error--text': hasErrors('email') }"
             label="Email"
@@ -111,8 +111,8 @@
         </v-flex>
         <v-flex xs12 md4 px-2>
           <v-text-field
-            v-validate="'required|alpha_dash|min:6'"
             v-model="form.username"
+            v-validate="'required|alpha_dash|min:6'"
             :error-messages="errorMessages('username')"
             :class="{ 'error--text': hasErrors('username') }"
             label="Username"
@@ -135,8 +135,8 @@
           >
             <template v-slot:activator="{ on }">
               <v-text-field
-                v-validate="'required'"
                 v-model="form.dob"
+                v-validate="'required'"
                 :error-messages="errorMessages('dob')"
                 :class="{ 'error--text': hasErrors('dob') }"
                 label="Birthday date"
@@ -157,9 +157,9 @@
         </v-flex>
         <v-flex class="xs12 offset-md2 md8">
           <v-autocomplete
+            v-model="form.roles"
             v-validate="'required'"
             :items="roles"
-            v-model="form.roles"
             :error-messages="errorMessages('roles')"
             :class="{ 'error--text': hasErrors('roles') }"
             required
@@ -176,8 +176,8 @@
         </v-flex>
         <v-flex v-if="showPaymasterDrownDown" class="xs12 offset-md2 md8">
           <v-autocomplete
-            :items="paymasters"
             v-model="form.paymaster_id"
+            :items="paymasters"
             required
             item-text="name"
             item-value="id"
@@ -203,12 +203,12 @@
             deletable-chips
             prepend-icon="fa-tags"
           />
-        </v-flex> -->
+        </v-flex>-->
 
         <v-flex xs12 md4 offset-md2 px-2>
           <v-text-field
-            v-validate="'min:6|confirmed:password_confirmation'"
             v-model="form.password"
+            v-validate="'min:6|confirmed:password_confirmation'"
             :append-icon="icon"
             :type="!password_visible ? 'password' : 'text'"
             :error-messages="errorMessages('password')"
@@ -274,21 +274,21 @@ import { Form } from "vform";
 import swal from "sweetalert2";
 export default {
   components: {
-    ModalLayout
+    ModalLayout,
   },
   mixins: [validationError],
   props: {
     roles: {
       type: [Array],
-      required: true
+      required: true,
     },
     sponsors: {
       type: [Array],
-      required: true
+      required: true,
     },
     paymasters: {
       type: [Array],
-      required: true
+      required: true,
     },
     // permissions: {
     //   type: [Array],
@@ -315,16 +315,16 @@ export default {
       email: null,
       mobile_no: null,
       current_address: null,
-      permanent_address: null
+      permanent_address: null,
     }),
     menu: false,
     password_visible: false,
-    showPaymasterDrownDown: false
+    showPaymasterDrownDown: false,
   }),
   computed: {
     icon() {
       return this.password_visible ? "visibility" : "visibility_off";
-    }
+    },
   },
   // add watcher for sponsor , and roles
   watch: {
@@ -332,20 +332,17 @@ export default {
       val && this.$nextTick(() => (this.$refs.picker.activePicker = "YEAR"));
     },
     "form.roles"(val) {
-      if(val.length === 0){
-        this.showPaymasterDrownDown = false;
-        this.form.paymaster_id = null
-      }
-      if(val.includes("member")){
-        this.showPaymasterDrownDown = true;
-      }else{
+      if (val.length === 0) {
         this.showPaymasterDrownDown = false;
         this.form.paymaster_id = null;
       }
-    }
-  },
-  mounted() {
-    let self = this;
+      if (val.includes("member")) {
+        this.showPaymasterDrownDown = true;
+      } else {
+        this.showPaymasterDrownDown = false;
+        this.form.paymaster_id = null;
+      }
+    },
   },
   methods: {
     save(date) {
@@ -367,13 +364,13 @@ export default {
         } else {
           const validationModal = swal.mixin({
             confirmButtonClass: "v-btn blue-grey  subheading white--text",
-            buttonsStyling: false
+            buttonsStyling: false,
           });
           validationModal({
-            title: `Validation Error`,
-            html: `<p class="title">Please Fix Form Errors</p>`,
+            title: "Validation Error",
+            html: "<p class=\"title\">Please Fix Form Errors</p>",
             type: "warning",
-            confirmButtonText: "Back"
+            confirmButtonText: "Back",
           });
         }
       });
@@ -381,17 +378,16 @@ export default {
     createUser() {
       let self = this;
       self.form.busy = true;
-      self.$inertia.post(
-        this.route("users.store").url(),
-        self.form
-      ).then(()=> {
-        self.form.busy = false;
-      })
+      self.$inertia
+        .post(this.route("users.store").url(), self.form)
+        .then(() => {
+          self.form.busy = false;
+        });
     },
     redirectBack() {
       let self = this;
-      self.$nextTick(() => self.$inertia.visit(route('users.index').url()))
-    }
-  }
+      self.$nextTick(() => self.$inertia.visit(this.route("users.index").url()));
+    },
+  },
 };
 </script>

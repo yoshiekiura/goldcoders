@@ -3,7 +3,7 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <v-flex centered lg12 md12>
-          <app-alert></app-alert>
+          <app-alert />
           <v-card>
             <v-flex xs12 class="white">
               <v-layout align-center justify-space-between row>
@@ -20,13 +20,13 @@
                 </v-flex>
                 <v-flex>
                   <v-text-field
+                    v-model="search"
                     solo
                     prepend-icon="search"
                     :placeholder="`Search ${name} Here`"
-                    v-model="search"
                     hide-details
                     class="hidden-sm-and-down"
-                  ></v-text-field>
+                  />
                 </v-flex>
               </v-layout>
             </v-flex>
@@ -46,18 +46,18 @@
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
-                    @click.native="editRecord(item)"
                     depressed
                     icon
                     fab
                     dark
                     color="primary"
                     small
+                    @click.native="editRecord(item)"
                   >
                     <v-icon>edit</v-icon>
                   </v-btn>
 
-                  <v-btn @click="deleteRecord(item)" depressed icon fab dark color="pink" small>
+                  <v-btn depressed icon fab dark color="pink" small @click="deleteRecord(item)">
                     <v-icon>delete</v-icon>
                   </v-btn>
                 </template>
@@ -78,27 +78,25 @@ import swal from "sweetalert2";
 export default {
   components: {
     MainLayout,
-    AppAlert
+    AppAlert,
   },
   props: {
     payouts: Array,
-    link: String
+    link: String,
   },
-
-  computed: {},
 
   data: () => ({
     name: "Payout",
     form: {
       id: null,
-      busy: false
+      busy: false,
     },
     headers: [
       {
         text: "Paymaster",
         value: "paymaster_name",
         align: "left",
-        sortable: true
+        sortable: true,
       },
       { text: "Member", value: "member_name", align: "left", sortable: true },
       { text: "Amount", value: "amount", align: "center", sortable: true },
@@ -106,18 +104,20 @@ export default {
         text: "Date Payout",
         value: "date_payout",
         align: "center",
-        sortable: true
+        sortable: true,
       },
       { text: "Approved", value: "approved", align: "center", sortable: true },
-      { text: "Actions", value: "actions", align: "center", sortable: false }
+      { text: "Actions", value: "actions", align: "center", sortable: false },
     ],
     search: "",
     alert: {
       model: true,
       message: "message here",
-      type: "info" //info success warning error
-    }
+      type: "info", //info success warning error
+    },
   }),
+
+  computed: {},
   watch: {},
   methods: {
     deleteRecord(data) {
@@ -134,7 +134,7 @@ export default {
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
           confirmButtonText: "Yes, delete it!",
-          reverseButtons: true
+          reverseButtons: true,
         })
         .then(result => {
           if (result.value) {
@@ -165,10 +165,10 @@ export default {
         title: "Not Allowed",
         text: "Record was already approved.",
         type: "warning",
-        confirmButtonColor: "#3085d6"
+        confirmButtonColor: "#3085d6",
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

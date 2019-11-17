@@ -5,7 +5,9 @@
         <inertia-link
           class="headline font-weight-thin inertia-link"
           :href="route('admin_file_manager')"
-        >{{ name }}</inertia-link>
+        >
+{{ name }}
+</inertia-link>
         <span class="headline font-weight-thin mx-1">/</span>
         <span class="headline font-weight-thin">Create</span>
       </v-layout>
@@ -19,14 +21,14 @@
 
                 <v-flex px-5>
                   <v-text-field
-                    autofocus
                     v-model="form.title"
+                    autofocus
                     class="primary--text"
                     label="Title"
                     prepend-icon="assessment"
                     :error-messages="$page.errors.title"
                   />
-                  <v-switch v-model="form.active" label="Active ?"></v-switch>
+                  <v-switch v-model="form.active" label="Active ?" />
                 </v-flex>
               </v-layout>
             </v-container>
@@ -67,7 +69,7 @@
                               <v-img :src="image" aspect-ratio="1" class="grey lighten-2">
                                 <template v-slot:placeholder>
                                   <v-row class="fill-height ma-0" align="center" justify="center">
-                                    <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                                    <v-progress-circular indeterminate color="grey lighten-5" />
                                   </v-row>
                                 </template>
                               </v-img>
@@ -103,21 +105,18 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
 import objectToFormData from "object-to-formdata";
 import fileManager from "@/mixins/file_manager";
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel
   },
 
   mixins: [fileManager],
   props: {
-    url: String
+    url: String,
   },
-  created() {},
   data() {
     return {
       dialog: false,
@@ -127,10 +126,21 @@ export default {
         title: null,
         active: true,
         busy: false,
-        images: null
-      }
+        images: null,
+      },
     };
   },
+  watch: {
+    "form.images": {
+      handler: function(val) {
+        let self = this;
+        self.images = [];
+        self.images = self.formatManagerFiles(val);
+      },
+      deep: true,
+    },
+  },
+  created() {},
   methods: {
     submit() {
       let self = this;
@@ -141,22 +151,12 @@ export default {
           objectToFormData(self.form),
           {
             replace: true,
-            preserveState: true
+            preserveState: true,
           }
         )
         .then(() => (self.form.busy = false));
-    }
+    },
   },
-  watch: {
-    "form.images": {
-      handler: function(val, oldVal) {
-        let self = this;
-        self.images = [];
-        self.images = self.formatManagerFiles(val);
-      },
-      deep: true
-    }
-  }
 };
 </script>
 

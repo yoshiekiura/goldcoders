@@ -3,7 +3,7 @@
     <v-container grid-list-xl fluid>
       <v-layout row wrap>
         <v-flex centered lg12 md12>
-          <app-alert></app-alert>
+          <app-alert />
           <v-card>
             <v-flex xs12 class="white">
               <v-layout align-center justify-space-between row>
@@ -11,7 +11,9 @@
                   <inertia-link
                     class="title font-weight-thin inertia-link"
                     :href="route('contract_manager')"
-                  >Contract Manager</inertia-link>
+                  >
+                    Contract Manager
+                  </inertia-link>
                   <span class="title font-weight-thin mx-1">/</span>
                   <span class="title font-weight-thin">{{ name }}</span>
                 </v-flex>
@@ -25,13 +27,13 @@
                 </v-flex>
                 <v-flex>
                   <v-text-field
+                    v-model="search"
                     solo
                     prepend-icon="search"
                     :placeholder="`Search ${name} Here`"
-                    v-model="search"
                     hide-details
                     class="hidden-sm-and-down"
-                  ></v-text-field>
+                  />
                 </v-flex>
               </v-layout>
             </v-flex>
@@ -51,18 +53,18 @@
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <v-btn
-                    @click.native="editRecord(item)"
                     depressed
                     icon
                     fab
                     dark
                     color="primary"
                     small
+                    @click.native="editRecord(item)"
                   >
                     <v-icon>edit</v-icon>
                   </v-btn>
 
-                  <v-btn @click="deleteRecord(item)" depressed icon fab dark color="pink" small>
+                  <v-btn depressed icon fab dark color="pink" small @click="deleteRecord(item)">
                     <v-icon>delete</v-icon>
                   </v-btn>
                 </template>
@@ -77,43 +79,39 @@
 
 <script>
 import MainLayout from "@/Layouts/MainLayout";
-import AdminDashPanel from "@/Shared/AdminDashPanel";
-import ModalLayout from "@/Layouts/ModalLayout";
 import AppAlert from "@/partials/AppAlert";
 import swal from "sweetalert2";
 
 export default {
   components: {
     MainLayout,
-    AdminDashPanel,
-    ModalLayout,
-    AppAlert
+    AppAlert,
   },
   props: {
     files: Array,
-    link: String
+    link: String,
   },
-
-  computed: {},
 
   data: () => ({
     name: "Admin File Manager",
     form: {
       id: null,
-      busy: false
+      busy: false,
     },
     headers: [
       { text: "Title", value: "title", align: "left", sortable: true },
       { text: "Active", value: "active", align: "center", sortable: true },
-      { text: "Actions", value: "actions", align: "center", sortable: false }
+      { text: "Actions", value: "actions", align: "center", sortable: false },
     ],
     search: "",
     alert: {
       model: true,
       message: "message here",
-      type: "info" //info success warning error
-    }
+      type: "info", //info success warning error
+    },
   }),
+
+  computed: {},
   watch: {},
   methods: {
     deleteRecord(data) {
@@ -126,7 +124,7 @@ export default {
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
           confirmButtonText: "Yes, delete it!",
-          reverseButtons: true
+          reverseButtons: true,
         })
         .then(result => {
           if (result.value) {
@@ -154,8 +152,8 @@ export default {
     },
     getStatus(val) {
       return val ? "Active" : "Inactive";
-    }
-  }
+    },
+  },
 };
 </script>
 

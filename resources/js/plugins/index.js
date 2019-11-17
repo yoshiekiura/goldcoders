@@ -1,3 +1,3 @@
-import '@/plugins/vee-validate'
-import '@/plugins/route'
-import '@/plugins/bus'
+import "@/plugins/vee-validate";
+import "@/plugins/route";
+import "@/plugins/bus";

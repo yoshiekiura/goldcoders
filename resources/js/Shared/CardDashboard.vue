@@ -10,7 +10,7 @@
     </v-list-item>
 
     <v-list class="transparent">
-      <v-list-item dense v-for="(detail,index) in details" :key="index">
+      <v-list-item v-for="(detail,index) in details" :key="index" dense>
         <v-list-item-icon>
           <v-icon>{{ detail.icon }}</v-icon>
         </v-list-item-icon>
@@ -21,10 +21,10 @@
       </v-list-item>
     </v-list>
     <div class="card-actions">
-      <v-divider class="mt-5"></v-divider>
+      <v-divider class="mt-5" />
       <v-card-actions v-if="actions.length">
-        <v-spacer></v-spacer>
-        <v-btn text v-for="(action,index) in actions" :key="index" @click="action.func()">
+        <v-spacer />
+        <v-btn v-for="(action,index) in actions" :key="index" text @click="action.func()">
           <v-icon color="grey" left>info</v-icon>
           <span class="caption grey--text align-end">{{ action.text }}</span>
         </v-btn>
@@ -40,14 +40,14 @@ export default {
     icon: String,
     color: {
       type: String,
-      default: "#00CAE3"
+      default: "#00CAE3",
     },
     details: Array,
-    actions: Array
+    actions: Array,
   },
   data() {
     return {};
-  }
+  },
 };
 </script>
 

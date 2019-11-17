@@ -23,17 +23,17 @@
 </template>
 
 <script>
-import HelloWorld from '@/Shared/HelloWorld'
+import HelloWorld from "@/Shared/HelloWorld";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     HelloWorld,
   },
   data () {
     return {
       //
-    }
+    };
   },
-}
+};
 </script>

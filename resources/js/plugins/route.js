@@ -1,7 +1,8 @@
-import Vue from 'vue';
+import Vue from "vue";
 
 Vue.mixin({
-    methods: {
-        route: route
-    }
+  methods: {
+    // eslint-disable-next-line no-undef
+    route: route,
+  },
 });

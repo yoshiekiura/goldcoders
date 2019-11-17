@@ -1,10 +1,8 @@
 <template>
-  <v-footer 
-    :class="[footerClass]" 
-    app>
-    <v-spacer/>
+  <v-footer :class="[footerClass]" app>
+    <v-spacer />
     <span>© {{ year }} {{ domain }} ® | {{ trademark }}™</span>
-    <v-spacer/>
+    <v-spacer />
   </v-footer>
 </template>
 
@@ -14,14 +12,15 @@ export default {
     footerClass: { "primary--text": true, accent: true },
     year: new Date().getFullYear(),
     domain: "fx20.test",
-    trademark: "Invest Wisely"
+    trademark: "Invest Wisely",
   }),
   created() {
     /* Emit On a Child Component If You Want This To Be Visible */
+    // eslint-disable-next-line no-undef
     Bus.$on("footer-content-visible", visibility => {
       this.contentVisible = visibility;
     });
-  }
+  },
 };
 </script>
 

@@ -25,7 +25,7 @@
                   Current Balance: {{ $page.balance/100 }}
                   <v-icon small right color="green">fa-usd</v-icon>
                 </v-chip>
-                <div class="flex-grow-1"></div>
+                <div class="flex-grow-1" />
               </v-card-text>
             </v-col>
           </v-row>
@@ -60,7 +60,7 @@
                 type="number"
                 min="-1"
                 max="15"
-              ></v-text-field>
+              />
             </v-col>
           </v-row>
         </template>
@@ -74,7 +74,7 @@
         <!-- <template v-slot:item.volume="{ item }">{{ item.volume }}</template> -->
 
         <!-- <template v-slot:item.positionCloseDetails.profitInPips="{ item }">{{ getPips(item) }}</template> -->
-        <template v-slot:item.positionCloseDetails.profit="{ item }">{{ getPRL(item)}}</template>
+        <template v-slot:item.positionCloseDetails.profit="{ item }">{{ getPRL(item) }}</template>
       </v-data-table>
     </v-container>
   </main-layout>
@@ -83,50 +83,49 @@
 <script>
 import MainLayout from "../../Layouts/MainLayout";
 import Acl from "../../mixins/acl";
-import swal from "sweetalert2";
 
 export default {
   components: {
-    MainLayout
+    MainLayout,
   },
+  mixins: [Acl],
   // from backend
   props: {
     deals: Array,
     filters: Object,
     paymaster: {
       type: Object,
-      default: null
+      default: null,
     },
-    next_cursor: {
+    nextCursor: {
       type: String,
-      default: null
+      default: null,
     },
-    prev_cursor: {
+    prevCursor: {
       type: String,
-      default: null
+      default: null,
     },
     from: {
       type: [String, Number],
-      default: null
+      default: null,
     },
     to: {
       type: [String, Number],
-      default: null
+      default: null,
     },
-    trading_account_id: {
+    tradingAccountId: {
       type: [String, Number],
-      default: null
+      default: null,
     },
     cursors: {
       type: Array,
-      default: null
+      default: null,
     },
     balance: {
       type: [String, Number],
-      default: null
-    }
+      default: null,
+    },
   },
-  mixins: [Acl],
   data: () => ({
     headers: [
       { text: "DID", value: "dealId", align: "left" },
@@ -134,7 +133,7 @@ export default {
       { text: "Trade Side", value: "tradeSide", align: "left" },
       // { text: "Volume", value: "volume", align: "left" },
       // { text: "Pips", value: "positionCloseDetails.profitInPips",align: "left"},
-      { text: "Net Pr/L", value: "positionCloseDetails.profit", align: "left" }
+      { text: "Net Pr/L", value: "positionCloseDetails.profit", align: "left" },
     ],
     form: {
       trading_account_id: null,
@@ -142,9 +141,26 @@ export default {
       to: null,
       cursor: null, // always save this on session?
       prev_cursor: null,
-      limit: 25
-    }
+      limit: 25,
+    },
   }),
+  watch: {
+    "form.cursor"() {
+      this.debouncedGetHistory();
+    },
+    "form.limit"() {
+      this.reset("cursor");
+      this.reset("from");
+      this.reset("to");
+      this.debouncedGetHistory();
+    },
+    "form.from"() {
+      this.debouncedGetHistory();
+    },
+    "form.to"() {
+      this.debouncedGetHistory();
+    },
+  },
 
   created() {
     let self = this;
@@ -153,12 +169,14 @@ export default {
     self.form.to = self.filters.to;
     self.form.cursor = self.filters.cursor; // current
     self.form.limit = self.filters.limit;
+    // eslint-disable-next-line no-undef
     self.debouncedGetHistory = _.debounce(self.fetchDeals, 50);
   },
   methods: {
     back() {
-      this.$inertia.visit(route("ctrader.accounts.index").url());
+      this.$inertia.visit(this.route("ctrader.accounts.index").url());
     },
+    // eslint-disable-next-line no-unused-vars
     getLotsize(item) {
       // first we got the array of symbols
       // we look for  minOrderVolume i.e. XAUUSD = 100
@@ -194,6 +212,7 @@ export default {
       this.form.cursor = pointer;
     },
     fetchDeals() {
+      // eslint-disable-next-line no-undef
       let query = _.pickBy(this.form);
       let url = this.route(
         "ctrader.tradinghistory",
@@ -203,24 +222,7 @@ export default {
     },
     reset(key) {
       this.form[key] = undefined;
-    }
+    },
   },
-  watch: {
-    "form.cursor"(newVal) {
-      this.debouncedGetHistory();
-    },
-    "form.limit"(newVal) {
-      this.reset("cursor");
-      this.reset("from");
-      this.reset("to");
-      this.debouncedGetHistory();
-    },
-    "form.from"(newVal) {
-      this.debouncedGetHistory();
-    },
-    "form.to"(newVal) {
-      this.debouncedGetHistory();
-    }
-  }
 };
 </script>

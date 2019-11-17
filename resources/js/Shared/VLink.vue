@@ -3,10 +3,12 @@
     <v-list-item-action v-if="iconOn && !avatarOn">
       <v-icon
         :style="{color: isActive(href) ? activeColor : iconColor, cursor: href ? 'pointer' : ''}"
-      >{{ icon }}</v-icon>
+      >
+        {{ icon }}
+      </v-icon>
     </v-list-item-action>
     <v-list-item-avatar v-if="iconOn && avatarOn">
-      <v-img :src="avatar"></v-img>
+      <v-img :src="avatar" />
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title :style="{color: isActive(href) ? activeColor : linkColor}">
@@ -16,7 +18,9 @@
     <v-list-item-action v-if="iconOn && avatarOn">
       <v-icon
         :style="{color: isActive(href) ? activeColor : iconColor, cursor: href ? 'pointer' : ''}"
-      >{{ icon }}</v-icon>
+      >
+        {{ icon }}
+      </v-icon>
     </v-list-item-action>
   </v-list-item>
 </template>
@@ -28,46 +32,46 @@ export default {
       type: Boolean,
       default() {
         return false;
-      }
+      },
     },
     href: {
       type: String,
-      required: true
+      required: true,
     },
     title: {
       type: String,
-      required: true
+      required: true,
     },
     avatar: {
       type: String,
       default() {
         return "";
-      }
+      },
     },
     icon: {
       type: String,
       default() {
         return "";
-      }
+      },
     },
     iconColor: {
       type: String,
       default() {
         return this.dark ? "#fafafa" : "#78909C"; // white or blue-grey lighten-1
-      }
+      },
     },
     linkColor: {
       type: String,
       default() {
         return this.dark ? "#fafafa" : "#e3b500"; // white or blue-grey lighten-1
-      }
+      },
     },
     activeColor: {
       type: String,
       default() {
         return "#f5c300"; // teal lighten 2
-      }
-    }
+      },
+    },
   },
   computed: {
     isDark() {
@@ -78,7 +82,7 @@ export default {
     },
     iconOn() {
       return !!this.icon;
-    }
+    },
   },
   methods: {
     isActive() {
@@ -101,7 +105,7 @@ export default {
           data: {},
           replace: false,
           preserveScroll: false,
-          preserveState: false
+          preserveState: false,
         });
       }
     },
@@ -123,8 +127,8 @@ export default {
         "^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$";
       var url = new RegExp(urlRegex, "i");
       return str.length < 2083 && url.test(str);
-    }
-  }
+    },
+  },
 };
 </script>
 

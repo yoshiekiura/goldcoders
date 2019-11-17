@@ -1,12 +1,14 @@
 <template>
   <main-layout :title="name">
     <v-container grid-list-md>
-      <app-alert></app-alert>
+      <app-alert />
       <v-layout row my-4>
         <inertia-link
           class="headline font-weight-thin inertia-link"
           :href="route('gateway')"
-        >{{ name }}</inertia-link>
+        >
+          {{ name }}
+        </inertia-link>
         <span class="headline font-weight-thin mx-1">/</span>
         <span class="headline font-weight-thin">Edit</span>
       </v-layout>
@@ -20,8 +22,8 @@
 
                 <v-flex px-5>
                   <v-text-field
-                    autofocus
                     v-model="form.name"
+                    autofocus
                     class="primary--text"
                     label="Name"
                     prepend-icon="assessment"
@@ -35,8 +37,8 @@
                     :error-messages="$page.errors.type"
                   />
 
-                  <v-switch v-model="form.active" label="Active ?"></v-switch>
-                  <v-switch v-model="form.for_payout" label="For Payout ?"></v-switch>
+                  <v-switch v-model="form.active" label="Active ?" />
+                  <v-switch v-model="form.for_payout" label="For Payout ?" />
                 </v-flex>
               </v-layout>
             </v-container>
@@ -52,7 +54,7 @@
                   <!-- Fields -->
 
                   <v-layout align-center justify-space-between row>
-                    <span class="v-label theme--light"></span>
+                    <span class="v-label theme--light" />
 
                     <v-btn v-show="form.for_payout" @click="addField('')">Add Field</v-btn>
                     <div v-show="!form.for_payout">
@@ -76,7 +78,7 @@
                           label="Field Value"
                           prepend-icon="assignment"
                         />
-                        <v-btn @click="deleteField(item)" small icon fab color="grey">
+                        <v-btn small icon fab color="grey" @click="deleteField(item)">
                           <v-icon>delete</v-icon>
                         </v-btn>
                       </v-layout>
@@ -115,11 +117,11 @@ import AppAlert from "@/partials/AppAlert";
 export default {
   components: {
     MainLayout,
-    AppAlert
+    AppAlert,
   },
   mixins: [validationError],
   props: {
-    gateway: Object
+    gateway: Object,
   },
   data() {
     return {
@@ -133,12 +135,21 @@ export default {
         type: this.gateway.type,
         active: this.gateway.active,
         for_payout: this.gateway.for_payout,
-        details: this.gateway.details
+        details: this.gateway.details,
       },
       items: [],
       selected: [],
-      alert: true
+      alert: true,
     };
+  },
+  watch: {
+    "form.for_payout": {
+      handler: function() {
+        let self = this;
+        self.form.details = [];
+      },
+      deep: true,
+    },
   },
 
   methods: {
@@ -148,7 +159,7 @@ export default {
     addField(prefix) {
       this.form.details.push({
         name: prefix,
-        value: ""
+        value: "",
       });
     },
     submit() {
@@ -156,17 +167,8 @@ export default {
       this.$inertia
         .post(this.route("gateway.update").url(), this.form)
         .then(() => ((this.form.busy = false), (this.alert = true)));
-    }
+    },
   },
-  watch: {
-    "form.for_payout": {
-      handler: function(val, oldVal) {
-        let self = this;
-        self.form.details = [];
-      },
-      deep: true
-    }
-  }
 };
 </script>
 

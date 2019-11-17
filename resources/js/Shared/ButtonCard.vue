@@ -9,7 +9,7 @@
         <v-list-item-subtitle>{{ description }}</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
-    <v-spacer></v-spacer>
+    <v-spacer />
     <v-icon color="grey" right>keyboard_arrow_right</v-icon>
   </v-btn>
 </template>
@@ -25,11 +25,11 @@ export default {
     func: Function,
     color: {
       default: "#1867C0",
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     return {};
-  }
+  },
 };
 </script>

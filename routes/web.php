@@ -90,7 +90,6 @@ Route::get('/user_file_manager/{user_file_manager}/edit')->name('user_file_manag
 Route::post('/user_file_manager/update')->name('user_file_manager.update')->uses('UserFileManagerController@update')->middleware('auth');
 Route::get('/user_file_manager/{user_file_manager}/view')->name('user_file_manager.view')->uses('UserFileManagerController@view')->middleware('auth');
 
-
 // return a view that user can click to redirect to ctrader login and allow our app permission
 Route::get('/ctrader/auth')->name('ctrader.connect')->uses('ConnectApiController@connect')->middleware('auth', 'role:admin|paymaster');
 // this url will receive our authorization code that we can use to get access token
@@ -112,3 +111,9 @@ Route::get('/ctrader/account/{trading_account_id}/getAccount')->name('ctrader.ge
 Route::get('/ctrader/account/{trading_account_id}/trading-history')->name('ctrader.tradinghistory')->uses('AccountsApiController@getDeals')->middleware('auth');
 Route::get('/ctrader/account/{trading_account_id}/cashflow')->name('ctrader.getCashFlow')->uses('AccountsApiController@getCashFlow')->middleware('auth');
 Route::get('/ctrader/account/{trading_account_id}/getSymbols')->name('ctrader.getSymbols')->uses('AccountsApiController@getSymbols')->middleware('auth');
+// Routes for Subscriptions
+Route::get('/subscriptions')->name('subscription.index')->uses('SubscriptionController@index');
+Route::get('/subscription/create')->name('subscription.create')->uses('SubscriptionController@create')->middleware('auth');
+Route::get('/subscription/edit')->name('subscription.edit')->uses('SubscriptionController@edit')->middleware('auth');
+Route::post('/subscription/update')->name('subscription.update')->uses('SubscriptionController@update')->middleware('auth');
+Route::post('/subscription/destroy')->name('subscription.destroy')->uses('SubscriptionController@destroy')->middleware('auth');

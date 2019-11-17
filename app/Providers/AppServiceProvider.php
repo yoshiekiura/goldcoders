@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Date::use (CarbonImmutable::class);
         Resource::withoutWrapping();
+        config('plans');
+
+        if (count(config('subtype'))) {
+            // Map Polymophic Classname to custom name
+            Relation::morphMap(config('subtype'));
+        }
     }
 
     /**

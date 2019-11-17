@@ -157,9 +157,9 @@
         </v-flex>
         <v-flex class="xs12 offset-md2 md8">
           <v-autocomplete
+            v-model="form.roles"
             v-validate="'required'"
             :items="roles"
-            v-model="form.roles"
             :error-messages="errorMessages('roles')"
             :class="{ 'error--text': hasErrors('roles') }"
             required
@@ -176,8 +176,8 @@
         </v-flex>
         <v-flex v-if="showPaymasterDrownDown" class="xs12 offset-md2 md8">
           <v-autocomplete
-            :items="paymasters"
             v-model="form.paymaster_id"
+            :items="paymasters"
             required
             item-text="name"
             item-value="id"
@@ -203,7 +203,7 @@
             deletable-chips
             prepend-icon="fa-tags"
           />
-        </v-flex> -->
+        </v-flex>-->
 
         <v-flex xs12 md4 offset-md2 px-2>
           <v-text-field
@@ -293,7 +293,7 @@ export default {
     paymasters: {
       type: [Array],
       required: true
-    },
+    }
     // permissions: {
     //   type: [Array],
     //   required: true
@@ -418,7 +418,7 @@ export default {
     },
     redirectBack() {
       let self = this;
-      self.$nextTick(() => self.$inertia.visit(route("users.index").url()));
+      self.$nextTick(() => self.$inertia.visit(this.route("users.index").url()));
     }
   }
 };

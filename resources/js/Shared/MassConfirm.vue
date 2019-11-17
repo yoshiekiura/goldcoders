@@ -25,32 +25,33 @@ export default {
   props: {
     callback: {
       type: Function,
-      required: true
+      required: true,
     },
     message: {
       type: String,
       default: function() {
         return "Halt! This Action is Destructive and Irreversible Only Proceed If You Think Deleting All The Selected Record Has No Impact On Your Data Record.";
-      }
+      },
     },
     title: {
       type: String,
       default: function() {
         return "You are Deleting The Selected Items!";
-      }
+      },
     },
     action: {
       type: String,
       default: function() {
         return "Yes , I Understand";
-      }
-    }
+      },
+    },
   },
   data: () => ({
     dialog: false,
-    params: null
+    params: null,
   }),
   mounted() {
+    // eslint-disable-next-line no-undef
     Bus.$on("open-mass-confirm-dialog", params => {
       this.dialog = true;
       this.params = params;
@@ -72,8 +73,8 @@ export default {
           this.callback();
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

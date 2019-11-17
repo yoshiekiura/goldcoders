@@ -14,9 +14,9 @@
         type="number"
         min="-1"
         max="15"
-      ></v-text-field>
+      />
       <v-card-title>
-        <div class="flex-grow-1"></div>
+        <div class="flex-grow-1" />
 
         <v-btn color="accent" dark @click="createUser">
           Create New User
@@ -52,8 +52,8 @@
               hide-details
               prepend-inner-icon="search"
               label="Search User"
-            ></v-text-field>
-            <div class="flex-grow-1"></div>
+            />
+            <div class="flex-grow-1" />
             <v-text-field
               v-model="form.sponsor"
               clearable
@@ -62,9 +62,9 @@
               hide-details
               prepend-inner-icon="person"
               label="Search Sponsor"
-            ></v-text-field>
+            />
 
-            <div class="flex-grow-1"></div>
+            <div class="flex-grow-1" />
             <v-select
               v-model="form.role"
               :items="roles"
@@ -74,8 +74,8 @@
               solo-inverted
               prepend-inner-icon="group"
               flat
-            ></v-select>
-            <div class="flex-grow-1"></div>
+            />
+            <div class="flex-grow-1" />
             <v-select
               v-model="form.status"
               :items="statuses"
@@ -85,9 +85,9 @@
               solo-inverted
               prepend-inner-icon="group"
               flat
-            ></v-select>
+            />
             <template v-if="can('manage_users')">
-              <div class="flex-grow-1"></div>
+              <div class="flex-grow-1" />
 
               <v-btn :disabled="selected.length<1" icon text @click="massDeactivate">
                 <v-icon color="amber">block</v-icon>
@@ -112,10 +112,10 @@
 
         <template v-slot:item.active="{ item }">
           <v-switch
+            v-model="item.active"
             :disabled="!can('manage_users')"
             color="green darken-4"
             :label="getStatus(item.active)"
-            v-model="item.active"
             @change="toggleStatus(item)"
           />
         </template>
@@ -124,24 +124,31 @@
             <v-avatar
               left
               :class="{
-                    'amber lighten-2': (role === 'admin'),
-                    'blue lighten-2': (role === 'paymaster'),
-                    'lime lighten-2': (role === 'member')
-                  }"
+                'amber lighten-2': (role === 'admin'),
+                'blue lighten-2': (role === 'paymaster'),
+                'lime lighten-2': (role === 'member')
+              }"
             >
               <span class="headline white--text">{{ role.charAt(0).toUpperCase() }}</span>
             </v-avatar>
             <span
               :class="{
-                    'amber--text text--lighten-2': (role === 'admin'),
-                    'blue--text text--lighten-2': (role === 'paymaster'),
-                    'lime--text text--lighten-2': (role === 'member')
-                  }"
+                'amber--text text--lighten-2': (role === 'admin'),
+                'blue--text text--lighten-2': (role === 'paymaster'),
+                'lime--text text--lighten-2': (role === 'member')
+              }"
             >{{ role.toUpperCase() }}</span>
           </v-chip>
         </template>
         <template v-if="can('manage_users')" v-slot:item.action="{item}">
-          <v-btn v-if="$page.auth.user.id === 1" text icon color="primary" class="compress--icon" @click="impersonate(item)">
+          <v-btn
+            v-if="$page.auth.user.id === 1"
+            text
+            icon
+            color="primary"
+            class="compress--icon"
+            @click="impersonate(item)"
+          >
             <v-icon>fa-sign-in</v-icon>
           </v-btn>
           <v-btn text icon color="blue" class="compress--icon" @click="editUser(item)">
@@ -160,7 +167,7 @@
                   <v-layout fill-height>
                     <v-flex xs12 align-end flexbox>
                       <v-avatar text-xs-left>
-                        <img :src="props.item.avatar" :alt="props.item.name" />
+                        <img :src="props.item.avatar" :alt="props.item.name">
                       </v-avatar>
                       <span class="headline">{{ props.item.name }}</span>
                     </v-flex>
@@ -172,7 +179,9 @@
                   <p
                     v-if="props.item.sponsor"
                     class="title accent--text"
-                  >Sponsor: {{ props.item.sponsor }}</p>
+                  >
+                    Sponsor: {{ props.item.sponsor }}
+                  </p>
 
                   <p class="title accent--text">Account Details</p>
                   <v-layout row wrap>
@@ -267,26 +276,26 @@ export default {
     MainLayout,
     Confirm,
     MassMail,
-    MassConfirm
+    MassConfirm,
   },
+  mixins: [Acl, validationError, confirmation],
   // from backend
   props: {
     users: Object,
     status: Boolean,
-    filters: Object
+    filters: Object,
   },
-  mixins: [Acl, validationError, confirmation],
   data: () => ({
     dialog: false,
     expanded: [],
     // server side
     selected: [],
     toggleForm: new Form({
-      user_id: null
+      user_id: null,
     }),
     roles: [],
     deleteUserForm: new Form({
-      user_id: null
+      user_id: null,
     }),
     togglestatus: false,
     sortBy: [],
@@ -297,9 +306,9 @@ export default {
       status: "",
       role: "",
       page: 1,
-      per_page: 10
+      per_page: 10,
     },
-    statuses: ["active", "inactive"]
+    statuses: ["active", "inactive"],
   }),
   computed: {
     headers() {
@@ -308,203 +317,26 @@ export default {
           text: "Member",
           align: "left",
           sortable: true,
-          value: "name"
+          value: "name",
         },
         {
           text: "Sponsor",
           value: "sponsor",
-          sortable: true
+          sortable: true,
         },
         {
           text: "Roles",
           value: "roles",
-          sortable: true
+          sortable: true,
         },
         {
           text: "Status",
           value: "active",
-          sortable: true
+          sortable: true,
         },
-        { text: "Actions", value: "action", sortable: false }
+        { text: "Actions", value: "action", sortable: false },
       ];
-    }
-  },
-  created() {
-    let self = this;
-    self.form.search = self.filters.search;
-    self.form.role = self.filters.role;
-    self.form.status = self.filters.status;
-    self.form.sponsor = self.filters.sponsor;
-    self.form.page = parseInt(self.users.meta.page);
-    self.form.per_page = parseInt(self.users.meta.per_page);
-    self.roles = self.$page.roles;
-    self.debouncedGetUsers = _.debounce(self.fetchUsers, 50);
-  },
-  remember: {
-    data: ["form"]
-  },
-  mounted() {
-    let self = this;
-    // listen on mail event
-    Bus.$on("send-mass-mail", form => {
-      self.massMail(form);
-    });
-  },
-  methods: {
-    impersonate(item) {
-      this.$inertia.visit(route("impersonate", { id: item.id }).url());
     },
-    fetchUsers() {
-      let query = _.pickBy(this.form);
-      let url = this.route(
-        "users.index",
-        Object.keys(query).length ? query : { remember: "forget" }
-      ).url();
-      this.$inertia.replace(url);
-    },
-    updateSelect() {
-      this.$set(this.form, "status", this.form["status"]);
-      console.log("updating");
-    },
-    viewMassMailModal() {
-      Bus.$emit("open-modal-mass-mail", this.selected);
-    },
-    massDelete() {
-      let self = this;
-
-      let selected = _.map(self.selected, "id");
-      let massDeleteForm = new Form({
-        selected
-      });
-
-      self.$inertia.post(route("users.massDelete").url(), massDeleteForm);
-
-      swal.fire({
-        title: "<strong>Success!</u></strong>",
-        type: "success",
-        html: " <b>Selected Users Deleted!</b>",
-        focusConfirm: true,
-        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
-        confirmButtonAriaLabel: "Back!"
-      });
-    },
-    massMail(form) {
-      let self = this;
-      form
-        .post(route("users.massMail").url())
-        .then(response => {
-          swal.fire({
-            title: "<strong>Success!</u></strong>",
-            type: "success",
-            html: "<b>" + response.data.message + "</b>",
-            focusConfirm: true,
-            confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
-            confirmButtonAriaLabel: "Back!"
-          });
-          self.selected = [];
-          Bus.$emit("close-modal-mass-mail");
-        })
-        .catch(errors => {
-          console.log(errors);
-          if (errors.response.data.message) {
-            swal.fire({
-              title: "<strong>Success!</u></strong>",
-              type: "success",
-              html: "<b>" + response.data.message + "</b>",
-              focusConfirm: true,
-              confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
-              confirmButtonAriaLabel: "Back!"
-            });
-          }
-          self.selected = [];
-          Bus.$emit("close-modal-mass-mail");
-        });
-    },
-    editUser(user) {
-      this.$inertia.visit(route("users.edit", { user: user.id }).url());
-    },
-    toggleStatus(user) {
-      let self = this;
-      self.toggleForm.user_id = user.id;
-      let index = _.findIndex(self.users.data, { id: user.id });
-      self.$inertia.post(route("users.toggleStatus").url(), self.toggleForm);
-      swal.fire({
-        title: "<strong>Success!</u></strong>",
-        type: "success",
-        html: " <b>User Status Toggled!</b>",
-        focusConfirm: true,
-        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
-        confirmButtonAriaLabel: "Back!"
-      });
-    },
-    getStatus(status) {
-      if (status) {
-        return "Active";
-      } else {
-        return "Inactive";
-      }
-    },
-    createUser() {
-      this.$inertia.visit(route("users.create").url());
-    },
-    async massDeactivate() {
-      let self = this;
-      let selected = _.map(self.selected, "id");
-      let toggleStatusForm = new Form({
-        selected
-      });
-
-      self.$inertia.post(route("users.massDeactivate").url(), toggleStatusForm);
-
-      swal.fire({
-        title: "<strong>Success!</u></strong>",
-        type: "success",
-        html: " <b>Selected Users Deactivated!</b>",
-        focusConfirm: true,
-        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
-        confirmButtonAriaLabel: "Back!"
-      });
-    },
-    async massActivate() {
-      let self = this;
-      let selected = _.map(self.selected, "id");
-      let toggleStatusForm = new Form({
-        selected
-      });
-
-      self.$inertia.post(route("users.massActivate").url(), toggleStatusForm);
-      swal.fire({
-        title: "<strong>Success!</u></strong>",
-        type: "success",
-        html: " <b>Selected Users Activated!</b>",
-        focusConfirm: true,
-        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
-        confirmButtonAriaLabel: "Back!"
-      });
-    },
-    deleteUser(user) {
-      let self = this;
-      self.deleteUserForm.user_id = user.id;
-
-      self.$inertia.post(
-        route("users.destroy", { user: user.id }).url(),
-        self.deleteUserForm
-      );
-      swal.fire({
-        title: "<strong>Success!</u></strong>",
-        type: "success",
-        html: " <b>Selected Users Activated!</b>",
-        focusConfirm: true,
-        confirmButtonText: '<i class="fa fa-arrow-left"></i> Back!',
-        confirmButtonAriaLabel: "Back!"
-      });
-    },
-    toProperCase(key) {
-      let newStr = key.replace(/_/g, " ");
-      return newStr.replace(/\w\S*/g, function(txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-      });
-    }
   },
   watch: {
     status(newValue) {
@@ -530,13 +362,207 @@ export default {
       this.form.page = 1;
       this.debouncedGetUsers();
     },
-    "form.page"(newVal) {
+    "form.page"() {
       if (this.form.page !== 1) {
         this.debouncedGetUsers();
       }
       // issue on redirect back for page
-    }
-  }
+    },
+  },
+  created() {
+    let self = this;
+    self.form.search = self.filters.search;
+    self.form.role = self.filters.role;
+    self.form.status = self.filters.status;
+    self.form.sponsor = self.filters.sponsor;
+    self.form.page = parseInt(self.users.meta.page);
+    self.form.per_page = parseInt(self.users.meta.per_page);
+    self.roles = self.$page.roles;
+    // eslint-disable-next-line no-undef
+    self.debouncedGetUsers = _.debounce(self.fetchUsers, 50);
+  },
+  remember: {
+    data: ["form"],
+  },
+  mounted() {
+    let self = this;
+    // listen on mail event
+    // eslint-disable-next-line no-undef
+    Bus.$on("send-mass-mail", form => {
+      self.massMail(form);
+    });
+  },
+  methods: {
+    impersonate(item) {
+      this.$inertia.visit(this.route("impersonate", { id: item.id }).url());
+    },
+    fetchUsers() {
+      // eslint-disable-next-line no-undef
+      let query = _.pickBy(this.form);
+      let url = this.route(
+        "users.index",
+        Object.keys(query).length ? query : { remember: "forget" }
+      ).url();
+      this.$inertia.replace(url);
+    },
+    updateSelect() {
+      this.$set(this.form, "status", this.form["status"]);
+      // eslint-disable-next-line no-console
+      console.log("updating");
+    },
+    viewMassMailModal() {
+      // eslint-disable-next-line no-undef
+      Bus.$emit("open-modal-mass-mail", this.selected);
+    },
+    massDelete() {
+      let self = this;
+
+      // eslint-disable-next-line no-undef
+      let selected = _.map(self.selected, "id");
+      let massDeleteForm = new Form({
+        selected,
+      });
+
+      self.$inertia.post(this.route("users.massDelete").url(), massDeleteForm);
+
+      swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>Selected Users Deleted!</b>",
+        focusConfirm: true,
+        confirmButtonText: "<i class=\"fa fa-arrow-left\"></i> Back!",
+        confirmButtonAriaLabel: "Back!",
+      });
+    },
+    massMail(form) {
+      let self = this;
+      form
+        .post(this.route("users.massMail").url())
+        .then(response => {
+          swal.fire({
+            title: "<strong>Success!</u></strong>",
+            type: "success",
+            html: "<b>" + response.data.message + "</b>",
+            focusConfirm: true,
+            confirmButtonText: "<i class=\"fa fa-arrow-left\"></i> Back!",
+            confirmButtonAriaLabel: "Back!",
+          });
+          self.selected = [];
+
+          // eslint-disable-next-line no-undef
+          Bus.$emit("close-modal-mass-mail");
+        })
+        .catch(errors => {
+          // eslint-disable-next-line no-console
+          console.log(errors);
+          if (errors.response.data.message) {
+            swal.fire({
+              title: "<strong>Success!</u></strong>",
+              type: "success",
+              html: "<b>" + errors.response.data.message + "</b>",
+              focusConfirm: true,
+              confirmButtonText: "<i class=\"fa fa-arrow-left\"></i> Back!",
+              confirmButtonAriaLabel: "Back!",
+            });
+          }
+          self.selected = [];
+          // eslint-disable-next-line no-undef
+          Bus.$emit("close-modal-mass-mail");
+        });
+    },
+    editUser(user) {
+      this.$inertia.visit(this.route("users.edit", { user: user.id }).url());
+    },
+    toggleStatus(user) {
+      let self = this;
+      self.toggleForm.user_id = user.id;
+      self.$inertia.post(
+        this.route("users.toggleStatus").url(),
+        self.toggleForm
+      );
+      swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>User Status Toggled!</b>",
+        focusConfirm: true,
+        confirmButtonText: "<i class=\"fa fa-arrow-left\"></i> Back!",
+        confirmButtonAriaLabel: "Back!",
+      });
+    },
+    getStatus(status) {
+      if (status) {
+        return "Active";
+      } else {
+        return "Inactive";
+      }
+    },
+    createUser() {
+      this.$inertia.visit(this.route("users.create").url());
+    },
+    async massDeactivate() {
+      let self = this;
+      // eslint-disable-next-line no-undef
+      let selected = _.map(self.selected, "id");
+      let toggleStatusForm = new Form({
+        selected,
+      });
+
+      self.$inertia.post(
+        this.route("users.massDeactivate").url(),
+        toggleStatusForm
+      );
+
+      swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>Selected Users Deactivated!</b>",
+        focusConfirm: true,
+        confirmButtonText: "<i class=\"fa fa-arrow-left\"></i> Back!",
+        confirmButtonAriaLabel: "Back!",
+      });
+    },
+    async massActivate() {
+      let self = this;
+      // eslint-disable-next-line no-undef
+      let selected = _.map(self.selected, "id");
+      let toggleStatusForm = new Form({
+        selected,
+      });
+
+      self.$inertia.post(this.route("users.massActivate").url(), toggleStatusForm);
+      swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>Selected Users Activated!</b>",
+        focusConfirm: true,
+        confirmButtonText: "<i class=\"fa fa-arrow-left\"></i> Back!",
+        confirmButtonAriaLabel: "Back!",
+      });
+    },
+    deleteUser(user) {
+      let self = this;
+      self.deleteUserForm.user_id = user.id;
+
+      self.$inertia.post(
+        this.route("users.destroy", { user: user.id }).url(),
+        self.deleteUserForm
+      );
+      swal.fire({
+        title: "<strong>Success!</u></strong>",
+        type: "success",
+        html: " <b>Selected Users Activated!</b>",
+        focusConfirm: true,
+        confirmButtonText: "<i class=\"fa fa-arrow-left\"></i> Back!",
+        confirmButtonAriaLabel: "Back!",
+      });
+    },
+    toProperCase(key) {
+      let newStr = key.replace(/_/g, " ");
+      return newStr.replace(/\w\S*/g, function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      });
+    },
+  },
 };
 </script>
 <style scoped>

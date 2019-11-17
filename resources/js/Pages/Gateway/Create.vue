@@ -5,7 +5,9 @@
         <inertia-link
           class="headline font-weight-thin inertia-link"
           :href="route('gateway')"
-        >{{ name }}</inertia-link>
+        >
+          {{ name }}
+        </inertia-link>
         <span class="headline font-weight-thin mx-1">/</span>
         <span class="headline font-weight-thin">Create</span>
       </v-layout>
@@ -19,8 +21,8 @@
 
                 <v-flex px-5>
                   <v-text-field
-                    autofocus
                     v-model="form.name"
+                    autofocus
                     class="primary--text"
                     label="Name"
                     prepend-icon="assessment"
@@ -34,8 +36,8 @@
                     :error-messages="$page.errors.type"
                   />
 
-                  <v-switch v-model="form.active" label="Active ?"></v-switch>
-                  <v-switch v-model="form.for_payout" label="For Payout ?"></v-switch>
+                  <v-switch v-model="form.active" label="Active ?" />
+                  <v-switch v-model="form.for_payout" label="For Payout ?" />
                 </v-flex>
               </v-layout>
             </v-container>
@@ -51,8 +53,7 @@
                   <!-- Fields -->
 
                   <v-layout align-center justify-space-between row>
-                    <span class="v-label theme--light"></span>
-
+                    <span class="v-label theme--light" />
 
                     <v-btn v-show="form.for_payout" @click="addField('')">Add Field</v-btn>
                     <div v-show="!form.for_payout">
@@ -76,7 +77,7 @@
                           label="Field Value"
                           prepend-icon="assignment"
                         />
-                        <v-btn @click="deleteField(item)" small icon fab color="grey">
+                        <v-btn small icon fab color="grey" @click="deleteField(item)">
                           <v-icon>delete</v-icon>
                         </v-btn>
                       </v-layout>
@@ -112,7 +113,7 @@ import MainLayout from "@/Layouts/MainLayout";
 
 export default {
   components: {
-    MainLayout
+    MainLayout,
   },
   data() {
     return {
@@ -124,9 +125,18 @@ export default {
         type: null,
         active: false,
         for_payout: false,
-        details: []
-      }
+        details: [],
+      },
     };
+  },
+  watch: {
+    "form.for_payout": {
+      handler: function() {
+        let self = this;
+        self.form.details = [];
+      },
+      deep: true,
+    },
   },
   methods: {
     submit() {
@@ -142,19 +152,10 @@ export default {
     addField(prefix) {
       this.form.details.push({
         name: prefix,
-        value: ""
+        value: "",
       });
-    }
+    },
   },
-  watch: {
-    "form.for_payout": {
-      handler: function(val, oldVal) {
-        let self = this;
-        self.form.details = [];
-      },
-      deep: true
-    }
-  }
 };
 </script>
 

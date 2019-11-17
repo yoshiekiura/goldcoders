@@ -1,14 +1,14 @@
 <template>
   <div class="pa-5">
     <v-row dense>
-      <v-col cols="12" md="6" lg="4" sm="12" v-for="(item,index) in records" :key="index">
+      <v-col v-for="(item,index) in records" :key="index" cols="12" md="6" lg="4" sm="12">
         <card-dashboard
           :name="item.name"
           :icon="item.icon"
           :details="item.details"
           :actions="item.actions"
           :color="item.color"
-        ></card-dashboard>
+        />
       </v-col>
     </v-row>
   </div>
@@ -19,15 +19,15 @@ import CardDashboard from "@/Shared/CardDashboard";
 
 export default {
   components: {
-    CardDashboard
+    CardDashboard,
   },
   props: {
-    subscription_count: String,
-    subscription_verified: String,
-    referrals_total: Number,
-    kyc_verified: Boolean,
-    payment_total: Number,
-    payout_request_total: Number
+    subscriptionCount: String,
+    subscriptionVerified: String,
+    referralsTotal: Number,
+    kycVerified: Boolean,
+    paymentTotal: Number,
+    payoutRequestTotal: Number,
   },
   data() {
     return {
@@ -40,20 +40,20 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Counts",
-              value: this.subscription_count
+              value: this.subscription_count,
             },
             {
               icon: "check_circle_outline",
               name: "Verified",
-              value: this.subscription_verified
-            }
+              value: this.subscription_verified,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.subscription()
-            }
-          ]
+              func: () => this.subscription(),
+            },
+          ],
         },
         {
           name: "Referrals",
@@ -63,15 +63,15 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total Referrals",
-              value: this.referrals_total
-            }
+              value: this.referrals_total,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.referral()
-            }
-          ]
+              func: () => this.referral(),
+            },
+          ],
         },
 
         {
@@ -82,15 +82,15 @@ export default {
             {
               icon: "check_circle_outline",
               name: "Status",
-              value: this.kyc_verified ? "Verified" : "Not Yet Verified"
-            }
+              value: this.kyc_verified ? "Verified" : "Not Yet Verified",
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.kyc()
-            }
-          ]
+              func: () => this.kyc(),
+            },
+          ],
         },
         {
           name: "Deposit",
@@ -100,15 +100,15 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total Deposit",
-              value: this.payment_total
-            }
+              value: this.payment_total,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.deposit()
-            }
-          ]
+              func: () => this.deposit(),
+            },
+          ],
         },
         {
           name: "Payout",
@@ -118,36 +118,41 @@ export default {
             {
               icon: "format_list_numbered_rtl",
               name: "Total Payout",
-              value: this.payout_request_total
-            }
+              value: this.payout_request_total,
+            },
           ],
           actions: [
             {
               text: "Details",
-              func: () => this.income()
-            }
-          ]
-        }
-      ]
+              func: () => this.income(),
+            },
+          ],
+        },
+      ],
     };
   },
   methods: {
     referral() {
+      // eslint-disable-next-line no-console
       console.log("referral");
     },
     subscription() {
+      // eslint-disable-next-line no-console
       console.log("subscription");
     },
     kyc() {
+      // eslint-disable-next-line no-console
       console.log("kyc");
     },
     deposit() {
+      // eslint-disable-next-line no-console
       console.log("deposit");
     },
     income() {
+      // eslint-disable-next-line no-console
       console.log("income");
-    }
-  }
+    },
+  },
 };
 </script>
 
