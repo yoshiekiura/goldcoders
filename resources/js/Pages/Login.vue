@@ -1,67 +1,64 @@
 <template>
   <modal-layout class="white" title="Login">
-    <v-card :flat="true" color="grey lighten-5">
-      <v-toolbar class="accent">
+    <template v-slot:toolbar>
+      <v-toolbar flat width="100%" class="accent">
         <v-spacer />
         <v-toolbar-title class="text-xs-center white--text">Welcome to Login Page</v-toolbar-title>
         <v-spacer />
       </v-toolbar>
-      <v-card-text style="padding-top:150px;">
-        <v-container fluid>
+    </template>
+    <template v-slot:footer>
+      <app-footer />
+    </template>
+
+    <v-container fill-height>
+      <v-row justify="center" align="center">
+        <v-col justify="center" align="center" cols="12" md="4" xs="6" sm="6">
           <form @submit.prevent="login()">
-            <v-layout row>
-              <v-flex xs12 sm12 md4 offset-md4 lg4 offset-lg4 xl4 offset-xl4>
-                <v-text-field
-                  v-model="form.email"
-                  v-validate="'required|email'"
-                  :error-messages="errorMessages('email')"
-                  :class="{ 'error--text': hasErrors('email') }"
-                  class="primary--text"
-                  name="username"
-                  label="Type Your Account Email"
-                  data-vv-name="email"
-                  prepend-icon="email"
-                  counter="255"
-                />
-              </v-flex>
-            </v-layout>
-            <v-layout row>
-              <v-flex xs12 sm12 md4 offset-md4 lg4 offset-lg4 xl4 offset-xl4>
-                <v-text-field
-                  v-model="form.password"
-                  v-validate="'required|min:8'"
-                  :append-icon="icon"
-                  :type="!password_visible ? 'password' : 'text'"
-                  :error-messages="errorMessages('password')"
-                  :class="{ 'error--text': hasErrors('password') }"
-                  class="primary--text"
-                  name="password"
-                  label="Enter your password"
-                  hint="At least 8 characters"
-                  data-vv-name="password"
-                  counter="255"
-                  prepend-icon="fa-key"
-                  @click:append="() => (password_visible = !password_visible)"
-                />
-              </v-flex>
-            </v-layout>
-            <v-flex xs12 sm12 md4 offset-md4 lg4 offset-lg4 xl4 offset-xl4 text-xs-center>
-              <v-btn
-                :loading="form.busy"
-                :disabled="errors.any()"
-                block
-                type="submit"
-                color="accent"
-              >
-                Log In
-                <v-icon right colo="primary">fa-sign-in</v-icon>
-              </v-btn>
-            </v-flex>
+            <v-text-field
+              v-model="form.email"
+              v-validate="'required|email'"
+              :error-messages="errorMessages('email')"
+              :class="{ 'error--text': hasErrors('email') }"
+              class="primary--text"
+              name="username"
+              label="Type Your Account Email"
+              data-vv-name="email"
+              prepend-icon="email"
+              counter="255"
+            />
+
+            <v-text-field
+              v-model="form.password"
+              v-validate="'required|min:8'"
+              :append-icon="icon"
+              :type="!password_visible ? 'password' : 'text'"
+              :error-messages="errorMessages('password')"
+              :class="{ 'error--text': hasErrors('password') }"
+              class="primary--text"
+              name="password"
+              label="Enter your password"
+              hint="At least 8 characters"
+              data-vv-name="password"
+              counter="255"
+              prepend-icon="fa-key"
+              @click:append="() => (password_visible = !password_visible)"
+            />
+
+            <v-btn
+              :loading="form.busy"
+              :disabled="errors.any()"
+              block
+              type="submit"
+              color="accent"
+            >
+              Log In
+              <v-icon right colo="primary">fa-sign-in</v-icon>
+            </v-btn>
           </form>
-        </v-container>
-      </v-card-text>
-    </v-card>
-    <app-footer />
+        </v-col>
+      </v-row>
+    </v-container>
   </modal-layout>
 </template>
 
