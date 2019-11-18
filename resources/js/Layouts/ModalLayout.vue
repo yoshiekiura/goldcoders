@@ -1,37 +1,38 @@
 <template>
-  <v-app v-cloak standalone>
-    <main>
-      <v-container transition="slide-x-transition" fluid class="pa-0 ma-0">
-        <v-card :flat="true">
-          <slot name="toolbar" />
-          <slot />
-          <slot name="footer" />
-        </v-card>
-      </v-container>
-    </main>
+  <v-app>
+    <v-header>
+      <slot name="toolbar" />
+    </v-header>
+
+    <v-content>
+      <slot />
+    </v-content>
+    <v-footer app>
+      <slot name="footer" />
+    </v-footer>
   </v-app>
 </template>
 
 <script>
 export default {
   props: {
-    title: String
+    title: String,
+  },
+  watch: {
+    title(title) {
+      this.updatePageTitle(title);
+    },
   },
   mounted(){
-    this.updatePageTitle(this.title)
+    this.updatePageTitle(this.title);
   },
   methods: {
     updatePageTitle(title) {
       document.title = title
         ? `${title} | ${this.$page.app.name}`
         : this.$page.app.name;
-    }
+    },
   },
-  watch: {
-    title(title) {
-      this.updatePageTitle(title);
-    }
-  }
 };
 </script>
 
