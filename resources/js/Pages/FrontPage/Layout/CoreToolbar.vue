@@ -1,63 +1,60 @@
 <template>
-  <section>
-    <v-layout column>
-      <v-toolbar app class="white px-5" flat id="app-toolbar">
-        <v-toolbar-title class="mr-3 text-xs-center">
-          <v-layout row align-center justify-center>
-            <v-hyperlink>
-              <!-- <app-logo width="50"></app-logo> -->
-               <img :src="image_src">
+  <v-toolbar id="app-toolbar" dark class flat>
+    <v-toolbar-title class="hidden-sm-and-down mr-3 text-xs-center">
+      <v-row justify="center" align="center">
+        <v-hyperlink>
+          <img :src="image_src">
+        </v-hyperlink>
+      </v-row>
+    </v-toolbar-title>
 
-            </v-hyperlink>
+    <v-spacer class="hidden-sm-and-down" />
 
-            <span class="hidden-sm-and-down">
-              <v-list>
-                <v-list-tile>
-                  <v-list-tile-content>
-                    <v-list-tile-title class="font-weight-bold" style="margin-bottom: -5px">Gold</v-list-tile-title>
-                    <v-list-tile-title class="font-weight-bold">Coders</v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
-              </v-list>
-            </span>
-          </v-layout>
-        </v-toolbar-title>
+    <toolbar-how-it-work />
+    <toolbar-faq />
+    <toolbar-testimonials />
+    <toolbar-tradings />
+    <toolbar-contact />
 
-        <v-toolbar-items>
-          <!-- <tb-about-us></tb-about-us>
-          <tb-customer></tb-customer>
-          <tb-news></tb-news>
-          <tb-career></tb-career> -->
-        </v-toolbar-items>
 
-        <v-spacer />
+    <v-spacer class="d-flex d-sm-none" />
 
-        <v-toolbar-items>
-          <v-btn icon flat>
-            <v-avatar size="35px">
-              <img :src="profileLogo" alt="avatar" />
-            </v-avatar>
-          </v-btn>
-        </v-toolbar-items>
-      </v-toolbar>
-    </v-layout>
-  </section>
+    <v-hyperlink href="login">
+      <toolbar-client-area />
+    </v-hyperlink>
+
+
+    <toolbar-search />
+  </v-toolbar>
 </template>
 
 <script>
 import VHyperlink from "@/Shared/VHyperlink";
-import AppLogo from "@/Shared/AppLogo";
+import ToolbarHowItWork from "./ToolbarHowItWork";
+import ToolbarFaq from "./ToolbarFaq";
+import ToolbarTestimonials from "./ToolbarTestimonials";
+import ToolbarTradings from "./ToolbarTradings";
+import ToolbarContact from "./ToolbarContact";
+import ToolbarClientArea from "./ToolbarClientArea";
+import ToolbarSearch from "./ToolbarSearch";
+
 export default {
   components: {
     VHyperlink,
-    AppLogo,
+    ToolbarHowItWork,
+    ToolbarFaq,
+    ToolbarTestimonials,
+    ToolbarTradings,
+    ToolbarContact,
+    ToolbarClientArea,
+    ToolbarSearch,
   },
 
   data() {
     return {
-        image_src: '/images/logo/logo.png',
+      image_src: "/images/logo/logo.png",
     };
-  }
+  },
 };
 </script>
 
@@ -88,3 +85,17 @@ export default {
     padding: 0
     z-index: -1
 </style>
+
+
+<style scoped>
+.btn {
+  text-decoration: none;
+}
+.inertia-link {
+  text-decoration: none;
+}
+</style>
+
+
+
+

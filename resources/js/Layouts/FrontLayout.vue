@@ -19,7 +19,7 @@ export default {
   components: {
     CoreToolbar,
     CoreFooterSummary,
-    CoreFooterInfo
-  }
+    CoreFooterInfo,
+  },
 };
 </script>

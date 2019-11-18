@@ -1,6 +1,9 @@
 <template>
-  <inertia-link class="ibtn" style="color: black" :href="route(`${href}`)">
-    <slot></slot>
+  <inertia-link
+    class="inertia-link"
+    :href="route(`${href}`)"
+  >
+    <slot />
   </inertia-link>
 </template>
 
@@ -10,10 +13,21 @@ export default {
   props: {
     href: {
       type: String,
-      default: "home"
-    }
-  }
+      default: "home",
+    },
+  },
 };
 </script>
+
+
+
+<style scoped>
+.btn {
+  text-decoration: none;
+}
+.inertia-link {
+  text-decoration: none;
+}
+</style>
 
 
