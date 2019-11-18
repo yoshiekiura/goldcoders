@@ -63,7 +63,7 @@
           data-vv-name="type"
         />
       </v-flex>
-      <component :is="form.type" v-if="form.type" :details="form.details" />
+      <component :is="form.type" v-if="form.type" :details="details" />
       <v-flex xs12 offset-md2 md8>
         <v-switch v-model="form.lifetime" color="green darken-4" :label="getLifetimeStatus" />
       </v-flex>
@@ -151,7 +151,7 @@
         />
 
         <v-chip-group
-          v-model="form.cycle_period"
+          v-model="billing_cycle"
           multiple
           column
           active-class="accent white--text"
@@ -191,9 +191,13 @@ export default {
   mixins: [validationError],
   data: () => ({
     title: "Create Subscription Plan",
+    // start : working on this
+    details: null,
+    commissions: null, // we need to add to  each key (rank) the billing cycle with value
+    billing_cycle: [],
+    // end
     form: new Form({
       type: null,
-      details: null,
       name: "",
       amount: "",
       cycle_unit: 24,
@@ -203,38 +207,18 @@ export default {
       // int (single)
       // array [1,3,5,7]
       // range['1-2','3-5','8-9']
-      cycle_period: [],
+      cycle_period: [], // push here billing cycle on submit
       lifetime: false,
     }),
     selected_all: false,
     periods: [1],
     ranks: [],
     searchRank: null,
-    billing_cycle: [
-      // we need a implement here a way to cash range to loop and add it to array
-      // we always show the remaining cycle
-      "every_repeat", //loop 1 up to cycle_repeat
-      "custom", // [1,'2-3',cucle_repeat count]
-    ],
-    // define here the structure of our data for each type
-    fix_value: {
-      value: 30,
-      shit: "powerA",
-    },
-    percentage: {
-      percent: 30,
-    },
-    compounding: {
-      percent: 3,
-    },
-    profit_sharing: {
-      percent: 50,
-    },
   }),
   computed: {
     indeterminate() {
       if (
-        this.form.cycle_period.length !== this.periods.length &&
+        this.billing_cycle.length !== this.periods.length &&
         this.selected_all
       ) {
         return true;
@@ -275,20 +259,34 @@ export default {
     },
   },
   watch: {
+    ranks(newVal){
+        let details = {}
+        this.ranks.forEach( (key) => {
+          details[key] = {}
+        })
+        this.details = details
+        this.commissions = details
+    },
     "form.type"(newVal) {
       // set new type component
-      this.type = this.toCamelCase(newVal);
       // evaluate the newVal text to object
-      this.form.details = eval(`this.${newVal}`);
+      //  this.form.details = eval(`this.${newVal}`);
+      let details = {}
+      this.ranks.forEach( (key) => {
+          details[key] = {}
+      })
+      this.details = details
+      this.commissions = details
+
     },
     "form.cycle_repeat"(newVal) {
-      this.form.cycle_period = [];
+      this.billing_cycle = [];
       this.selected_all = false;
       this.periods = this.rangeCycle(1, newVal);
     },
     "form.lifetime"(newVal) {
       if (newVal) {
-        this.form.cycle_period = [];
+        this.billing_cycle = [];
         this.selected_all = false;
       }
     },
@@ -296,20 +294,11 @@ export default {
   methods: {
     toggleSelect() {
       if (this.selected_all === true) {
-        this.form.cycle_period = this.periods;
+        this.billing_cycle = this.periods;
       }
       if (this.selected_all === false) {
-        this.form.cycle_period = [];
+        this.billing_cycle = [];
       }
-    },
-
-    toCamelCase(str) {
-      return str.replace(/([-_][a-z])/g, group =>
-        group
-          .toUpperCase()
-          .replace("-", "")
-          .replace("_", "")
-      );
     },
     submit() {
       // before submit check if the not life time

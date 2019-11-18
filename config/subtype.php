@@ -7,9 +7,9 @@ use App\Models\SubscriptionType\Compounding;
 use App\Models\SubscriptionType\ProfitSharing;
 
 return [
-    'fix_value'      => FixValue::class,
+    'fix-value'      => FixValue::class,
     'percentage'     => Percentage::class,
     'compounding'    => Compounding::class,
     'ranking'        => Ranking::class,
-    'profit_sharing' => ProfitSharing::class
+    'profit-sharing' => ProfitSharing::class
 ];
