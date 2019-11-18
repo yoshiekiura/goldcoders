@@ -2,8 +2,11 @@
   <modal-layout class="white" title="Login">
     <template v-slot:toolbar>
       <v-toolbar flat width="100%" class="accent">
+        <v-btn text icon color="white" @click="back()">
+          <v-icon>arrow_back</v-icon>
+        </v-btn>
         <v-spacer />
-        <v-toolbar-title class="text-xs-center white--text">Welcome to Login Page</v-toolbar-title>
+        <v-toolbar-title class="text-xs-center white--text">{{ $page.app.name }} Login Page</v-toolbar-title>
         <v-spacer />
       </v-toolbar>
     </template>
@@ -13,7 +16,7 @@
 
     <v-container fill-height>
       <v-row justify="center" align="center">
-        <v-col justify="center" align="center" cols="12" md="4" xs="6" sm="6">
+        <v-col justify="center" align="center" cols="12" xl="4" lg="4" md="8" xs="10" sm="10">
           <form @submit.prevent="login()">
             <v-text-field
               v-model="form.email"
@@ -45,13 +48,7 @@
               @click:append="() => (password_visible = !password_visible)"
             />
 
-            <v-btn
-              :loading="form.busy"
-              :disabled="errors.any()"
-              block
-              type="submit"
-              color="accent"
-            >
+            <v-btn :loading="form.busy" :disabled="errors.any()" block type="submit" color="accent">
               Log In
               <v-icon right colo="primary">fa-sign-in</v-icon>
             </v-btn>
@@ -95,6 +92,9 @@ export default {
       if (!self.errors.any()) {
         self.$inertia.post(self.route("login.attempt").url(), self.form);
       }
+    },
+    back(){
+      this.$inertia.visit("/");
     },
   },
 };
