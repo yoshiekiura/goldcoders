@@ -63,7 +63,7 @@
           data-vv-name="type"
         />
       </v-flex>
-      <component :is="form.type" v-if="form.type" :details="details" />
+      <component :is="form.type" v-if="form.type" :commissions="commissions" />
       <v-flex xs12 offset-md2 md8>
         <v-switch v-model="form.lifetime" color="green darken-4" :label="getLifetimeStatus" />
       </v-flex>
@@ -214,6 +214,26 @@ export default {
     periods: [1],
     ranks: [],
     searchRank: null,
+    fixValue: new Form({
+      min: 1,
+      max: 1000,
+      amount: 100,
+    }),
+    percentage: new Form({
+      min: 1,
+      max: 1000,
+      amount: 5,
+    }),
+    compounding: new Form({
+      min: 1,
+      max: 1000,
+      amount: 5,
+    }),
+    profitSharing: new Form({
+      min: 1,
+      max: 1000,
+      amount: 5,
+    }),
   }),
   computed: {
     indeterminate() {
@@ -259,25 +279,34 @@ export default {
     },
   },
   watch: {
-    ranks(newVal){
-        let details = {}
-        this.ranks.forEach( (key) => {
-          details[key] = {}
-        })
-        this.details = details
-        this.commissions = details
+    ranks(newVal) {
+      let details = {};
+      // eslint-disable-next-line no-unused-vars
+      let self = this;
+      this.ranks.forEach(key => {
+        if (this.form.type) {
+          // eslint-disable-next-line no-undef
+          details[key] = eval(`self.${_.camelCase(this.form.type)}`);
+        } else {
+          details[key] = new Form();
+        }
+      });
+      this.details = details;
+      this.commissions = details;
     },
     "form.type"(newVal) {
       // set new type component
       // evaluate the newVal text to object
       //  this.form.details = eval(`this.${newVal}`);
-      let details = {}
-      this.ranks.forEach( (key) => {
-          details[key] = {}
-      })
-      this.details = details
-      this.commissions = details
-
+      // eslint-disable-next-line no-unused-vars
+      let self = this;
+      let details = {};
+      this.ranks.forEach(key => {
+        // eslint-disable-next-line no-undef
+        details[key] = eval(`self.${_.camelCase(newVal)}`);
+      });
+      this.details = details;
+      this.commissions = details;
     },
     "form.cycle_repeat"(newVal) {
       this.billing_cycle = [];
@@ -292,6 +321,13 @@ export default {
     },
   },
   methods: {
+    newForm() {
+      return new Form({
+        min: 1,
+        max: 1000,
+        amount: 100,
+      });
+    },
     toggleSelect() {
       if (this.selected_all === true) {
         this.billing_cycle = this.periods;

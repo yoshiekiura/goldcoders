@@ -1,78 +1,84 @@
 <template>
-  <div>
-    <v-flex xs12 offset-md2 md8>
-      <v-text-field
-        v-model.number="form.amount"
-        v-validate="'required|min_value:1|max_value:1000'"
-        type="number"
-        min="1"
-        max="1000"
-        :error-messages="errorMessages('amount')"
-        :class="{ 'error--text': hasErrors('amount') }"
-        class="primary--text"
-        name="amount"
-        label="Compounding Percent"
-        data-vv-name="amount"
-        counter="255"
-        prepend-icon="fa-percent"
-      />
-    </v-flex>
-    <v-flex xs12 offset-md2 md8>
-      <v-text-field
-        v-model.number="form.min"
-        v-validate="'required|min_value:1|max_value:1000'"
-        type="number"
-        min="1"
-        max="1000"
-        :error-messages="errorMessages('min')"
-        :class="{ 'error--text': hasErrors('min') }"
-        class="primary--text"
-        name="min"
-        label="Min Amount"
-        data-vv-name="min"
-        counter="255"
-        prepend-icon="vertical_align_bottom"
-      />
-    </v-flex>
-    <v-flex xs12 offset-md2 md8>
-      <v-text-field
-        v-model.number="form.max"
-        v-validate="'required|min_value:1|max_value:1000'"
-        type="number"
-        min="1"
-        max="1000"
-        :error-messages="errorMessages('max')"
-        :class="{ 'error--text': hasErrors('max') }"
-        class="primary--text"
-        name="max"
-        label="Fix Value Max Amount"
-        data-vv-name="max"
-        counter="255"
-        prepend-icon="vertical_align_top"
-      />
-    </v-flex>
+  <div v-if="commissions">
+    <div v-for="(rank,key) in commissions" :key="key">
+      <v-flex xs12 offset-md2 md8>
+        <v-subheader>key-{{ key }}</v-subheader>
+        <pre>rank {{ rank }}</pre>
+        <pre>commission key {{ commissions[key] }}</pre>
+      </v-flex>
+      <v-flex xs12 offset-md2 md8>
+        <v-text-field
+          v-model="rank.amount"
+          v-validate="'required'"
+          :error-messages="errorMessages(`${key}_amount`)"
+          :class="{ 'error--text': hasErrors(`${key}_amount`,rank) }"
+          :data-vv-name="`${key}_amount`"
+          class="primary--text"
+          name="amount"
+          label="Commission Per Cycle"
+          prepend-icon="fa-money"
+        />
+      </v-flex>
+
+      <v-flex xs12 offset-md2 md8>
+        <v-text-field
+          v-model.number="rank.min"
+          v-validate="'required|min_value:1|max_value:1000'"
+          :error-messages="errorMessages(`${key}_min`)"
+          :class="{ 'error--text': hasErrors(`${key}_min`,rank) }"
+          :data-vv-name="`${key}_min`"
+          type="number"
+          min="1"
+          max="1000"
+          class="primary--text"
+          name="min"
+          label="Min"
+          counter="255"
+          prepend-icon="vertical_align_bottom"
+        />
+      </v-flex>
+
+      <v-flex xs12 offset-md2 md8>
+        <v-text-field
+          v-model.number="rank.max"
+          v-validate="'required|min_value:1|max_value:1000'"
+          :error-messages="errorMessages(`${key}_min`)"
+          :class="{ 'error--text': hasErrors(`${key}_min`,rank) }"
+          :data-vv-name="`${key}_min`"
+          type="number"
+          min="1"
+          max="1000"
+          class="primary--text"
+          name="max"
+          label="Max"
+          counter="255"
+          prepend-icon="vertical_align_top"
+        />
+      </v-flex>
+    </div>
   </div>
 </template>
 <script>
 import validationError from "../../../mixins/validation-error";
-import { Form } from "vform";
-
 export default {
+  mixins: [validationError],
   // make this an array we need to pass in the rank also
   // so each rank has its own compounding form
-  mixins: [validationError],
   props: {
-    details: {
-      type: [Object, Array],
+    commissions: {
+      type: [Object],
       default: null,
     },
   },
-  data: () => ({
-    form: new Form({
-      min: 1,
-      max: 1000,
-      amount: 5,
-    }),
-  }),
+  methods: {
+    hasErrors(field, rank) {
+      console.log(rank);
+      let errors = this.errors.collect(field).concat(rank.errors.only(field));
+      if (errors.length > 0) {
+        return true;
+      }
+      return false;
+    },
+  },
 };
 </script>

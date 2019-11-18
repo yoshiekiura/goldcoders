@@ -5,10 +5,12 @@ export default {
     /* form is related to vform - removed not used */
     /* this.$page.errors is related to session errors return by laravel */
     errorMessages(field) {
-      if(this.$page.errors[field]){
-      return this.errors.collect(field).concat(this.$page.errors[field]);
+      if (this.$page.errors[field]) {
+        return this.errors
+          .collect(field)
+          .concat(this.$page.errors[field]);
       }
-      return this.errors.collect(field)
+      return this.errors.collect(field);
     },
     hasErrors(field) {
       let errors = this.errors
@@ -18,6 +20,6 @@ export default {
         return true;
       }
       return false;
-    }
-  }
+    },
+  },
 };

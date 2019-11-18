@@ -52,6 +52,15 @@
         icon-color="#fafafa"
       />
       <v-link
+        v-if="can('manage_users')"
+        title="Manage Plans"
+        href="subscription.create"
+        icon="monetization_on"
+        link-color="white"
+        active-color="#BA9A5a"
+        icon-color="#fafafa"
+      />
+      <v-link
         v-if="can('approve_payment')"
         title="Paymaster Portal"
         href="paymaster.index"
