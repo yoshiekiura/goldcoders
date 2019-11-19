@@ -6,20 +6,6 @@
       </v-flex>
       <v-flex xs12 offset-md2 md8>
         <v-text-field
-          v-model="rank.amount"
-          v-validate="'required'"
-          :error-messages="errorMessages(`${key}_amount`)"
-          :class="{ 'error--text': hasErrors(`${key}_amount`,rank) }"
-          :data-vv-name="`${key}_amount`"
-          class="primary--text"
-          name="amount"
-          label="Cycle Commission"
-          prepend-icon="fa-money"
-        />
-      </v-flex>
-
-      <v-flex xs12 offset-md2 md8>
-        <v-text-field
           v-model.number="rank.min"
           v-validate="'required|min_value:1'"
           :error-messages="errorMessages(`${key}_min`)"
