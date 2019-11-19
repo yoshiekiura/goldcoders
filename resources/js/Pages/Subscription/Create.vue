@@ -19,6 +19,10 @@
         />
       </v-flex>
       <v-flex xs12 offset-md2 md8>
+        <v-subheader>Set Up Ranks, Plan Type and Cycle Commissions</v-subheader>
+        <v-divider />
+      </v-flex>
+      <v-flex xs12 offset-md2 md8>
         <v-combobox
           v-model="ranks"
           :items="$page.ranks"

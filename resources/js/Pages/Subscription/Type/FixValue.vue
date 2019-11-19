@@ -13,7 +13,7 @@
           :data-vv-name="`${key}_amount`"
           class="primary--text"
           name="amount"
-          label="Commission Per Cycle"
+          label="Cycle Commission"
           prepend-icon="fa-money"
         />
       </v-flex>
