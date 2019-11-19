@@ -2,9 +2,7 @@
   <div v-if="commissions">
     <div v-for="(rank,key) in commissions" :key="key">
       <v-flex xs12 offset-md2 md8>
-        <v-subheader>key-{{ key }}</v-subheader>
-        <pre>rank {{ rank }}</pre>
-        <pre>commission key {{ commissions[key] }}</pre>
+        <v-subheader class="text-capitalize font-weight-black">{{ key }}</v-subheader>
       </v-flex>
       <v-flex xs12 offset-md2 md8>
         <v-text-field
@@ -32,7 +30,7 @@
           max="1000"
           class="primary--text"
           name="min"
-          label="Min"
+          label="Min Payment"
           counter="255"
           prepend-icon="vertical_align_bottom"
         />
@@ -42,9 +40,9 @@
         <v-text-field
           v-model.number="rank.max"
           v-validate="'required|min_value:1|max_value:1000'"
-          :error-messages="errorMessages(`${key}_min`)"
-          :class="{ 'error--text': hasErrors(`${key}_min`,rank) }"
-          :data-vv-name="`${key}_min`"
+          :error-messages="errorMessages(`${key}_max`)"
+          :class="{ 'error--text': hasErrors(`${key}_max`,rank) }"
+          :data-vv-name="`${key}_max`"
           type="number"
           min="1"
           max="1000"
@@ -72,7 +70,6 @@ export default {
   },
   methods: {
     hasErrors(field, rank) {
-      console.log(rank);
       let errors = this.errors.collect(field).concat(rank.errors.only(field));
       if (errors.length > 0) {
         return true;

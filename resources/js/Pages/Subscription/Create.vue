@@ -1,5 +1,3 @@
-/* eslint-disable vue/return-in-computed-property */
-/* eslint-disable import/no-unresolved */
 <template>
   <main-layout :title="title">
     <v-card flat class="grey lighten-5">
@@ -25,6 +23,7 @@
           v-model="ranks"
           :items="$page.ranks"
           :search-input.sync="searchRank"
+          deletable-chips
           hide-selected
           hint="Ranks"
           label="Add Ranks"
@@ -133,7 +132,7 @@
       <v-flex xs12 offset-md2 md8>
         <v-text-field
           v-model="duration"
-          readonly
+          readdeletable-chipsonly
           class="primary--text"
           name="duration"
           label="Duration"
@@ -214,26 +213,6 @@ export default {
     periods: [1],
     ranks: [],
     searchRank: null,
-    fixValue: new Form({
-      min: 1,
-      max: 1000,
-      amount: 100,
-    }),
-    percentage: new Form({
-      min: 1,
-      max: 1000,
-      amount: 5,
-    }),
-    compounding: new Form({
-      min: 1,
-      max: 1000,
-      amount: 5,
-    }),
-    profitSharing: new Form({
-      min: 1,
-      max: 1000,
-      amount: 5,
-    }),
   }),
   computed: {
     indeterminate() {
@@ -279,14 +258,13 @@ export default {
     },
   },
   watch: {
-    ranks(newVal) {
+    ranks() {
       let details = {};
       // eslint-disable-next-line no-unused-vars
       let self = this;
       this.ranks.forEach(key => {
         if (this.form.type) {
-          // eslint-disable-next-line no-undef
-          details[key] = eval(`self.${_.camelCase(this.form.type)}`);
+          details[key] = self.newForm();
         } else {
           details[key] = new Form();
         }
@@ -294,16 +272,13 @@ export default {
       this.details = details;
       this.commissions = details;
     },
-    "form.type"(newVal) {
+    "form.type"() {
       // set new type component
-      // evaluate the newVal text to object
-      //  this.form.details = eval(`this.${newVal}`);
-      // eslint-disable-next-line no-unused-vars
       let self = this;
       let details = {};
+
       this.ranks.forEach(key => {
-        // eslint-disable-next-line no-undef
-        details[key] = eval(`self.${_.camelCase(newVal)}`);
+        details[key] = self.newForm();
       });
       this.details = details;
       this.commissions = details;
@@ -323,9 +298,9 @@ export default {
   methods: {
     newForm() {
       return new Form({
-        min: 1,
-        max: 1000,
-        amount: 100,
+        min: null,
+        max: null,
+        amount: null,
       });
     },
     toggleSelect() {
