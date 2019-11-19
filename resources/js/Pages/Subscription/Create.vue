@@ -19,7 +19,7 @@
         />
       </v-flex>
       <v-flex xs12 offset-md2 md8>
-        <v-subheader>Set Up Ranks, Plan Type and Cycle Commissions</v-subheader>
+        <v-subheader>Set Up Ranks and Plan Type</v-subheader>
         <v-divider />
       </v-flex>
       <v-flex xs12 offset-md2 md8>
@@ -29,7 +29,7 @@
           :search-input.sync="searchRank"
           deletable-chips
           hide-selected
-          hint="Ranks"
+          hint="Define Min Payment And Max Payment Per Rank"
           label="Add Ranks"
           multiple
           persistent-hint
@@ -47,6 +47,10 @@
             </v-list-item>
           </template>
         </v-combobox>
+      </v-flex>
+      <ranking :ranks="tiers" />
+      <v-flex v-if="!isEmpty(tiers)" xs12 offset-md2 md8>
+        <v-divider />
       </v-flex>
       <v-flex class="xs12 offset-md2 md8 pt-5 pb-5">
         <v-autocomplete
@@ -66,7 +70,7 @@
           data-vv-name="type"
         />
       </v-flex>
-      <component :is="form.type" v-if="form.type" :commissions="commissions" />
+      <component :is="form.type" />
       <v-flex xs12 offset-md2 md8>
         <v-switch v-model="form.lifetime" color="green darken-4" :label="getLifetimeStatus" />
       </v-flex>
@@ -196,13 +200,12 @@ export default {
     title: "Create Subscription Plan",
     // start : working on this
     details: null,
-    commissions: null, // we need to add to  each key (rank) the billing cycle with value
+    tiers: {}, // we need to add to  each key (rank) the billing cycle with value
     billing_cycle: [],
     // end
     form: new Form({
       type: null,
       name: "",
-      amount: "",
       cycle_unit: 24,
       cycle_interval: 1,
       cycle_repeat: 1,
@@ -266,26 +269,16 @@ export default {
       let details = {};
       // eslint-disable-next-line no-unused-vars
       let self = this;
-      this.ranks.forEach(key => {
-        if (this.form.type) {
-          details[key] = self.newForm();
+      this.ranks.forEach(rank => {
+        if (self.isEmpty(self.tiers[rank])) {
+          //! and have a new value the default value of min and max is null
+          details[rank] = self.newForm();
         } else {
-          details[key] = new Form();
+          //! dont overwrite the form when the key (rank) exist
+          details[rank] = self.tiers[rank];
         }
       });
-      this.details = details;
-      this.commissions = details;
-    },
-    "form.type"() {
-      // set new type component
-      let self = this;
-      let details = {};
-
-      this.ranks.forEach(key => {
-        details[key] = self.newForm();
-      });
-      this.details = details;
-      this.commissions = details;
+      this.tiers = details;
     },
     "form.cycle_repeat"(newVal) {
       this.billing_cycle = [];
@@ -300,11 +293,16 @@ export default {
     },
   },
   methods: {
+    isEmpty(obj) {
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) return false;
+      }
+      return true;
+    },
     newForm() {
       return new Form({
         min: null,
         max: null,
-        amount: null,
       });
     },
     toggleSelect() {

@@ -1,63 +1,36 @@
 <template>
-  <div v-if="commissions">
-    <div v-for="(rank,key) in commissions" :key="key">
-      <v-flex xs12 offset-md2 md8>
-        <v-subheader class="text-capitalize font-weight-black">{{ key }}</v-subheader>
-      </v-flex>
-      <v-flex xs12 offset-md2 md8>
-        <v-text-field
-          v-model.number="rank.min"
-          v-validate="'required|min_value:1'"
-          :error-messages="errorMessages(`${key}_min`)"
-          :class="{ 'error--text': hasErrors(`${key}_min`,rank) }"
-          :data-vv-name="`${key}_min`"
-          type="number"
-          min="1"
-          class="primary--text"
-          name="min"
-          label="Min Payment"
-          prepend-icon="vertical_align_bottom"
-        />
-      </v-flex>
-
-      <v-flex xs12 offset-md2 md8>
-        <v-text-field
-          v-model.number="rank.max"
-          v-validate="'required|min_value:1'"
-          :error-messages="errorMessages(`${key}_max`)"
-          :class="{ 'error--text': hasErrors(`${key}_max`,rank) }"
-          :data-vv-name="`${key}_max`"
-          type="number"
-          min="1"
-          class="primary--text"
-          name="max"
-          label="Max"
-          prepend-icon="vertical_align_top"
-        />
-      </v-flex>
-    </div>
+  <div>
+    <v-flex xs12 offset-md2 md8>
+      <v-text-field
+        v-model.number="form.fix_value"
+        v-validate="'required|min_value:1|max_value:1000'"
+        type="number"
+        min="1"
+        max="1000"
+        :error-messages="errorMessages('fix_value')"
+        :class="{ 'error--text': hasErrors('fix_value') }"
+        class="primary--text"
+        name="fix_value"
+        label="Fix Value Amount"
+        data-vv-name
+        counter="255"
+        prepend-icon="fa-money"
+      />
+    </v-flex>
   </div>
 </template>
 <script>
 import validationError from "../../../mixins/validation-error";
+import { Form } from "vform";
+
 export default {
-  mixins: [validationError],
   // make this an array we need to pass in the rank also
   // so each rank has its own compounding form
-  props: {
-    commissions: {
-      type: [Object],
-      default: null,
-    },
-  },
-  methods: {
-    hasErrors(field, rank) {
-      let errors = this.errors.collect(field).concat(rank.errors.only(field));
-      if (errors.length > 0) {
-        return true;
-      }
-      return false;
-    },
-  },
+  mixins: [validationError],
+  data: () => ({
+    form: new Form({
+      fix_value: 5,
+    }),
+  }),
 };
 </script>

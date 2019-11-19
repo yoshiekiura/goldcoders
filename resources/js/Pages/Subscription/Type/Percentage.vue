@@ -2,53 +2,17 @@
   <div>
     <v-flex xs12 offset-md2 md8>
       <v-text-field
-        v-model.number="form.amount"
-        v-validate="'required|min_value:1|max_value:1000'"
+        v-model.number="form.percent"
+        v-validate="'required|min_value:1'"
         type="number"
         min="1"
-        max="1000"
-        :error-messages="errorMessages('amount')"
-        :class="{ 'error--text': hasErrors('amount') }"
+        :error-messages="errorMessages('percent')"
+        :class="{ 'error--text': hasErrors('percent') }"
         class="primary--text"
-        name="amount"
-        label="Default Percentage"
-        data-vv-name="amount"
-        counter="255"
+        name="percent"
+        label="Percent"
+        data-vv-name="percent"
         prepend-icon="fa-percent"
-      />
-    </v-flex>
-    <v-flex xs12 offset-md2 md8>
-      <v-text-field
-        v-model.number="form.min"
-        v-validate="'required|min_value:1|max_value:1000'"
-        type="number"
-        min="1"
-        max="1000"
-        :error-messages="errorMessages('min')"
-        :class="{ 'error--text': hasErrors('min') }"
-        class="primary--text"
-        name="min"
-        label="Min Amount"
-        data-vv-name="min"
-        counter="255"
-        prepend-icon="vertical_align_bottom"
-      />
-    </v-flex>
-    <v-flex xs12 offset-md2 md8>
-      <v-text-field
-        v-model.number="form.max"
-        v-validate="'required|min_value:1|max_value:1000'"
-        type="number"
-        min="1"
-        max="1000"
-        :error-messages="errorMessages('max')"
-        :class="{ 'error--text': hasErrors('max') }"
-        class="primary--text"
-        name="max"
-        label="Fix Value Max Amount"
-        data-vv-name="max"
-        counter="255"
-        prepend-icon="vertical_align_top"
       />
     </v-flex>
   </div>
@@ -61,22 +25,9 @@ export default {
   // make this an array we need to pass in the rank also
   // so each rank has its own compounding form
   mixins: [validationError],
-  props: {
-    details: {
-      type: [Object, Array],
-      default: null,
-    },
-    ranks: {
-      type: [Array],
-      // eslint-disable-next-line vue/require-valid-default-prop
-      default: null,
-    },
-  },
   data: () => ({
     form: new Form({
-      min: 1,
-      max: 1000,
-      amount: 5,
+      percent: 1,
     }),
   }),
 };
